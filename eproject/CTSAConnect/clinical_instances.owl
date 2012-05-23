@@ -1,0 +1,175 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://purl.obolibrary.org/obo/arg/clinical_instances.owl#"
+     xml:base="http://purl.obolibrary.org/obo/arg/clinical_instances.owl"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:ro="http://www.obofoundry.org/ro/ro.owl#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/arg/clinical_instances.owl"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/ARG_0000495"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.obofoundry.org/ro/ro.owl#has_part -->
+
+    <owl:ObjectProperty rdf:about="http://www.obofoundry.org/ro/ro.owl#has_part"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ARG_0000140 -->
+
+    <owl:DatatypeProperty rdf:about="http://purl.obolibrary.org/obo/ARG_0000140"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ARG_0000006 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ARG_0000006"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ARG_0000033 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ARG_0000033"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ARG_0000051 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ARG_0000051"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ARG_0000130 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ARG_0000130"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/ARG_0000442 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/ARG_0000442"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/arg/i/1234567 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/arg/i/1234567">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_0000130"/>
+        <rdfs:label xml:lang="en">practiotioner_1234567</rdfs:label>
+        <obo:ARG_0000495 xml:lang="en">1234567</obo:ARG_0000495>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/arg/i/29fc2a02-00f4-43a4-9cdd-586286295765 -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/arg/i/29fc2a02-00f4-43a4-9cdd-586286295765">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_0000442"/>
+        <rdfs:label xml:lang="en">cpt_29fc2a02-00f4-43a4-9cdd-586286295765_order_fb438d51-bd05-499c-8503-c3387560dabd</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/arg/i/78767d55-ddd9-4455-9f81-4aabca1e69ba -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/arg/i/78767d55-ddd9-4455-9f81-4aabca1e69ba">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_0000051"/>
+        <rdfs:label xml:lang="en">patient_78767d55-ddd9-4455-9f81-4aabca1e69ba</rdfs:label>
+        <obo:ARG_0000495 xml:lang="en">78767d55-ddd9-4455-9f81-4aabca1e69ba</obo:ARG_0000495>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/arg/i/aa493eb7-1adf-4b49-8d0c-825da268614f -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/arg/i/aa493eb7-1adf-4b49-8d0c-825da268614f">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_0000033"/>
+        <rdfs:label xml:lang="en">encounter_practitioner_1234567_patient_78767d55-ddd9-4455-9f81-4aabca1e69ba</rdfs:label>
+        <obo:ARG_0000495 xml:lang="en">aa493eb7-1adf-4b49-8d0c-825da268614f</obo:ARG_0000495>
+        <obo:ARG_0000140 xml:lang="xsd:datetime">10-2-2012</obo:ARG_0000140>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/arg/i/fb438d51-bd05-499c-8503-c3387560dabd -->
+
+    <owl:NamedIndividual rdf:about="http://purl.obolibrary.org/obo/arg/i/fb438d51-bd05-499c-8503-c3387560dabd">
+        <rdf:type rdf:resource="http://purl.obolibrary.org/obo/ARG_0000006"/>
+        <rdfs:label xml:lang="en">order_fb438d51-bd05-499c-8503-c3387560dabd</rdfs:label>
+        <ro:has_part rdf:resource="http://purl.obolibrary.org/obo/arg/i/29fc2a02-00f4-43a4-9cdd-586286295765"/>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.3.1964) http://owlapi.sourceforge.net -->
+
