@@ -67,9 +67,12 @@ public class createInstances {
 	private static String identifierAnnoPropertyURI ="http://purl.obolibrary.org/obo/ARG_0000495";
 	private static String orderClassURI = "http://purl.obolibrary.org/obo/ARG_0000006";
 	private static String CPTbillingCodeURI = "http://purl.obolibrary.org/obo/ARG_0000442";
+	private static String hasspecifiedoutputURL ="http://purl.obolibrary.org/obo/OBI_0000299";
 	private static String haspartURI = "http://www.obofoundry.org/ro/ro.owl#has_part";
 	private static String baseCPTSUbclassURI = "http://purl.obolibrary.org/obo/arg/cptcode/";
 	private static String baseICDSUbclassURI = "http://purl.obolibrary.org/obo/arg/icdcode/";
+	private static String hasparticipantURL = "http://www.obofoundry.org/ro/ro.owl#has_participant";
+	private static IRI hasspecifiedoutputIRI = IRI.create(hasspecifiedoutputURL);
 	private static IRI haspartIRI = IRI.create(haspartURI);
 	private static IRI  CPTbillingCodeIRI = IRI.create(CPTbillingCodeURI);
 	private static IRI healthcarepractitionerClassIRI = IRI.create(healthcarepractitionerClassURI);
@@ -78,6 +81,7 @@ public class createInstances {
 	private static IRI hasdateIRI = IRI.create(hasdateURI);
 	private static IRI IdentifierAnnoIRI = IRI.create(identifierAnnoPropertyURI);
 	private static IRI orderClassIRI = IRI.create(orderClassURI);
+	private static IRI hasparticipantIRI = IRI.create(hasparticipantURL);
 	
 	
 
@@ -153,6 +157,7 @@ public class createInstances {
 		 
 		 for (int i=0; i<testData.size();i++)
 		 {
+			 // Maybe the following can be extracted as a method so that it can be reused 
 			 String practitionerID = testData.get(i).practitionerID;
 			 // check if the practitioner ID exists
 			 if (!practitionerIDSet.contains(practitionerID))
@@ -186,7 +191,9 @@ public class createInstances {
 				
 			 }
 			 
-			 
+			 	 // Declare anyay the instance of practictioner
+			 	IRI practitionerIndividualIRI = IRI.create(basicinstanceURI+practitionerID);
+				OWLIndividual practitioner = df.getOWLNamedIndividual(practitionerIndividualIRI); 
 				 System.out.println("Practitioner already exists.");
 				 
 				 // Go on and process the rest of the data
@@ -271,10 +278,23 @@ public class createInstances {
 					
 					//Add the relation between the encounter and the order
 					// encounter instance has_specified_output order instance
+					// Using http://purl.obolibrary.org/obo/OBI_0000299 for has_specified output to be changes in the ontology
+					
+					OWLObjectProperty has_specified_output = df.getOWLObjectProperty(hasspecifiedoutputIRI);
+					OWLObjectPropertyAssertionAxiom specoutassertion = df.getOWLObjectPropertyAssertionAxiom(has_specified_output, encounter, order);
+					manager.applyChange(new AddAxiom(onto, specoutassertion));
+					
 					
 					
 					// Add the participants in the encounter: the patientIRI and the practitioner IRI
-					// Two statements
+					// Two statements hasparticipantIRI
+					
+					OWLObjectProperty has_participant = df.getOWLObjectProperty(hasparticipantIRI);
+					OWLObjectPropertyAssertionAxiom participantassertion = df.getOWLObjectPropertyAssertionAxiom(has_participant, encounter, patient);
+					manager.applyChange(new AddAxiom(onto, participantassertion));
+					OWLObjectPropertyAssertionAxiom participantassertionpractitioner = df.getOWLObjectPropertyAssertionAxiom(has_participant, encounter, practitioner);
+					manager.applyChange(new AddAxiom(onto, participantassertionpractitioner));
+					
 					
 					
 					
@@ -294,7 +314,7 @@ public class createInstances {
 						OWLIndividual cptCodeInstance = df.getOWLNamedIndividual(cptcodeinstanceIRI); 
 						
 						// add the type of CPT
-						IRI CPTCodeIndividualparentIRI = IRI.create(baseCPTSUbclassURI+ctpCodeInstanceID);
+						IRI CPTCodeIndividualparentIRI = IRI.create(baseCPTSUbclassURI+CPTCode);
 						OWLClass CPTCodeIndividualparent = df.getOWLClass(CPTCodeIndividualparentIRI);
 						OWLClassAssertionAxiom CPTinstanceAssertion = df.getOWLClassAssertionAxiom(CPTCodeIndividualparent, cptCodeInstance);
 						manager.addAxiom(onto, CPTinstanceAssertion);
@@ -310,14 +330,6 @@ public class createInstances {
 						OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, order, cptCodeInstance);
 						manager.applyChange(new AddAxiom(onto, codeorderassertion));
 						
-						
-						
-						
-						
-						
-						
-						
-						
 					}
 					
 					else{
@@ -326,15 +338,17 @@ public class createInstances {
 					
 					// Get ICD9 Code and process it
 					
-						
+					
 					
 					
 				 }
 				 
+				 // Here need to check if the unique patient is less than the total number will need to generate for X times 
+				 // where X = total - unique patients
+				 // We should definetly extract a method: create instance set
 				 
-			 
-			 
-			 System.out.println(patientIDSet);
+		 System.out.println(patientIDSet);
+		 
 		 }
 		 
 		 
