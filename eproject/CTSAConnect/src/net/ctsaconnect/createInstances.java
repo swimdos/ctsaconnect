@@ -139,6 +139,7 @@ public class createInstances {
 		 
 		 List<simpleData> testData = new ArrayList<simpleData>();
 		 testData.add(new simpleData("1234567", "91120", "",1, 1 ));
+		 testData.add(new simpleData("1234567", "", "555.1",1, 1 ));
 		// testData.add(new simpleData("1234567", "91120", "",125, 125 ));
 		// testData.add(new simpleData("1234567", "", "555.1",200, 147 ));
 		// testData.add(new simpleData("1234568", "91322", "",201, 103 ));
@@ -154,6 +155,7 @@ public class createInstances {
 		 List<String> encounterIDSet = new ArrayList<String>();
 		 List<String> orderIDSet = new ArrayList<String>();
 		 List<String> CPTCodeIDSet = new ArrayList<String>();
+		 List<String> ICDCodeIDSet = new ArrayList<String>();
 		 
 		 for (int i=0; i<testData.size();i++)
 		 {
@@ -191,7 +193,7 @@ public class createInstances {
 				
 			 }
 			 
-			 	 // Declare anyay the instance of practictioner
+			 	 // Declare the instance of practitioner
 			 	IRI practitionerIndividualIRI = IRI.create(basicinstanceURI+practitionerID);
 				OWLIndividual practitioner = df.getOWLNamedIndividual(practitionerIndividualIRI); 
 				 System.out.println("Practitioner already exists.");
@@ -245,12 +247,6 @@ public class createInstances {
 					OWLAxiom encounteraxanno = df.getOWLAnnotationAssertionAxiom(encounterIndividualIRI, identifierencounter);
 					manager.applyChange(new AddAxiom(onto, encounteraxanno));
 					
-					// Add has date Annotation starting
-					// create the date value
-					//RDFSDatatype xsdDate = owlModel.getRDFSDatatypeByName("xsd:date");
-				    //OWLDataProperty dateProperty = owlModel.createOWLDatatypeProperty("dateProperty", xsdDate);
-				   // RDFSLiteral dateLiteral = owlModel.createRDFSLiteral("1971-07-06", xsdDate);
-
 					
 					// Need to find a way to write the proper value as xsd:DateTime
 					OWLDataPropertyAssertionAxiom dataproporaxiom =df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(hasdateIRI), encounter, df.getOWLLiteral("10-2-2012", "xsd:datetime"));
@@ -337,7 +333,45 @@ public class createInstances {
 					}
 					
 					// Get ICD9 Code and process it
+					String ICDCode = testData.get(i).ICD9Code;
 					
+					// replace . with _
+					ICDCode = ICDCode.replace(".","_");
+					
+					if (!ICDCode.equals(""))
+					{
+						// Process ICD9 Code
+						System.out.println("ICD9 Code not empty!");
+						// Create the CPT Instance
+						// For the time being I am just creating an instance of order that has part the instance of CPT code that has identifier the identifier
+						
+						// Create the ICD9 instance
+						String icdCodeInstanceID = assignID(ICDCodeIDSet);
+						IRI icdcodeinstanceIRI = IRI.create(basicinstanceURI+icdCodeInstanceID);
+						OWLIndividual icdCodeInstance = df.getOWLNamedIndividual(icdcodeinstanceIRI); 
+						
+						// add the type of ICD9
+						IRI ICDCodeIndividualparentIRI = IRI.create(baseICDSUbclassURI+ICDCode);
+						OWLClass ICDCodeIndividualparent = df.getOWLClass(ICDCodeIndividualparentIRI);
+						OWLClassAssertionAxiom ICDinstanceAssertion = df.getOWLClassAssertionAxiom(ICDCodeIndividualparent, icdCodeInstance);
+						manager.addAxiom(onto, ICDinstanceAssertion);
+			
+						// ADD ICD9 Code label
+						String icdcode_label ="cpt_"+icdCodeInstanceID+"_order_"+orderID; 
+						OWLAnnotation icdlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(icdcode_label, "en"));
+						OWLAxiom icdlabelax = df.getOWLAnnotationAssertionAxiom(icdcodeinstanceIRI, icdlabelanno);
+						manager.applyChange(new AddAxiom(onto, icdlabelax));
+						
+						// Add the ICD9 instance part_of the order instance
+						OWLObjectProperty has_part = df.getOWLObjectProperty(haspartIRI);
+						OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, order, icdCodeInstance);
+						manager.applyChange(new AddAxiom(onto, codeorderassertion));
+						
+					}
+					
+					else{
+						System.out.println("ICD9 Code empty!");
+					}
 					
 					
 					
