@@ -139,13 +139,21 @@ public class createInstances {
 		 Boolean isCPT=false;
 		 Boolean isICD=false;
 		 
-		 // The results here should be:
-		 // Encounter: 13
-		 // Patient: 13
-		 // Practitioners: 2
-		 // CPT 91120 instance = 9
-		 // CPT 91322 instances = 10
-		 // Diagnoses (encounter that has output an ICD9= 
+		 /**
+		  * The results:
+		 	Encounter: 13
+		 	Patient: 13
+		 	Practitioners: 2
+		 	CPT 91120 instance = 9
+		 	CPT 91322 instances = 10
+		 	Diagnoses = 1
+		 	Order = 12
+		 	
+		 	
+		 	SPARQL QUERIES:
+		 	
+		  */
+		
 		 
 		 
 		 OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
