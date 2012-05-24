@@ -34,14 +34,11 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  * @author torniai@ohsum01.ohsu.edu
  *TO DO:
  *
- * 1) Create unique identifier for all the instances use UUID + hash methods
- * 2) For the moment just explore the creation of steps starting from the simple dates:
- * 	Practitioner ID, CPT Code Value,  Code occurrences,  Number of Unique Patients
- * 3) Have jut the creation of the instances
- * 	- method to create same hash from same ID (for practitioner)
- * 
- * 
- * Assumption: this will be one shot creation now (meaning we won't be appending anything for the moment 
+ * 1) Have the ontology look up existing practitioners (future)
+ * 2) Add support for Mysql table to generate the sampleData
+ *3) Create a tests with  test values and SPARQL query with the proper result
+ *  
+ * Assumption: this will be one shot creation now: i'm assuming to start form an ontology with no instances and  (meaning we won't be appending anything for the moment 
  * to our ontology). In the future we will have the ontology instances file  as an input and we will perform the look up for instances there.
  * 
  * From each row assuming contains the structure in Simple data the algorithm would be:
@@ -52,15 +49,10 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 public class createInstances {
 
 	
-	// Here I define all the URI for the reference classes we will need (currently they are just placeholder theu will change)
-	// Encounter
-	// Practitioner
-	// CPT code
-	// ICD 9 Code
-	// Patient
+	
 	
 
-	private static String encounterClassURI = "http://purl.obolibrary.org/obo/ARG_0000033";
+	private static String encounterClassURI = "http://purl.obolibrary.org/obo/ARG_0000140";
 	private static String healthcarepractitionerClassURI="http://purl.obolibrary.org/obo/ARG_0000130";
 	private static String patientClassURI = "http://purl.obolibrary.org/obo/ARG_0000051";
 	private static String hasdateURI = "http://purl.obolibrary.org/obo/ARG_0000140"; 
@@ -71,7 +63,9 @@ public class createInstances {
 	private static String haspartURI = "http://www.obofoundry.org/ro/ro.owl#has_part";
 	private static String baseCPTSUbclassURI = "http://purl.obolibrary.org/obo/arg/cptcode/";
 	private static String baseICDSUbclassURI = "http://purl.obolibrary.org/obo/arg/icdcode/";
+	private static String diagnosisURL = "http://purl.obolibrary.org/obo/ARG_0000037";
 	private static String hasparticipantURL = "http://www.obofoundry.org/ro/ro.owl#has_participant";
+	private static IRI diagnosisClassIRI = IRI.create(diagnosisURL);
 	private static IRI hasspecifiedoutputIRI = IRI.create(hasspecifiedoutputURL);
 	private static IRI haspartIRI = IRI.create(haspartURI);
 	private static IRI  CPTbillingCodeIRI = IRI.create(CPTbillingCodeURI);
@@ -156,6 +150,7 @@ public class createInstances {
 		 List<String> orderIDSet = new ArrayList<String>();
 		 List<String> CPTCodeIDSet = new ArrayList<String>();
 		 List<String> ICDCodeIDSet = new ArrayList<String>();
+		 List<String> diagnosisCodeIDSet = new ArrayList<String>();
 		 
 		 for (int i=0; i<testData.size();i++)
 		 {
@@ -196,7 +191,7 @@ public class createInstances {
 			 	 // Declare the instance of practitioner
 			 	IRI practitionerIndividualIRI = IRI.create(basicinstanceURI+practitionerID);
 				OWLIndividual practitioner = df.getOWLNamedIndividual(practitionerIndividualIRI); 
-				 System.out.println("Practitioner already exists.");
+				System.out.println("Practitioner already exists.");
 				 
 				 // Go on and process the rest of the data
 				
@@ -253,35 +248,6 @@ public class createInstances {
 					manager.applyChange(new AddAxiom(onto, dataproporaxiom));
 					
 					
-					// Create order instance and related axioms
-					// create order ID 
-					String orderID = assignID(orderIDSet);
-					IRI orderIndividualIRI = IRI.create(basicinstanceURI+orderID);
-					OWLIndividual order = df.getOWLNamedIndividual(orderIndividualIRI); 
-
-					
-					// Assert the type of Order
-					OWLClass orderIndividualparent = df.getOWLClass(orderClassIRI);
-					OWLClassAssertionAxiom orderclassAssertion = df.getOWLClassAssertionAxiom(orderIndividualparent, order);
-					manager.addAxiom(onto, orderclassAssertion);
-					
-					// Add label to Order
-					String order_label ="order_"+orderID; 
-					OWLAnnotation orderlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(order_label, "en"));
-					OWLAxiom orderax = df.getOWLAnnotationAssertionAxiom(orderIndividualIRI, orderlabelanno);
-					manager.applyChange(new AddAxiom(onto, orderax));
-					
-					
-					//Add the relation between the encounter and the order
-					// encounter instance has_specified_output order instance
-					// Using http://purl.obolibrary.org/obo/OBI_0000299 for has_specified output to be changes in the ontology
-					
-					OWLObjectProperty has_specified_output = df.getOWLObjectProperty(hasspecifiedoutputIRI);
-					OWLObjectPropertyAssertionAxiom specoutassertion = df.getOWLObjectPropertyAssertionAxiom(has_specified_output, encounter, order);
-					manager.applyChange(new AddAxiom(onto, specoutassertion));
-					
-					
-					
 					// Add the participants in the encounter: the patientIRI and the practitioner IRI
 					// Two statements hasparticipantIRI
 					
@@ -299,6 +265,35 @@ public class createInstances {
 					String CPTCode = testData.get(i).CPTCode;
 					if (!CPTCode.equals(""))
 					{
+						
+						// Create order instance and related axioms
+						// create order ID 
+						String orderID = assignID(orderIDSet);
+						IRI orderIndividualIRI = IRI.create(basicinstanceURI+orderID);
+						OWLIndividual order = df.getOWLNamedIndividual(orderIndividualIRI); 
+
+						
+						// Assert the type of Order
+						OWLClass orderIndividualparent = df.getOWLClass(orderClassIRI);
+						OWLClassAssertionAxiom orderclassAssertion = df.getOWLClassAssertionAxiom(orderIndividualparent, order);
+						manager.addAxiom(onto, orderclassAssertion);
+						
+						// Add label to Order
+						String order_label ="order_"+orderID; 
+						OWLAnnotation orderlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(order_label, "en"));
+						OWLAxiom orderax = df.getOWLAnnotationAssertionAxiom(orderIndividualIRI, orderlabelanno);
+						manager.applyChange(new AddAxiom(onto, orderax));
+						
+						
+						//Add the relation between the encounter and the orderer
+						// encounter instance has_specified_output order instance
+						// Using http://purl.obolibrary.org/obo/OBI_0000299 for has_specified output to be changes in the ontology
+						
+						OWLObjectProperty has_specified_output = df.getOWLObjectProperty(hasspecifiedoutputIRI);
+						OWLObjectPropertyAssertionAxiom specoutassertion = df.getOWLObjectPropertyAssertionAxiom(has_specified_output, encounter, order);
+						manager.applyChange(new AddAxiom(onto, specoutassertion));
+						
+						
 						// Process CPT Code
 						System.out.println("CPT Code not empty!");
 						// Create the CPT Instance
@@ -340,6 +335,33 @@ public class createInstances {
 					
 					if (!ICDCode.equals(""))
 					{
+						
+						// Create diagnosis instance and related axioms
+						// create diagnosis ID 
+						String diagnosisID = assignID(diagnosisCodeIDSet);
+						IRI diagnosisIndividualIRI = IRI.create(basicinstanceURI+diagnosisID);
+						OWLIndividual diagnosis = df.getOWLNamedIndividual(diagnosisIndividualIRI); 
+
+						
+						// Assert the type of Diagnosis
+						OWLClass orderIndividualparent = df.getOWLClass(diagnosisClassIRI);
+						OWLClassAssertionAxiom orderclassAssertion = df.getOWLClassAssertionAxiom(orderIndividualparent, diagnosis);
+						manager.addAxiom(onto, orderclassAssertion);
+						
+						// Add label to Diagnosis
+						String diagnosis_label ="diagnosis_"+diagnosisID; 
+						OWLAnnotation diagnosislabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(diagnosis_label, "en"));
+						OWLAxiom orderax = df.getOWLAnnotationAssertionAxiom(diagnosisIndividualIRI, diagnosislabelanno);
+						manager.applyChange(new AddAxiom(onto, orderax));
+						
+						
+						//Add the relation between the encounter and the orderer
+						// encounter instance has_specified_output order instance
+						// Using http://purl.obolibrary.org/obo/OBI_0000299 for has_specified output to be changes in the ontology
+						
+						OWLObjectProperty has_specified_output = df.getOWLObjectProperty(hasspecifiedoutputIRI);
+						OWLObjectPropertyAssertionAxiom specoutassertion = df.getOWLObjectPropertyAssertionAxiom(has_specified_output, encounter, diagnosis);
+						manager.applyChange(new AddAxiom(onto, specoutassertion));
 						// Process ICD9 Code
 						System.out.println("ICD9 Code not empty!");
 						// Create the CPT Instance
@@ -357,14 +379,14 @@ public class createInstances {
 						manager.addAxiom(onto, ICDinstanceAssertion);
 			
 						// ADD ICD9 Code label
-						String icdcode_label ="cpt_"+icdCodeInstanceID+"_order_"+orderID; 
+						String icdcode_label ="idc_"+icdCodeInstanceID+"_diagnosis_"+diagnosisID; 
 						OWLAnnotation icdlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(icdcode_label, "en"));
 						OWLAxiom icdlabelax = df.getOWLAnnotationAssertionAxiom(icdcodeinstanceIRI, icdlabelanno);
 						manager.applyChange(new AddAxiom(onto, icdlabelax));
 						
 						// Add the ICD9 instance part_of the order instance
 						OWLObjectProperty has_part = df.getOWLObjectProperty(haspartIRI);
-						OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, order, icdCodeInstance);
+						OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, diagnosis, icdCodeInstance);
 						manager.applyChange(new AddAxiom(onto, codeorderassertion));
 						
 					}
@@ -377,11 +399,14 @@ public class createInstances {
 					
 				 }
 				 
-				 // Here need to check if the unique patient is less than the total number will need to generate for X times 
+				 // Here need to check if the unique patient is less than the total number will need to generate for X times whatever codes I have
+				 // I should get the last order created form the array list and add codes to that.
+				 
 				 // where X = total - unique patients
 				 // We should definetly extract a method: create instance set
-				 
-		 System.out.println(patientIDSet);
+		 System.out.println("Practitioners: " +practitionerIDSet);
+		 System.out.println("Patients: " +patientIDSet);
+	
 		 
 		 }
 		 
@@ -390,8 +415,8 @@ public class createInstances {
 		 
 		 RDFXMLOntologyFormat  rdfxmlFormat = new  RDFXMLOntologyFormat();
 			
-			// write onto in the new format
-			 File file = new File(outFile);
+		 // write onto in the new format
+		 File file = new File(outFile);
 		 
 		 System.out.println("Saving new file: " + outFile);
 		 manager.saveOntology(onto, rdfxmlFormat, IRI.create(file.toURI()));
