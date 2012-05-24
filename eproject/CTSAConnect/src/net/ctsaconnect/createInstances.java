@@ -133,12 +133,21 @@ public class createInstances {
 		 
 		 List<simpleData> testData = new ArrayList<simpleData>();
 		 testData.add(new simpleData("1234567", "91120", "",1, 1 ));
-		 testData.add(new simpleData("1234567", "", "555.1",1, 1 ));
-		// testData.add(new simpleData("1234567", "91120", "",125, 125 ));
-		// testData.add(new simpleData("1234567", "", "555.1",200, 147 ));
-		// testData.add(new simpleData("1234568", "91322", "",201, 103 ));
+		 testData.add(new simpleData("1234567", "", "555.1",4, 1 ));
+		 testData.add(new simpleData("1234567", "91120", "",8, 6 ));
+		 testData.add(new simpleData("1234568", "91322", "",10, 5 ));
+		 Boolean isCPT=false;
+		 Boolean isICD=false;
 		 
-		 // create the ontology
+		 // The results here should be:
+		 // Encounter: 13
+		 // Patient: 13
+		 // Practitioners: 2
+		 // CPT 91120 instance = 9
+		 // CPT 91322 instances = 10
+		 // Diagnoses (encounter that has output an ICD9= 
+		 
+		 
 		 OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 		 OWLDataFactory df = manager.getOWLDataFactory();
 		 OWLOntology onto = manager.createOntology(ontoIRI);
@@ -200,7 +209,9 @@ public class createInstances {
 				 
 				 for (int j=0; j<uniquepatients; j++){
 					 
-					 // create patient instance (label practitioner_XXXXXX , annotation property identifier) // Currently UUID Need to define an hash function
+					isCPT=false;
+					isICD=false;
+					// create patient instance (label practitioner_XXXXXX , annotation property identifier) // Currently UUID Need to define an hash function
 					String patientID = assignID(patientIDSet);
 					IRI patientIndividualIRI = IRI.create(basicinstanceURI+patientID);
 					OWLIndividual patient = df.getOWLNamedIndividual(patientIndividualIRI); 
@@ -258,14 +269,12 @@ public class createInstances {
 					manager.applyChange(new AddAxiom(onto, participantassertionpractitioner));
 					
 					
-					
-					
-					
 					// Get CPTCode value 
 					String CPTCode = testData.get(i).CPTCode;
 					if (!CPTCode.equals(""))
 					{
-						
+						isCPT = true;
+						System.out.println("Adding CPT Code to the encounter");
 						// Create order instance and related axioms
 						// create order ID 
 						String orderID = assignID(orderIDSet);
@@ -295,7 +304,6 @@ public class createInstances {
 						
 						
 						// Process CPT Code
-						System.out.println("CPT Code not empty!");
 						// Create the CPT Instance
 						// For the time being I am just creating an instance of order that has part the instance of CPT code that has identifier the identifier
 						
@@ -320,11 +328,11 @@ public class createInstances {
 						OWLObjectProperty has_part = df.getOWLObjectProperty(haspartIRI);
 						OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, order, cptCodeInstance);
 						manager.applyChange(new AddAxiom(onto, codeorderassertion));
-						
+		
 					}
 					
 					else{
-						System.out.println("CPT Code empty!");
+						//System.out.println("CPT Code empty!");
 					}
 					
 					// Get ICD9 Code and process it
@@ -335,14 +343,15 @@ public class createInstances {
 					
 					if (!ICDCode.equals(""))
 					{
-						
+						System.out.println("Adding ICD Code to the encounter");
+						// Probably have to understand if there was a CPT code or a ICD9 code
+						isICD = true;
 						// Create diagnosis instance and related axioms
 						// create diagnosis ID 
 						String diagnosisID = assignID(diagnosisCodeIDSet);
 						IRI diagnosisIndividualIRI = IRI.create(basicinstanceURI+diagnosisID);
 						OWLIndividual diagnosis = df.getOWLNamedIndividual(diagnosisIndividualIRI); 
 
-						
 						// Assert the type of Diagnosis
 						OWLClass orderIndividualparent = df.getOWLClass(diagnosisClassIRI);
 						OWLClassAssertionAxiom orderclassAssertion = df.getOWLClassAssertionAxiom(orderIndividualparent, diagnosis);
@@ -363,7 +372,7 @@ public class createInstances {
 						OWLObjectPropertyAssertionAxiom specoutassertion = df.getOWLObjectPropertyAssertionAxiom(has_specified_output, encounter, diagnosis);
 						manager.applyChange(new AddAxiom(onto, specoutassertion));
 						// Process ICD9 Code
-						System.out.println("ICD9 Code not empty!");
+						//System.out.println("ICD9 Code not empty!");
 						// Create the CPT Instance
 						// For the time being I am just creating an instance of order that has part the instance of CPT code that has identifier the identifier
 						
@@ -392,23 +401,106 @@ public class createInstances {
 					}
 					
 					else{
-						System.out.println("ICD9 Code empty!");
+						//System.out.println("ICD9 Code empty!");
 					}
 					
 					
 					
 				 }
 				 
-				 // Here need to check if the unique patient is less than the total number will need to generate for X times whatever codes I have
-				 // I should get the last order created form the array list and add codes to that.
 				 
-				 // where X = total - unique patients
-				 // We should definetly extract a method: create instance set
-		 System.out.println("Practitioners: " +practitionerIDSet);
-		 System.out.println("Patients: " +patientIDSet);
+				 // here attach the remaining data
+				// If the total codes are > than the unique patients we append the codes to the last encounter
+				
+				 int additionalcodes = testData.get(i).codeOccurrences-uniquepatients; // Calculate the numbers of codes to be added
+				 if (additionalcodes>0)
+				 System.out.println("Adding " + additionalcodes+ " more codes to the encounter.");
+				 {
+					for (int y=0; y<additionalcodes; y++)
+				 	{
+						// If the code is a CPT code:
+						if (isCPT)
+						{
+							// Get the last CPT Code 
+							String CPTCode = testData.get(i).CPTCode;
+							
+							// Create a new instance of the code
+							String ctpCodeInstanceID = assignID(CPTCodeIDSet);
+							IRI cptcodeinstanceIRI = IRI.create(basicinstanceURI+ctpCodeInstanceID);
+							OWLIndividual cptCodeInstance = df.getOWLNamedIndividual(cptcodeinstanceIRI); 
+							
+							// add the type of CPT
+							IRI CPTCodeIndividualparentIRI = IRI.create(baseCPTSUbclassURI+CPTCode);
+							OWLClass CPTCodeIndividualparent = df.getOWLClass(CPTCodeIndividualparentIRI);
+							OWLClassAssertionAxiom CPTinstanceAssertion = df.getOWLClassAssertionAxiom(CPTCodeIndividualparent, cptCodeInstance);
+							manager.addAxiom(onto, CPTinstanceAssertion);
+				
+							// ADD CTP Code label
+							// Get the last order ID
+							String orderID=orderIDSet.get(orderIDSet.size()-1);
+							
+							String cptcode_label ="cpt_"+ctpCodeInstanceID+"_order_"+orderID; 
+							OWLAnnotation cptlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(cptcode_label, "en"));
+							OWLAxiom cptlabelax = df.getOWLAnnotationAssertionAxiom(cptcodeinstanceIRI, cptlabelanno);
+							manager.applyChange(new AddAxiom(onto, cptlabelax));
+							
+							// Add the CPT instance part_of the order instance
+							// Get the order instance
+							IRI orderIndividualIRI = IRI.create(basicinstanceURI+orderID);
+							OWLIndividual order = df.getOWLNamedIndividual(orderIndividualIRI); 
+							OWLObjectProperty has_part = df.getOWLObjectProperty(haspartIRI);
+							OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, order, cptCodeInstance);
+							manager.applyChange(new AddAxiom(onto, codeorderassertion));
+						}
+						
+						if (isICD){
+							// Get the last ICD Code 
+							String ICDCode = testData.get(i).ICD9Code;
+							ICDCode = ICDCode.replace(".","_");
+
+							// Get the last order ID 
+							String diagnosisID=orderIDSet.get(diagnosisCodeIDSet.size()-1);
+							
+							// Create the ICD9 instance
+							String icdCodeInstanceID = assignID(ICDCodeIDSet);
+							IRI icdcodeinstanceIRI = IRI.create(basicinstanceURI+icdCodeInstanceID);
+							OWLIndividual icdCodeInstance = df.getOWLNamedIndividual(icdcodeinstanceIRI); 
+							
+							// add the type of ICD9
+							IRI ICDCodeIndividualparentIRI = IRI.create(baseICDSUbclassURI+ICDCode);
+							OWLClass ICDCodeIndividualparent = df.getOWLClass(ICDCodeIndividualparentIRI);
+							OWLClassAssertionAxiom ICDinstanceAssertion = df.getOWLClassAssertionAxiom(ICDCodeIndividualparent, icdCodeInstance);
+							manager.addAxiom(onto, ICDinstanceAssertion);
+				
+							// ADD ICD9 Code label
+							String icdcode_label ="idc_"+icdCodeInstanceID+"_diagnosis_"+diagnosisID; 
+							OWLAnnotation icdlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(icdcode_label, "en"));
+							OWLAxiom icdlabelax = df.getOWLAnnotationAssertionAxiom(icdcodeinstanceIRI, icdlabelanno);
+							manager.applyChange(new AddAxiom(onto, icdlabelax));
+							
+							// Add the ICD9 instance part_of the order instance
+							IRI diagnoisiIndividualIRI = IRI.create(basicinstanceURI+diagnosisID);
+							OWLIndividual diagnosis = df.getOWLNamedIndividual(diagnoisiIndividualIRI); 
+							OWLObjectProperty has_part = df.getOWLObjectProperty(haspartIRI);
+							OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, diagnosis, icdCodeInstance);
+							manager.applyChange(new AddAxiom(onto, codeorderassertion));
+						}
+						
+				 	}
+				 }
+				 
+		
 	
 		 
 		 }
+		 
+		 System.out.println("Practitioners: " +practitionerIDSet.size());
+		 System.out.println("Patients: " +patientIDSet.size());
+		 System.out.println("Encounter: " + encounterIDSet.size());
+		 System.out.println("CPT Codes: " + CPTCodeIDSet.size());
+		 System.out.println("ICD Codes: " + ICDCodeIDSet.size());
+		 System.out.println("Order: " + orderIDSet.size());
+		 System.out.println("Diagnosis: " + diagnosisCodeIDSet.size());
 		 
 		 
 		 // Write the ontology
@@ -433,7 +525,7 @@ public class createInstances {
 		String newID= String.valueOf(id);;
 		if (!IDSet.contains(id)){
 			// Id is valud
-			System.out.println("Generated a new ID");
+			//System.out.println("Generated a new ID");
 			// Remove the dashes for the URI
 			//patientID = patientID.replace("-", "");
 			IDSet.add(newID);
