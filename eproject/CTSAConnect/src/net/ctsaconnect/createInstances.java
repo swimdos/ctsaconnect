@@ -34,7 +34,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  * @author torniai@ohsum01.ohsu.edu
  *TO DO:
  *
- * - Add parameters 
+ * - Add parameters (out File source instance file / source ontology)
  * - Refactor some methods
  * - Have the ontology look up existing practitioners (future / optional parameter)
  * - Add support for Mysql table to generate the sampleData
@@ -57,10 +57,9 @@ public class createInstances {
 	private static String encounterClassURI = "http://purl.obolibrary.org/obo/ARG_0000140";
 	private static String healthcarepractitionerClassURI="http://purl.obolibrary.org/obo/ARG_0000130";
 	private static String patientClassURI = "http://purl.obolibrary.org/obo/ARG_0000051";
-	private static String hasdateURI = "http://purl.obolibrary.org/obo/ARG_0000140"; 
+	private static String hasdateURI = "http://purl.obolibrary.org/obo/ARG_0000365"; 
 	private static String identifierAnnoPropertyURI ="http://purl.obolibrary.org/obo/ARG_0000495";
 	private static String orderClassURI = "http://purl.obolibrary.org/obo/ARG_0000006";
-	private static String CPTbillingCodeURI = "http://purl.obolibrary.org/obo/ARG_0000442";
 	private static String hasspecifiedoutputURL ="http://purl.obolibrary.org/obo/OBI_0000299";
 	private static String haspartURI = "http://www.obofoundry.org/ro/ro.owl#has_part";
 	private static String baseCPTSUbclassURI = "http://purl.obolibrary.org/obo/arg/cptcode/";
@@ -70,7 +69,6 @@ public class createInstances {
 	private static IRI diagnosisClassIRI = IRI.create(diagnosisURL);
 	private static IRI hasspecifiedoutputIRI = IRI.create(hasspecifiedoutputURL);
 	private static IRI haspartIRI = IRI.create(haspartURI);
-	private static IRI  CPTbillingCodeIRI = IRI.create(CPTbillingCodeURI);
 	private static IRI healthcarepractitionerClassIRI = IRI.create(healthcarepractitionerClassURI);
 	private static IRI patientClassIRI = IRI.create(patientClassURI);
 	private static IRI encounterCLassIRI = IRI.create(encounterClassURI);
@@ -78,6 +76,7 @@ public class createInstances {
 	private static IRI IdentifierAnnoIRI = IRI.create(identifierAnnoPropertyURI);
 	private static IRI orderClassIRI = IRI.create(orderClassURI);
 	private static IRI hasparticipantIRI = IRI.create(hasparticipantURL);
+	private static IRI datetimeIRI = IRI.create("http://www.w3.org/2001/XMLSchema#dateTime");
 	
 	
 
@@ -179,16 +178,10 @@ public class createInstances {
 		   	if the total occurrences > unique_patients
 		   			create  occurrences - unique_patients instances of the code (CPT or ICD)
 		   			add statements to the last encounter
-		   	 
-		   
-		  
-
-			
-			 
+		   				 
  */
 		
-		 
-		 
+	 
 		 OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 		 OWLDataFactory df = manager.getOWLDataFactory();
 		 OWLOntology onto = manager.createOntology(ontoIRI);
@@ -204,6 +197,8 @@ public class createInstances {
 		 
 		 for (int i=0; i<testData.size();i++)
 		 {
+			 System.out.println("------------------------");
+			 System.out.println("Processing row " +(i+1));
 			 // Maybe the following can be extracted as a method so that it can be reused 
 			 String practitionerID = testData.get(i).practitionerID;
 			 // check if the practitioner ID exists
@@ -296,7 +291,7 @@ public class createInstances {
 					
 					
 					// Need to find a way to write the proper value as xsd:DateTime
-					OWLDataPropertyAssertionAxiom dataproporaxiom =df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(hasdateIRI), encounter, df.getOWLLiteral("10-2-2012", "xsd:datetime"));
+					OWLDataPropertyAssertionAxiom dataproporaxiom =df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(hasdateIRI), encounter, df.getOWLLiteral("10-2-2012", df.getOWLDatatype(datetimeIRI)));
 					manager.applyChange(new AddAxiom(onto, dataproporaxiom));
 					
 					
