@@ -34,16 +34,18 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  * @author torniai@ohsum01.ohsu.edu
  *TO DO:
  *
- * 1) Have the ontology look up existing practitioners (future)
- * 2) Add support for Mysql table to generate the sampleData
- *3) Create a tests with  test values and SPARQL query with the proper result
- *  
- * Assumption: this will be one shot creation now: i'm assuming to start form an ontology with no instances and  (meaning we won't be appending anything for the moment 
- * to our ontology). In the future we will have the ontology instances file  as an input and we will perform the look up for instances there.
+ * - Add parameters 
+ * - Refactor some methods
+ * - Have the ontology look up existing practitioners (future / optional parameter)
+ * - Add support for Mysql table to generate the sampleData
+ * - Create a tests with SPARQL queries with the proper result (queries are already in)
+ * - modify the clinical-instance.owl with the proper URIs and synch the URIs
+ * - Tes the generated instances when we have the CPT and ICD owl files.
  * 
- * From each row assuming contains the structure in Simple data the algorithm would be:
- * 	 1) Look up if the instance of provider exists.
- * 		if so
+ * 
+ * Assumption: this is a one shot script now: it assumes to have a clean ontology with no instances.
+ * In the future we can add a target ontology where append the data ->  will perform the look up for instances there rather that in the t Arraylists
+ * 
  */
 
 public class createInstances {
@@ -90,46 +92,8 @@ public class createInstances {
 	
 	public static void main(String[] args) throws OWLOntologyCreationException, OWLOntologyStorageException {
 	 
-		 /* For each simpledata
-		  * 	Check if practitioner exists (currently implemented as an arraylist)
-		  * 	If not exists 
-		  * 		create instance of practitioner (label practitioner_XXXXXX annotation property identifier)
-		  * 		add practitioner to the arraylist for future lookup
-		  * 	
-		  * 	
-		  * 	else // Process the CPT code
-		  * 		 for each unique visits
-		  * 			create patient instance (label practitioner_XXXXXX , annotation property identifier) // Currently UUID
-		  * 			
-		  * 			create an encounter instance (label label encouneter_pract_XXXXX_pat_XXXXX, has_date -> value)
-		  * 			
-		  * 			// Process CPT
-		  * 			if CPT code != ""
-		  * 				create the CPT instance (with the proper parent retrieved using the identifier annotation properties) 
-		  * 				// Note need to script the creation of a first flat list of classes for CPT / ICD9 / RXnorm (discuss with Shaim)
-		  * 				// The label of will be related to the instance of an encounter
-		  * 
-		  * 				create the order instance
-		  * 				add the statements
-		  * 					 encoutner_instance has_specified_output order_instance
-		  * 					 order_instance has_part CPT_code_instance
-		  * 					
-		  * 			
-		  * 			// Process ICD 9 
-		  * 			if ICD code !=""
-		  * 				create the ICD code instance (with the proper parent retrieved by a future owl file using the identifier annotation property)
-		  * 				
-		  * 				create the diagnosis instance
-		  * 				add the statements
-		  * 					 encoutner_instance has_specified_output diagnosis_instance
-		  * 					 order_instance has_part ICD_code_instance
-		  * 			
-		  * 	 if the total occurrences > unique visits
-		  * 	 
-		  * 
-		  *
-		  */
-		 // Create a simple data sets ( it will be retrieved by a dataabase)
+		 
+
 		 
 		 List<simpleData> testData = new ArrayList<simpleData>();
 		 testData.add(new simpleData("1234567", "91120", "",1, 1 ));
@@ -140,7 +104,9 @@ public class createInstances {
 		 Boolean isICD=false;
 		 
 		 /**
-		  * The results:
+		  * The results for the dummy data set should be:
+		  *
+		  *
 		 	Encounter: 13
 		 	Patient: 13
 		 	Practitioners: 2
@@ -149,10 +115,77 @@ public class createInstances {
 		 	Diagnoses = 1
 		 	Order = 12
 		 	
+		 	How many CPT 91322 practitioner 1234567 has ordered?
 		 	
-		 	SPARQL QUERIES:
-		 	
-		  */
+			SPARQL QUERIES:
+			PREFIX ARG: <http://purl.obolibrary.org/obo/>
+			PREFIX ARGINST: <http://purl.obolibrary.org/obo/arg/i/>
+			SELECT DISTINCT ?codes
+			WHERE
+			{
+			?encounter a ARG:ARG_0000140.
+			?encounter <http://www.obofoundry.org/ro/ro.owl#has_participant> ARGINST:1234567.
+			?encoounter <http://purl.obolibrary.org/obo/OBI_0000299> ?order.
+			?order <http://www.obofoundry.org/ro/ro.owl#has_part> ?codes.
+			?codes a <http://purl.obolibrary.org/obo/arg/cptcode/91322>
+			}
+			
+			
+			
+			
+			How many unique patients practitioner 1234567 has visited?
+			
+			PREFIX ARG: <http://purl.obolibrary.org/obo/>
+			PREFIX ARGINST: <http://purl.obolibrary.org/obo/arg/i/>
+			SELECT DISTINCT ?patient
+			WHERE
+			{
+			?encounter a ARG:ARG_0000140.
+			?encounter <http://www.obofoundry.org/ro/ro.owl#has_participant> ARGINST:1234567.
+			?encounter <http://www.obofoundry.org/ro/ro.owl#has_participant> ?patient.
+			?patient a ARG:ARG_0000051.
+			}
+			
+			
+			ALGORITHM:
+			For each  simpledata
+		   		if practitioner  !exists 
+		   			create instance of practitioner
+		   			add practitioner to the arraylist for future lookup
+		   	
+		   	
+		   		
+		   		for each unique visit
+		   			create patient instance 
+		   			create encounter instance
+		   			
+		   			// Process CPT
+		   			if CPT code != ""
+		   				create the CPT instance
+		   				create the order instance
+		   				add the statements
+		   					 encoutner_instance has_specified_output order_instance
+		   					 order_instance has_part CPT_code_instance
+		   					
+		   			
+		   			// Process ICD 9 
+		   			if ICD code !=""
+		   				create the ICD code instance
+		   				create the diagnosis instance
+		   				add the statements
+		   					 encoutner_instance has_specified_output diagnosis_instance
+		   					 order_instance has_part ICD_code_instance
+		   			
+		   	if the total occurrences > unique_patients
+		   			create  occurrences - unique_patients instances of the code (CPT or ICD)
+		   			add statements to the last encounter
+		   	 
+		   
+		  
+
+			
+			 
+ */
 		
 		 
 		 
