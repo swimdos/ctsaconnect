@@ -40,7 +40,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  * - Add support for Mysql table to generate the sampleData
  * - Create a tests with SPARQL queries with the proper result (queries are already in)
  * - modify the clinical-instance.owl with the proper URIs and synch the URIs
- * - Tes the generated instances when we have the CPT and ICD owl files.
+ * - Test the generated instances when we have the CPT and ICD owl files.
  * 
  * 
  * Assumption: this is a one shot script now: it assumes to have a clean ontology with no instances.
