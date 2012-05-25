@@ -40,7 +40,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  * @author torniai@ohsum01.ohsu.edu
  *TO DO:
  * 
- * - Add parameters (out File source instance file / source ontology, date range)
+ * - Add parameters (out File source instance file / source ontology, start date - end date)
  * - Have the ontology look up existing practitioners (future / optional parameter)
  * - Add support for Mysql database to generate the sampleData
  * - Create a tests with SPARQL queries with the proper result (queries are already in the comments)
