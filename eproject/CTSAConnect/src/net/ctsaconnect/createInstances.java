@@ -2,10 +2,16 @@ package net.ctsaconnect;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.RDFXMLOntologyFormat;
 import org.semanticweb.owlapi.model.AddAxiom;
@@ -77,7 +83,6 @@ public class createInstances {
 	private static IRI hasparticipantIRI = IRI.create(hasparticipantURL);
 	private static IRI datetimeIRI = IRI.create("http://www.w3.org/2001/XMLSchema#dateTime");
 	
-	
 
 	private static String outFile="./clinical_instances.owl";
 
@@ -90,8 +95,9 @@ public class createInstances {
 	
 	public static void main(String[] args) throws OWLOntologyCreationException, OWLOntologyStorageException {
 	 
-		 
-
+		 // Added start date and date for the dataset
+		 String startDate = "01-01-2009";
+		 String endDate = "01-01-2010";
 		 
 		 List<simpleData> testData = new ArrayList<simpleData>();
 		 testData.add(new simpleData("1234567", "91120", "",1, 1 ));
@@ -267,6 +273,9 @@ public class createInstances {
 					OWLAxiom axanno = df.getOWLAnnotationAssertionAxiom(patientIndividualIRI, identifieranno);
 					manager.applyChange(new AddAxiom(onto, axanno));
 					
+					// Generate the date between start date and end date
+					String encounter_date = randomDate (startDate, endDate);
+					System.out.println(encounter_date);
 					// create an encounter instance (label label encouneter_pract_XXXXX_pat_XXXXX, has_date -> value)
 					String encounterID = assignID(encounterIDSet);
 					IRI encounterIndividualIRI = IRI.create(basicinstanceURI+encounterID);
@@ -290,7 +299,7 @@ public class createInstances {
 					
 					
 					// Need to find a way to write the proper value as xsd:DateTime
-					OWLDataPropertyAssertionAxiom dataproporaxiom =df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(hasdateIRI), encounter, df.getOWLLiteral("10-2-2012", df.getOWLDatatype(datetimeIRI)));
+					OWLDataPropertyAssertionAxiom dataproporaxiom =df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(hasdateIRI), encounter, df.getOWLLiteral(encounter_date, df.getOWLDatatype(datetimeIRI)));
 					manager.applyChange(new AddAxiom(onto, dataproporaxiom));
 					
 					
@@ -573,6 +582,27 @@ public class createInstances {
 		return newID;
 	}
 	
+	
+	private static String randomDate (String startDate, String endDate)
+	{
+		 DateTimeFormatter fmt = DateTimeFormat.forPattern("dd-MM-yyyy");
+		 DateTime startdt = fmt.parseDateTime(startDate);
+		 DateTime enddt = fmt.parseDateTime(endDate);
+		 Date jdkstartDate = startdt.toDate();
+		 Date jdkendDate = enddt.toDate();
+		 long start = jdkstartDate.getTime();  
+		 long end = jdkendDate.getTime();  
+		 long diff = end - start;  
+		 Random random = new Random();  
+		 long rand = random.nextLong();  
+		 rand = (rand % diff) + start;  
+		 Date randomDate = new Date(rand);  
+		
+		 DateTime mydate = new DateTime(randomDate);
+		 String randomdate = mydate.toString("dd-MM-yyyy");
+		 return randomdate;
+		
+	}
 	
 	 
 }
