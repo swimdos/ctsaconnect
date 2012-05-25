@@ -597,7 +597,6 @@ public class createInstances {
 		 long rand = random.nextLong();  
 		 rand = (rand % diff) + start;  
 		 Date randomDate = new Date(rand);  
-		
 		 DateTime mydate = new DateTime(randomDate);
 		 String randomdate = mydate.toString("dd-MM-yyyy");
 		 return randomdate;
