@@ -38,7 +38,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  * - Have the ontology look up existing practitioners (future / optional parameter)
  * - Add support for Mysql database to generate the sampleData
  * - Create a tests with SPARQL queries with the proper result (queries are already in the comments)
- * - Modify the clinical-instance.owl with the proper URIs and synch the URIs -> change the IRI accordignly ( think about having a method getting the proper IRIs from an owl file)
+ * - Modify the clinical-instance.owl with the proper URIs and synch the URIs -> change the IRI accordingly ( think about having a method getting the proper IRIs from an owl file)
  * - Test the generated instances when we have the CPT and ICD owl files.
  * - Have the script working with the more detailed sets of data (hashed patient ID , encounter date, and more) 
  * 
@@ -572,6 +572,8 @@ public class createInstances {
 		}
 		return newID;
 	}
+	
+	
 	 
 }
 	 
