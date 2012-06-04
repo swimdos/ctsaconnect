@@ -13,6 +13,9 @@ public class Const {
 	public static final String DIAGNOSIS_URI = "http://purl.obolibrary.org/obo/ARG_0000037";
 	public static final String HAS_PARTICIPANT_URI = "http://www.obofoundry.org/ro/ro.owl#has_participant";
 
+	public static final String CPT_BILLING_CODE_URI = "http://purl.obolibrary.org/obo/ARG_0000442";
+	public static final String ICD9_BILLING_CODE_URI = "http://purl.obolibrary.org/obo/ARG_0000123";
+	
 	public static final String RDFS_BASE_URI = "http://www.w3.org/2000/01/rdf-schema#";
 
 	// annotation properties uris

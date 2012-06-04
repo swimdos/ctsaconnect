@@ -28,17 +28,17 @@ public class UmlsOwlClassGenerator {
 
 	public void generateICD9CMSubClasses() throws Exception {
 		ontology = man.createOntology(IRI.create(ICD9CM_ONTOLOGY_URI));
-		umlsDbConnection = DriverManager.getConnection(DBInfo.UMLS_DB_URL, DBInfo.UMLS_DB_USER, DBInfo.UMLS_DB_PASS);
+		umlsDbConnection = DriverManager.getConnection("jdbc:mysql://bic0193:3307/umls12aa_full?user=writeumls&password=writeumlspass");
 		String sql = "select cui, code, str from MRCONSO where tty = 'PT' and sab = 'ICD9CM' and lat = 'ENG' ";
 		ResultSet rs = umlsDbConnection.prepareStatement(sql).executeQuery();
 
-		OWLClass superClass = uaddClassDeclaration(ontology, DIAGNOSIS_URI);
+		OWLClass superClass = uaddClassDeclaration(ontology, ICD9_BILLING_CODE_URI);
 		uaddLabel(ontology, superClass, "Diagnosis");
 		OWLClass subClass;
 
 		while (rs.next()) {
 			subClass = uaddClassDeclaration(ontology, BASE_ICD9CM_CLASS_URI + rs.getString(2).replace('.', '_'));
-			uaddLabel(ontology, subClass, rs.getString(3) + " ICD9CM code");
+			uaddLabel(ontology, subClass, "ICD9 code for " + rs.getString(3));
 			uaddStringAnnotationAssertion(ontology, subClass, rs.getString(2), HAS_CODE_ANNOT_PROP_URI);
 			uaddStringAnnotationAssertion(ontology, subClass, rs.getString(1), HAS_CUI_ANNOT_PROP_URI);
 			uaddSubClass(ontology, subClass, superClass);
@@ -49,17 +49,17 @@ public class UmlsOwlClassGenerator {
 
 	public void generateCPT2012SubClasses() throws Exception {
 		ontology = man.createOntology(IRI.create(CPT_ONTOLOGY_URI));
-		umlsDbConnection = DriverManager.getConnection(DBInfo.UMLS_DB_URL, DBInfo.UMLS_DB_USER, DBInfo.UMLS_DB_PASS);
+		umlsDbConnection = DriverManager.getConnection(DBInfo.UMLS_DB_URL, DBInfo.READ_UMLS_DB_USER, DBInfo.READ_UMLS_DB_PASS);
 		String sql = "select cui, code, str from MRCONSO where tty = 'PT' and sab = 'CPT'";
 		ResultSet rs = umlsDbConnection.prepareStatement(sql).executeQuery();
 
-		OWLClass superClass = uaddClassDeclaration(ontology, ORDER_CLASS_URI);
+		OWLClass superClass = uaddClassDeclaration(ontology, CPT_BILLING_CODE_URI);
 		uaddLabel(ontology, superClass, "Order");
 		OWLClass subClass;
 
 		while (rs.next()) {
 			subClass = uaddClassDeclaration(ontology, BASE_CPT_CLASS_URI + rs.getString(2));
-			uaddLabel(ontology, subClass, rs.getString(3) + " CPT code");
+			uaddLabel(ontology, subClass, "CPT code for " + rs.getString(3));
 			uaddStringAnnotationAssertion(ontology, subClass, rs.getString(2), HAS_CODE_ANNOT_PROP_URI);
 			uaddStringAnnotationAssertion(ontology, subClass, rs.getString(1), HAS_CUI_ANNOT_PROP_URI);
 			uaddSubClass(ontology, subClass, superClass);
