@@ -33,7 +33,6 @@ public class UmlsOwlClassGenerator {
 		ResultSet rs = umlsDbConnection.prepareStatement(sql).executeQuery();
 
 		OWLClass superClass = uaddClassDeclaration(ontology, ICD9_BILLING_CODE_URI);
-		uaddLabel(ontology, superClass, "Diagnosis");
 		OWLClass subClass;
 
 		while (rs.next()) {
@@ -54,7 +53,6 @@ public class UmlsOwlClassGenerator {
 		ResultSet rs = umlsDbConnection.prepareStatement(sql).executeQuery();
 
 		OWLClass superClass = uaddClassDeclaration(ontology, CPT_BILLING_CODE_URI);
-		uaddLabel(ontology, superClass, "Order");
 		OWLClass subClass;
 
 		while (rs.next()) {
