@@ -40,7 +40,7 @@ public class UmlsOwlClassGenerator {
 			uaddLabel(ontology, subClass, "ICD9 code for " + rs.getString(3));
 			uaddStringAnnotationAssertion(ontology, subClass, rs.getString(2), HAS_CODE_ANNOT_PROP_URI);
 			uaddStringAnnotationAssertion(ontology, subClass, rs.getString(1), HAS_CUI_ANNOT_PROP_URI);
-			uaddSubClass(ontology, subClass, superClass);
+			uaddSubClassAxiom(ontology, subClass, superClass);
 		}
 		umlsDbConnection.close();
 		man.saveOntology(ontology, new FileOutputStream(OWL_FILES_GENERATED_DIR_NAME + "/" + ICD9CM_ONTOLOGY_FILE_NAME));
@@ -60,7 +60,7 @@ public class UmlsOwlClassGenerator {
 			uaddLabel(ontology, subClass, "CPT code for " + rs.getString(3));
 			uaddStringAnnotationAssertion(ontology, subClass, rs.getString(2), HAS_CODE_ANNOT_PROP_URI);
 			uaddStringAnnotationAssertion(ontology, subClass, rs.getString(1), HAS_CUI_ANNOT_PROP_URI);
-			uaddSubClass(ontology, subClass, superClass);
+			uaddSubClassAxiom(ontology, subClass, superClass);
 		}
 		umlsDbConnection.close();
 		man.saveOntology(ontology, new FileOutputStream(OWL_FILES_GENERATED_DIR_NAME + "/" + CPT_ONTOLOGY_FILE_NAME));

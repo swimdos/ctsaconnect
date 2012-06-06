@@ -67,14 +67,14 @@ public class OWLUtil {
 		return l;
 	}
 
-	public static OWLSubClassOfAxiom uaddSubClass(OWLOntology ontology, OWLClass subClass, OWLClass superClass) {
+	public static OWLSubClassOfAxiom uaddSubClassAxiom(OWLOntology ontology, OWLClass subClass, OWLClass superClass) {
 		OWLSubClassOfAxiom sa = df.getOWLSubClassOfAxiom(subClass, superClass);
 		ontology.getOWLOntologyManager().addAxiom(ontology, sa);
 		return sa;
 	}
 
 	public static OWLSubClassOfAxiom uaddSubClass(OWLOntology ontology, String subclassUri, String superClassUri) {
-		return uaddSubClass(ontology, ugetOWLClass(subclassUri), ugetOWLClass(superClassUri));
+		return uaddSubClassAxiom(ontology, ugetOWLClass(subclassUri), ugetOWLClass(superClassUri));
 	}
 
 	public static OWLAnnotationAssertionAxiom uaddStringAnnotationAssertion(OWLOntology ontology, OWLEntity subject, String value, String propertyUri) {
