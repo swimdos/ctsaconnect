@@ -6,11 +6,19 @@ import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
@@ -83,4 +91,58 @@ public class OWLUtil {
 		return aa;
 	}
 
+	public static OWLNamedIndividual ugetNamedIndividual(String uri) {
+		return df.getOWLNamedIndividual(ugetIri(uri));
+
+	}
+
+	public static OWLNamedIndividual uaddNamedIndividual(OWLOntology ontology, String uri) {
+		OWLOntologyManager man = ontology.getOWLOntologyManager();
+		OWLNamedIndividual i = ugetNamedIndividual(uri);
+		man.addAxiom(ontology, df.getOWLDeclarationAxiom(i));
+		return i;
+	}
+
+	public static OWLClassAssertionAxiom uaddClassAssertion(OWLOntology ontology, String individualUri, String owlClassUri) {
+		return uaddClassAssertion(ontology, ugetNamedIndividual(individualUri), ugetOWLClass(owlClassUri));
+	}
+
+	public static OWLClassAssertionAxiom uaddClassAssertion(OWLOntology ontology, OWLIndividual individual, OWLClass owlClass) {
+		OWLOntologyManager man = ontology.getOWLOntologyManager();
+		OWLClassAssertionAxiom a = df.getOWLClassAssertionAxiom(owlClass, individual);
+		man.addAxiom(ontology, a);
+		return a;
+	}
+
+	public static OWLDataPropertyAssertionAxiom uaddDataAssertion(OWLOntology ontology, OWLIndividual individual, OWLDataProperty property, String value, OWL2Datatype type) {
+		OWLDataPropertyAssertionAxiom a = df.getOWLDataPropertyAssertionAxiom(property, individual, ugetOwlLiteral(value, type));
+		OWLOntologyManager man = ontology.getOWLOntologyManager();
+		man.addAxiom(ontology, a);
+		return a;
+	}
+
+	public static OWLLiteral ugetOwlLiteral(String value, OWL2Datatype type) {
+		return df.getOWLLiteral(value, type);
+	}
+
+	public static OWLDataProperty uaddDataProperty(OWLOntology ontology, String dataPropertyUri) {
+		OWLOntologyManager man = ontology.getOWLOntologyManager();
+		OWLDataProperty p = df.getOWLDataProperty(ugetIri(dataPropertyUri));
+		man.addAxiom(ontology, df.getOWLDeclarationAxiom(p));
+		return p;
+	}
+
+	public static OWLObjectProperty uaddObjectProperty(OWLOntology ontology, String objectPropertyUri) {
+		OWLOntologyManager man = ontology.getOWLOntologyManager();
+		OWLObjectProperty p = df.getOWLObjectProperty(ugetIri(objectPropertyUri));
+		man.addAxiom(ontology, df.getOWLDeclarationAxiom(p));
+		return p;
+	}
+
+	public static OWLObjectPropertyAssertionAxiom uaddObjectAssertion(OWLOntology ontology, OWLObjectProperty objectProperty, OWLIndividual fromIndividual, OWLIndividual toIndividual) {
+		OWLObjectPropertyAssertionAxiom a = df.getOWLObjectPropertyAssertionAxiom(objectProperty, fromIndividual, toIndividual);
+		OWLOntologyManager man = ontology.getOWLOntologyManager();
+		man.addAxiom(ontology, a);
+		return a;
+	}
 }

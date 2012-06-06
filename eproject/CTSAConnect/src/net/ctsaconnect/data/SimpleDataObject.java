@@ -1,6 +1,6 @@
-package net.ctsaconnect;
+package net.ctsaconnect.data;
 
-public class simpleData {
+public class SimpleDataObject {
 /*
  * Defines the structure of data available in the simple data base data
  */
@@ -8,7 +8,7 @@ public class simpleData {
 		public int codeOccurrences, uniquePatient;
 		
 
-	    public  simpleData(String practitionerID,String CPTCode, String ICD9Code, int codeOccurrences, int uniquePatient){
+	    public  SimpleDataObject(String practitionerID,String CPTCode, String ICD9Code, int codeOccurrences, int uniquePatient){
 	        this.practitionerID=practitionerID;
 	        this.CPTCode=CPTCode;
 	        this.ICD9Code=ICD9Code;

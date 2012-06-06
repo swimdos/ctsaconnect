@@ -1,13 +1,26 @@
 package net.ctsaconnect;
 
+import static net.ctsaconnect.common.Const.BASE_CPT_CLASS_URI;
+import static net.ctsaconnect.common.Const.BASE_ICD9CM_CLASS_URI;
+import static net.ctsaconnect.common.Const.DIAGNOSIS_URI;
+import static net.ctsaconnect.common.Const.ENCOUNTER_CLASS_URI;
+import static net.ctsaconnect.common.Const.HAS_DATE_DATA_PROPERTY_URI;
+import static net.ctsaconnect.common.Const.HAS_PARTICIPANT_URI;
+import static net.ctsaconnect.common.Const.HAS_PART_URI;
+import static net.ctsaconnect.common.Const.HAS_SPECIFIED_OUTPUT_URI;
+import static net.ctsaconnect.common.Const.HEALTH_PRACTITIONER_CLASS_URI;
+import static net.ctsaconnect.common.Const.IDENTIFIER_ANNOT_PROPERTY_URI;
+import static net.ctsaconnect.common.Const.ORDER_CLASS_URI;
+import static net.ctsaconnect.common.Const.PATIENT_CLASS_URI;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+
+import net.ctsaconnect.data.SimpleDataObject;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -30,9 +43,6 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
-
-import static net.ctsaconnect.common.Const.*;
-import static net.ctsaconnect.common.OWLUtil.*;
 
 /**
  * 
@@ -65,7 +75,7 @@ public class createInstances {
 	private static IRI healthcarepractitionerClassIRI = IRI.create(HEALTH_PRACTITIONER_CLASS_URI);
 	private static IRI patientClassIRI = IRI.create(PATIENT_CLASS_URI);
 	private static IRI encounterCLassIRI = IRI.create(ENCOUNTER_CLASS_URI);
-	private static IRI hasdateIRI = IRI.create(HAS_DATE_DATA_URI);
+	private static IRI hasdateIRI = IRI.create(HAS_DATE_DATA_PROPERTY_URI);
 	private static IRI IdentifierAnnoIRI = IRI.create(IDENTIFIER_ANNOT_PROPERTY_URI);
 	private static IRI orderClassIRI = IRI.create(ORDER_CLASS_URI);
 	private static IRI hasparticipantIRI = IRI.create(HAS_PARTICIPANT_URI);
@@ -83,11 +93,11 @@ public class createInstances {
 		String startDate = "01-01-2009";
 		String endDate = "01-01-2010";
 
-		List<simpleData> testData = new ArrayList<simpleData>();
-		testData.add(new simpleData("1234567", "91120", "", 1, 1));
-		testData.add(new simpleData("1234567", "", "555.1", 4, 1));
-		testData.add(new simpleData("1234567", "91120", "", 8, 6));
-		testData.add(new simpleData("1234568", "91322", "", 10, 5));
+		List<SimpleDataObject> testData = new ArrayList<SimpleDataObject>();
+		testData.add(new SimpleDataObject("1234567", "91120", "", 1, 1));
+		testData.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
+		testData.add(new SimpleDataObject("1234567", "91120", "", 8, 6));
+		testData.add(new SimpleDataObject("1234568", "91322", "", 10, 5));
 		Boolean isCPT = false;
 		Boolean isICD = false;
 
