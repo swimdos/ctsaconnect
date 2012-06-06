@@ -34,7 +34,8 @@ public class Const {
 	public static final String CPT_ONTOLOGY_FILE_NAME = "cpt-subclasses.owl";
 
 	// ontology iris
-	public static final String ICD9CM_ONTOLOGY_URI = BASE_ICD9CM_ONTOLOGY_URI + ICD9CM_ONTOLOGY_FILE_NAME;
+	public static final String ICD9CM_ONTOLOGY_URI = BASE_ICD9CM_ONTOLOGY_URI
+			+ ICD9CM_ONTOLOGY_FILE_NAME;
 	public static final String CPT_ONTOLOGY_URI = BASE_CPT_ONTOLOGY_URI + CPT_ONTOLOGY_FILE_NAME;
 
 	// misc
@@ -42,7 +43,8 @@ public class Const {
 
 	// instance data
 	public static final String CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME = "clinical_instances.owl";
-	public static final String CLINICAL_INSTANCE_ONTOLOGY_URI = "http://purl.obolibrary.org/obo/arg/" + CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME;
+	public static final String CLINICAL_INSTANCE_ONTOLOGY_URI = "http://purl.obolibrary.org/obo/arg/"
+			+ CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME;
 	public static final String BASE_CLINICAL_INSTANCE_URI = "http://purl.obolibrary.org/obo/arg/i/";
 	public static final String PRACTITIONER_LABEL_PREFIX = "practiotioner_";
 

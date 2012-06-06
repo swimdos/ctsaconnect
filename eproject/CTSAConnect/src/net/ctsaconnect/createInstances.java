@@ -1,17 +1,6 @@
 package net.ctsaconnect;
 
-import static net.ctsaconnect.common.Const.BASE_CPT_CLASS_URI;
-import static net.ctsaconnect.common.Const.BASE_ICD9CM_CLASS_URI;
-import static net.ctsaconnect.common.Const.DIAGNOSIS_URI;
-import static net.ctsaconnect.common.Const.ENCOUNTER_CLASS_URI;
-import static net.ctsaconnect.common.Const.HAS_DATE_DATA_PROPERTY_URI;
-import static net.ctsaconnect.common.Const.HAS_PARTICIPANT_URI;
-import static net.ctsaconnect.common.Const.HAS_PART_URI;
-import static net.ctsaconnect.common.Const.HAS_SPECIFIED_OUTPUT_URI;
-import static net.ctsaconnect.common.Const.HEALTH_PRACTITIONER_CLASS_URI;
-import static net.ctsaconnect.common.Const.IDENTIFIER_ANNOT_PROPERTY_URI;
-import static net.ctsaconnect.common.Const.ORDER_CLASS_URI;
-import static net.ctsaconnect.common.Const.PATIENT_CLASS_URI;
+import static net.ctsaconnect.common.Const.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -83,11 +72,13 @@ public class createInstances {
 
 	private static String outFile = "./clinical_instances.owl";
 
-	private static IRI ontoIRI = IRI.create("http://purl.obolibrary.org/obo/arg/clinical_instances.owl");
+	private static IRI ontoIRI = IRI
+			.create("http://purl.obolibrary.org/obo/arg/clinical_instances.owl");
 
 	private static String basicinstanceURI = "http://purl.obolibrary.org/obo/arg/i/";
 
-	public static void main(String[] args) throws OWLOntologyCreationException, OWLOntologyStorageException {
+	public static void main(String[] args) throws OWLOntologyCreationException,
+			OWLOntologyStorageException {
 
 		// Added start date and date for the dataset
 		String startDate = "01-01-2009";
@@ -215,17 +206,22 @@ public class createInstances {
 
 				// Assert the type of Practitioner
 				OWLClass practitionerIndividualparent = df.getOWLClass(healthcarepractitionerClassIRI);
-				OWLClassAssertionAxiom classAssertion = df.getOWLClassAssertionAxiom(practitionerIndividualparent, practitioner);
+				OWLClassAssertionAxiom classAssertion = df.getOWLClassAssertionAxiom(
+						practitionerIndividualparent, practitioner);
 				manager.addAxiom(onto, classAssertion);
 
 				// Add label to practitioner
-				OWLAnnotation labelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(practitioner_label, "en"));
+				OWLAnnotation labelanno = df.getOWLAnnotation(
+						df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+						df.getOWLLiteral(practitioner_label, "en"));
 				OWLAxiom ax = df.getOWLAnnotationAssertionAxiom(practitionerIndividualIRI, labelanno);
 				manager.applyChange(new AddAxiom(onto, ax));
 
 				// Add the annotation property with the identifier
-				OWLAnnotation identifieranno = df.getOWLAnnotation(df.getOWLAnnotationProperty(IdentifierAnnoIRI), df.getOWLLiteral(practitionerID, "en"));
-				OWLAxiom axanno = df.getOWLAnnotationAssertionAxiom(practitionerIndividualIRI, identifieranno);
+				OWLAnnotation identifieranno = df.getOWLAnnotation(
+						df.getOWLAnnotationProperty(IdentifierAnnoIRI), df.getOWLLiteral(practitionerID, "en"));
+				OWLAxiom axanno = df.getOWLAnnotationAssertionAxiom(practitionerIndividualIRI,
+						identifieranno);
 				manager.applyChange(new AddAxiom(onto, axanno));
 
 				// Add practitioner to the array list
@@ -256,17 +252,21 @@ public class createInstances {
 
 				// Assert the type of Patient
 				OWLClass patientIndividualparent = df.getOWLClass(patientClassIRI);
-				OWLClassAssertionAxiom classAssertion = df.getOWLClassAssertionAxiom(patientIndividualparent, patient);
+				OWLClassAssertionAxiom classAssertion = df.getOWLClassAssertionAxiom(
+						patientIndividualparent, patient);
 				manager.addAxiom(onto, classAssertion);
 
 				// Add label to Patient
 				String patient_label = "patient_" + patientID;
-				OWLAnnotation labelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(patient_label, "en"));
+				OWLAnnotation labelanno = df.getOWLAnnotation(
+						df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+						df.getOWLLiteral(patient_label, "en"));
 				OWLAxiom ax = df.getOWLAnnotationAssertionAxiom(patientIndividualIRI, labelanno);
 				manager.applyChange(new AddAxiom(onto, ax));
 
 				// Add the annotation property with the identifier to the patient
-				OWLAnnotation identifieranno = df.getOWLAnnotation(df.getOWLAnnotationProperty(IdentifierAnnoIRI), df.getOWLLiteral(patientID, "en"));
+				OWLAnnotation identifieranno = df.getOWLAnnotation(
+						df.getOWLAnnotationProperty(IdentifierAnnoIRI), df.getOWLLiteral(patientID, "en"));
 				OWLAxiom axanno = df.getOWLAnnotationAssertionAxiom(patientIndividualIRI, identifieranno);
 				manager.applyChange(new AddAxiom(onto, axanno));
 
@@ -281,22 +281,30 @@ public class createInstances {
 
 				// Assert the type of encounter
 				OWLClass encounterIndividualparent = df.getOWLClass(encounterCLassIRI);
-				OWLClassAssertionAxiom encounterclassAssertion = df.getOWLClassAssertionAxiom(encounterIndividualparent, encounter);
+				OWLClassAssertionAxiom encounterclassAssertion = df.getOWLClassAssertionAxiom(
+						encounterIndividualparent, encounter);
 				manager.addAxiom(onto, encounterclassAssertion);
 
 				// Add label to encounter
-				String encounter_label = "encounter_practitioner_" + practitionerID + "_patient_" + patientID;
-				OWLAnnotation encounterlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(encounter_label, "en"));
-				OWLAxiom encounterax = df.getOWLAnnotationAssertionAxiom(encounterIndividualIRI, encounterlabelanno);
+				String encounter_label = "encounter_practitioner_" + practitionerID + "_patient_"
+						+ patientID;
+				OWLAnnotation encounterlabelanno = df.getOWLAnnotation(
+						df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+						df.getOWLLiteral(encounter_label, "en"));
+				OWLAxiom encounterax = df.getOWLAnnotationAssertionAxiom(encounterIndividualIRI,
+						encounterlabelanno);
 				manager.applyChange(new AddAxiom(onto, encounterax));
 
 				// Add the annotation property with the identifier
-				OWLAnnotation identifierencounter = df.getOWLAnnotation(df.getOWLAnnotationProperty(IdentifierAnnoIRI), df.getOWLLiteral(encounterID, "en"));
-				OWLAxiom encounteraxanno = df.getOWLAnnotationAssertionAxiom(encounterIndividualIRI, identifierencounter);
+				OWLAnnotation identifierencounter = df.getOWLAnnotation(
+						df.getOWLAnnotationProperty(IdentifierAnnoIRI), df.getOWLLiteral(encounterID, "en"));
+				OWLAxiom encounteraxanno = df.getOWLAnnotationAssertionAxiom(encounterIndividualIRI,
+						identifierencounter);
 				manager.applyChange(new AddAxiom(onto, encounteraxanno));
 
 				// Need to find a way to write the proper value as xsd:DateTime
-				OWLDataPropertyAssertionAxiom dataproporaxiom = df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(hasdateIRI), encounter,
+				OWLDataPropertyAssertionAxiom dataproporaxiom = df.getOWLDataPropertyAssertionAxiom(
+						df.getOWLDataProperty(hasdateIRI), encounter,
 						df.getOWLLiteral(encounter_date, df.getOWLDatatype(datetimeIRI)));
 				manager.applyChange(new AddAxiom(onto, dataproporaxiom));
 
@@ -305,9 +313,11 @@ public class createInstances {
 				// Two statements hasparticipantIRI
 
 				OWLObjectProperty has_participant = df.getOWLObjectProperty(hasparticipantIRI);
-				OWLObjectPropertyAssertionAxiom participantassertion = df.getOWLObjectPropertyAssertionAxiom(has_participant, encounter, patient);
+				OWLObjectPropertyAssertionAxiom participantassertion = df
+						.getOWLObjectPropertyAssertionAxiom(has_participant, encounter, patient);
 				manager.applyChange(new AddAxiom(onto, participantassertion));
-				OWLObjectPropertyAssertionAxiom participantassertionpractitioner = df.getOWLObjectPropertyAssertionAxiom(has_participant, encounter, practitioner);
+				OWLObjectPropertyAssertionAxiom participantassertionpractitioner = df
+						.getOWLObjectPropertyAssertionAxiom(has_participant, encounter, practitioner);
 				manager.applyChange(new AddAxiom(onto, participantassertionpractitioner));
 
 				// Get CPTCode value
@@ -323,12 +333,15 @@ public class createInstances {
 
 					// Assert the type of Order
 					OWLClass orderIndividualparent = df.getOWLClass(orderClassIRI);
-					OWLClassAssertionAxiom orderclassAssertion = df.getOWLClassAssertionAxiom(orderIndividualparent, order);
+					OWLClassAssertionAxiom orderclassAssertion = df.getOWLClassAssertionAxiom(
+							orderIndividualparent, order);
 					manager.addAxiom(onto, orderclassAssertion);
 
 					// Add label to Order
 					String order_label = "order_" + orderID;
-					OWLAnnotation orderlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(order_label, "en"));
+					OWLAnnotation orderlabelanno = df.getOWLAnnotation(
+							df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+							df.getOWLLiteral(order_label, "en"));
 					OWLAxiom orderax = df.getOWLAnnotationAssertionAxiom(orderIndividualIRI, orderlabelanno);
 					manager.applyChange(new AddAxiom(onto, orderax));
 
@@ -338,7 +351,8 @@ public class createInstances {
 					// output to be changes in the ontology
 
 					OWLObjectProperty has_specified_output = df.getOWLObjectProperty(hasspecifiedoutputIRI);
-					OWLObjectPropertyAssertionAxiom specoutassertion = df.getOWLObjectPropertyAssertionAxiom(has_specified_output, encounter, order);
+					OWLObjectPropertyAssertionAxiom specoutassertion = df.getOWLObjectPropertyAssertionAxiom(
+							has_specified_output, encounter, order);
 					manager.applyChange(new AddAxiom(onto, specoutassertion));
 
 					// Process CPT Code
@@ -354,18 +368,22 @@ public class createInstances {
 					// add the type of CPT
 					IRI CPTCodeIndividualparentIRI = IRI.create(BASE_CPT_CLASS_URI + CPTCode);
 					OWLClass CPTCodeIndividualparent = df.getOWLClass(CPTCodeIndividualparentIRI);
-					OWLClassAssertionAxiom CPTinstanceAssertion = df.getOWLClassAssertionAxiom(CPTCodeIndividualparent, cptCodeInstance);
+					OWLClassAssertionAxiom CPTinstanceAssertion = df.getOWLClassAssertionAxiom(
+							CPTCodeIndividualparent, cptCodeInstance);
 					manager.addAxiom(onto, CPTinstanceAssertion);
 
 					// ADD CTP Code label
 					String cptcode_label = "cpt_" + ctpCodeInstanceID + "_order_" + orderID;
-					OWLAnnotation cptlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(cptcode_label, "en"));
+					OWLAnnotation cptlabelanno = df.getOWLAnnotation(
+							df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+							df.getOWLLiteral(cptcode_label, "en"));
 					OWLAxiom cptlabelax = df.getOWLAnnotationAssertionAxiom(cptcodeinstanceIRI, cptlabelanno);
 					manager.applyChange(new AddAxiom(onto, cptlabelax));
 
 					// Add the CPT instance part_of the order instance
 					OWLObjectProperty has_part = df.getOWLObjectProperty(haspartIRI);
-					OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, order, cptCodeInstance);
+					OWLObjectPropertyAssertionAxiom codeorderassertion = df
+							.getOWLObjectPropertyAssertionAxiom(has_part, order, cptCodeInstance);
 					manager.applyChange(new AddAxiom(onto, codeorderassertion));
 
 				}
@@ -392,13 +410,17 @@ public class createInstances {
 
 					// Assert the type of Diagnosis
 					OWLClass orderIndividualparent = df.getOWLClass(diagnosisClassIRI);
-					OWLClassAssertionAxiom orderclassAssertion = df.getOWLClassAssertionAxiom(orderIndividualparent, diagnosis);
+					OWLClassAssertionAxiom orderclassAssertion = df.getOWLClassAssertionAxiom(
+							orderIndividualparent, diagnosis);
 					manager.addAxiom(onto, orderclassAssertion);
 
 					// Add label to Diagnosis
 					String diagnosis_label = "diagnosis_" + diagnosisID;
-					OWLAnnotation diagnosislabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(diagnosis_label, "en"));
-					OWLAxiom orderax = df.getOWLAnnotationAssertionAxiom(diagnosisIndividualIRI, diagnosislabelanno);
+					OWLAnnotation diagnosislabelanno = df.getOWLAnnotation(
+							df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+							df.getOWLLiteral(diagnosis_label, "en"));
+					OWLAxiom orderax = df.getOWLAnnotationAssertionAxiom(diagnosisIndividualIRI,
+							diagnosislabelanno);
 					manager.applyChange(new AddAxiom(onto, orderax));
 
 					// Add the relation between the encounter and the orderer
@@ -407,7 +429,8 @@ public class createInstances {
 					// output to be changes in the ontology
 
 					OWLObjectProperty has_specified_output = df.getOWLObjectProperty(hasspecifiedoutputIRI);
-					OWLObjectPropertyAssertionAxiom specoutassertion = df.getOWLObjectPropertyAssertionAxiom(has_specified_output, encounter, diagnosis);
+					OWLObjectPropertyAssertionAxiom specoutassertion = df.getOWLObjectPropertyAssertionAxiom(
+							has_specified_output, encounter, diagnosis);
 					manager.applyChange(new AddAxiom(onto, specoutassertion));
 					// Process ICD9 Code
 					// System.out.println("ICD9 Code not empty!");
@@ -423,18 +446,22 @@ public class createInstances {
 					// add the type of ICD9
 					IRI ICDCodeIndividualparentIRI = IRI.create(BASE_ICD9CM_CLASS_URI + ICDCode);
 					OWLClass ICDCodeIndividualparent = df.getOWLClass(ICDCodeIndividualparentIRI);
-					OWLClassAssertionAxiom ICDinstanceAssertion = df.getOWLClassAssertionAxiom(ICDCodeIndividualparent, icdCodeInstance);
+					OWLClassAssertionAxiom ICDinstanceAssertion = df.getOWLClassAssertionAxiom(
+							ICDCodeIndividualparent, icdCodeInstance);
 					manager.addAxiom(onto, ICDinstanceAssertion);
 
 					// ADD ICD9 Code label
 					String icdcode_label = "idc_" + icdCodeInstanceID + "_diagnosis_" + diagnosisID;
-					OWLAnnotation icdlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(icdcode_label, "en"));
+					OWLAnnotation icdlabelanno = df.getOWLAnnotation(
+							df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+							df.getOWLLiteral(icdcode_label, "en"));
 					OWLAxiom icdlabelax = df.getOWLAnnotationAssertionAxiom(icdcodeinstanceIRI, icdlabelanno);
 					manager.applyChange(new AddAxiom(onto, icdlabelax));
 
 					// Add the ICD9 instance part_of the order instance
 					OWLObjectProperty has_part = df.getOWLObjectProperty(haspartIRI);
-					OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, diagnosis, icdCodeInstance);
+					OWLObjectPropertyAssertionAxiom codeorderassertion = df
+							.getOWLObjectPropertyAssertionAxiom(has_part, diagnosis, icdCodeInstance);
 					manager.applyChange(new AddAxiom(onto, codeorderassertion));
 
 				}
@@ -457,8 +484,9 @@ public class createInstances {
 																																							// to
 																																							// be
 																																							// added
-			if (additionalcodes > 0)
+			if (additionalcodes > 0) {
 				System.out.println("Adding " + additionalcodes + " more codes to the encounter.");
+			}
 			{
 				for (int y = 0; y < additionalcodes; y++) {
 					// If the code is a CPT code:
@@ -474,7 +502,8 @@ public class createInstances {
 						// add the type of CPT
 						IRI CPTCodeIndividualparentIRI = IRI.create(BASE_CPT_CLASS_URI + CPTCode);
 						OWLClass CPTCodeIndividualparent = df.getOWLClass(CPTCodeIndividualparentIRI);
-						OWLClassAssertionAxiom CPTinstanceAssertion = df.getOWLClassAssertionAxiom(CPTCodeIndividualparent, cptCodeInstance);
+						OWLClassAssertionAxiom CPTinstanceAssertion = df.getOWLClassAssertionAxiom(
+								CPTCodeIndividualparent, cptCodeInstance);
 						manager.addAxiom(onto, CPTinstanceAssertion);
 
 						// ADD CTP Code label
@@ -482,8 +511,11 @@ public class createInstances {
 						String orderID = orderIDSet.get(orderIDSet.size() - 1);
 
 						String cptcode_label = "cpt_" + ctpCodeInstanceID + "_order_" + orderID;
-						OWLAnnotation cptlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(cptcode_label, "en"));
-						OWLAxiom cptlabelax = df.getOWLAnnotationAssertionAxiom(cptcodeinstanceIRI, cptlabelanno);
+						OWLAnnotation cptlabelanno = df.getOWLAnnotation(
+								df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+								df.getOWLLiteral(cptcode_label, "en"));
+						OWLAxiom cptlabelax = df.getOWLAnnotationAssertionAxiom(cptcodeinstanceIRI,
+								cptlabelanno);
 						manager.applyChange(new AddAxiom(onto, cptlabelax));
 
 						// Add the CPT instance part_of the order instance
@@ -491,7 +523,8 @@ public class createInstances {
 						IRI orderIndividualIRI = IRI.create(basicinstanceURI + orderID);
 						OWLIndividual order = df.getOWLNamedIndividual(orderIndividualIRI);
 						OWLObjectProperty has_part = df.getOWLObjectProperty(haspartIRI);
-						OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, order, cptCodeInstance);
+						OWLObjectPropertyAssertionAxiom codeorderassertion = df
+								.getOWLObjectPropertyAssertionAxiom(has_part, order, cptCodeInstance);
 						manager.applyChange(new AddAxiom(onto, codeorderassertion));
 					}
 
@@ -511,20 +544,25 @@ public class createInstances {
 						// add the type of ICD9
 						IRI ICDCodeIndividualparentIRI = IRI.create(BASE_ICD9CM_CLASS_URI + ICDCode);
 						OWLClass ICDCodeIndividualparent = df.getOWLClass(ICDCodeIndividualparentIRI);
-						OWLClassAssertionAxiom ICDinstanceAssertion = df.getOWLClassAssertionAxiom(ICDCodeIndividualparent, icdCodeInstance);
+						OWLClassAssertionAxiom ICDinstanceAssertion = df.getOWLClassAssertionAxiom(
+								ICDCodeIndividualparent, icdCodeInstance);
 						manager.addAxiom(onto, ICDinstanceAssertion);
 
 						// ADD ICD9 Code label
 						String icdcode_label = "idc_" + icdCodeInstanceID + "_diagnosis_" + diagnosisID;
-						OWLAnnotation icdlabelanno = df.getOWLAnnotation(df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), df.getOWLLiteral(icdcode_label, "en"));
-						OWLAxiom icdlabelax = df.getOWLAnnotationAssertionAxiom(icdcodeinstanceIRI, icdlabelanno);
+						OWLAnnotation icdlabelanno = df.getOWLAnnotation(
+								df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()),
+								df.getOWLLiteral(icdcode_label, "en"));
+						OWLAxiom icdlabelax = df.getOWLAnnotationAssertionAxiom(icdcodeinstanceIRI,
+								icdlabelanno);
 						manager.applyChange(new AddAxiom(onto, icdlabelax));
 
 						// Add the ICD9 instance part_of the order instance
 						IRI diagnoisiIndividualIRI = IRI.create(basicinstanceURI + diagnosisID);
 						OWLIndividual diagnosis = df.getOWLNamedIndividual(diagnoisiIndividualIRI);
 						OWLObjectProperty has_part = df.getOWLObjectProperty(haspartIRI);
-						OWLObjectPropertyAssertionAxiom codeorderassertion = df.getOWLObjectPropertyAssertionAxiom(has_part, diagnosis, icdCodeInstance);
+						OWLObjectPropertyAssertionAxiom codeorderassertion = df
+								.getOWLObjectPropertyAssertionAxiom(has_part, diagnosis, icdCodeInstance);
 						manager.applyChange(new AddAxiom(onto, codeorderassertion));
 					}
 

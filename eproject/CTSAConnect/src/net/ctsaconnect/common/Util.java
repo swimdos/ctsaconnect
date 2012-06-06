@@ -28,8 +28,8 @@ public class Util {
 
 	}
 
-	public static String getRandomId(String someCode ){
-		
+	public static String getRandomId(String someCode) {
+
 		return UUID.randomUUID().toString();
 	}
 
