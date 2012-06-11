@@ -102,8 +102,8 @@ public class createInstances {
 		 	Practitioners: 2
 		 	CPT 91120 instance = 9
 		 	CPT 91322 instances = 10
-		 	Diagnoses = 1
-		 	Order = 12
+		 	Diagnoses = 19
+		 	Order = 4
 		 	
 		 	How many CPT 91322 practitioner 1234567 has ordered?
 		 	
@@ -119,8 +119,6 @@ public class createInstances {
 			?order <http://www.obofoundry.org/ro/ro.owl#has_part> ?codes.
 			?codes a <http://purl.obolibrary.org/obo/arg/cptcode/91322>
 			}
-			
-			
 			
 			
 			How many unique patients practitioner 1234567 has visited?
