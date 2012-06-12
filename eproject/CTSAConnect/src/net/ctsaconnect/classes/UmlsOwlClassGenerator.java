@@ -28,8 +28,8 @@ public class UmlsOwlClassGenerator {
 
 	public void generateICD9CMSubClasses() throws Exception {
 		ontology = man.createOntology(IRI.create(ICD9CM_ONTOLOGY_URI));
-		umlsDbConnection = DriverManager
-				.getConnection("jdbc:mysql://bic0193:3307/umls12aa_full?user=writeumls&password=writeumlspass");
+		umlsDbConnection = DriverManager.getConnection("jdbc:mysql://bic0193:3307/umls12aa_full",
+				DBInfo.READ_UMLS_DB_USER, DBInfo.READ_UMLS_DB_PASS);
 		String sql = "select cui, code, str from MRCONSO where tty = 'PT' and sab = 'ICD9CM' and lat = 'ENG' ";
 		ResultSet rs = umlsDbConnection.prepareStatement(sql).executeQuery();
 
