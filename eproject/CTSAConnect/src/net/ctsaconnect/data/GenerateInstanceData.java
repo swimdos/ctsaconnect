@@ -55,9 +55,9 @@ public class GenerateInstanceData {
 
 			// the type of code
 			if (sdo.ICD9Code != null && !sdo.ICD9Code.trim().equals("")) {
-				isOrder = true;
-			} else if (sdo.CPTCode != null && !sdo.CPTCode.trim().equals("")) {
 				isDiagnosis = true;
+			} else if (sdo.CPTCode != null && !sdo.CPTCode.trim().equals("")) {
+				isOrder = true;
 			}
 
 			// create the individuals
@@ -79,7 +79,7 @@ public class GenerateInstanceData {
 				} else if (isOrder) {
 					uaddClassAssertion(individualsOntology, wholeInd, ugetOWLClass(ORDER_CLASS_URI));
 					uaddLabel(individualsOntology, wholeInd, "order_" + wholeId);
-					uaddClassAssertion(individualsOntology, partInd, ugetOWLClass(BASE_ICD9CM_CLASS_URI
+					uaddClassAssertion(individualsOntology, partInd, ugetOWLClass(BASE_CPT_CLASS_URI
 							+ sdo.CPTCode));
 					uaddLabel(individualsOntology, partInd, "cpt_" + partIndId + "_order_" + wholeId);
 				}
@@ -95,7 +95,7 @@ public class GenerateInstanceData {
 				OWLNamedIndividual patientInd = uaddNamedIndividual(individualsOntology,
 						BASE_CLINICAL_INSTANCE_URI + patientId);
 				uaddClassAssertion(individualsOntology, patientInd, ugetOWLClass(PATIENT_CLASS_URI));
-				uaddLabel(individualsOntology, patientInd, patientId);
+				uaddLabel(individualsOntology, patientInd, "patient_"+patientId);
 				uaddStringAnnotationAssertion(individualsOntology, patientInd, patientId,
 						IDENTIFIER_ANNOT_PROPERTY_URI);
 
