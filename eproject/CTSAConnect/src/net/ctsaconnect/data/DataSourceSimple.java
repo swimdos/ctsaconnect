@@ -13,7 +13,7 @@ public class DataSourceSimple extends DataSource {
 		testData.add(new SimpleDataObject("1234567", "91120", "", 1, 1));
 		testData.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
 		testData.add(new SimpleDataObject("1234567", "91120", "", 8, 6));
-		testData.add(new SimpleDataObject("1234568", "91322", "", 10, 5));
+		testData.add(new SimpleDataObject("1234568", "76376", "", 10, 5));
 		i = testData.iterator();
 
 	}
