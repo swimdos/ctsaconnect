@@ -45,7 +45,7 @@ public class Const {
 	public static final String CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME = "clinical_instances.owl";
 	public static final String CLINICAL_INSTANCE_ONTOLOGY_URI = "http://purl.obolibrary.org/obo/arg/"
 			+ CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME;
-	public static final String BASE_CLINICAL_INSTANCE_URI = "http://purl.obolibrary.org/obo/arg/i/";
+	public static final String BASE_CLINICAL_INSTANCE_URI = "http://dev.ohsu.eagle-i.net/i/";
 	public static final String PRACTITIONER_LABEL_PREFIX = "practiotioner_";
 
 }
