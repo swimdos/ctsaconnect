@@ -1,12 +1,17 @@
-package net.ctsaconnect.data;
+package net.ctsaconnect.datasource;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * A simple example of a DataSource for testing. This datasource creates
+ * instances of the SimpleDataObject class and adds them to a list. The list is
+ * then used as the data source to return the data objects.
+ */
 public class DataSourceSimple extends DataSource {
-	List<SimpleDataObject> testData = new ArrayList<SimpleDataObject>();
-	Iterator<SimpleDataObject> i;
+	private List<SimpleDataObject> testData = new ArrayList<SimpleDataObject>();
+	private Iterator<SimpleDataObject> i;
 
 	DataSourceSimple() {
 

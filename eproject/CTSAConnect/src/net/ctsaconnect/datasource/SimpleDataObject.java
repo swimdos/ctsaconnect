@@ -1,9 +1,16 @@
-package net.ctsaconnect.data;
+package net.ctsaconnect.datasource;
 
+/**
+ * Defines the structure of data available in the simple database data. This
+ * class will represent the common interface for data elements. Original data
+ * from various institutions will be used to populate instances of this class.
+ * These instances will form the input to any code or algorithms that are not
+ * institution specific.
+ * 
+ * @see DataSource
+ */
 public class SimpleDataObject {
-	/*
-	 * Defines the structure of data available in the simple data base data
-	 */
+
 	public String practitionerID, CPTCode, ICD9Code;
 	public int codeOccurrences, uniquePatient;
 

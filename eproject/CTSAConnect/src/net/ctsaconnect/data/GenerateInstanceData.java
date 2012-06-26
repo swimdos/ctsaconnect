@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.ctsaconnect.common.Util;
+import net.ctsaconnect.datasource.DataSource;
+import net.ctsaconnect.datasource.SimpleDataObject;
 
 import org.joda.time.DateTime;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -32,16 +34,21 @@ public class GenerateInstanceData {
 
 	public void generate() throws Exception {
 
+		// create the ontology object
 		individualsOntology = man.createOntology(ugetIri(CLINICAL_INSTANCE_ONTOLOGY_URI));
+		// add property declarations to the ontology and keep a refernce to the
+		// properties for later use.
 		OWLDataProperty hasDateProperty = uaddDataProperty(individualsOntology,
 				HAS_DATE_DATA_PROPERTY_URI);
 		OWLObjectProperty hasParticipant = uaddObjectProperty(individualsOntology, HAS_PARTICIPANT_URI);
 		OWLObjectProperty hasPart = uaddObjectProperty(individualsOntology, HAS_PART_URI);
 		OWLObjectProperty hasOutput = uaddObjectProperty(individualsOntology, HAS_SPECIFIED_OUTPUT_URI);
+		// get the data source.
 		DataSource ds = DataSource.getDataSource();
 
-		// for each data
+		// for each data object
 		for (SimpleDataObject sdo : ds) {
+			// practitioner owl individual
 			OWLNamedIndividual practitionerInd = uaddNamedIndividual(individualsOntology,
 					BASE_CLINICAL_INSTANCE_URI + sdo.practitionerID);
 			uaddLabel(individualsOntology, practitionerInd, PRACTITIONER_LABEL_PREFIX
@@ -49,7 +56,7 @@ public class GenerateInstanceData {
 			uaddClassAssertion(individualsOntology, practitionerInd,
 					ugetOWLClass(HEALTH_PRACTITIONER_CLASS_URI));
 
-			// add all the diagnosis or order individuals to a list
+			// add all the diagnosis or order owl individuals to a list
 			List<OWLNamedIndividual> diagOrderList = new ArrayList<OWLNamedIndividual>();
 			boolean isDiagnosis = false, isOrder = false;
 
@@ -60,9 +67,11 @@ public class GenerateInstanceData {
 				isOrder = true;
 			}
 
-			// create the individuals
+			// create the diagnosis/order owl individuals
 			for (int i = 0; i < sdo.codeOccurrences; ++i) {
 				String wholeId = Util.getRandomId(null);
+				// a "whole" is the diagnosis or order information artifact and the
+				// "part" is the code reference
 				OWLNamedIndividual wholeInd = uaddNamedIndividual(individualsOntology,
 						BASE_CLINICAL_INSTANCE_URI + wholeId);
 				String partIndId = Util.getRandomId(null);
@@ -88,14 +97,17 @@ public class GenerateInstanceData {
 				diagOrderList.add(wholeInd);
 			}
 
-			// create encounters
+			// create encounters, one encounter for each patient. This could be
+			// changed to create one encounter for each code and instead of adding
+			// multiple codes to an encounter, we would add multiple encounters to a
+			// patient to "finish" relating all the data to patients.
 			OWLNamedIndividual encounterInd = null;
 			for (int i = 0; i < sdo.uniquePatient; ++i) {
 				String patientId = Util.getRandomId(null);
 				OWLNamedIndividual patientInd = uaddNamedIndividual(individualsOntology,
 						BASE_CLINICAL_INSTANCE_URI + patientId);
 				uaddClassAssertion(individualsOntology, patientInd, ugetOWLClass(PATIENT_CLASS_URI));
-				uaddLabel(individualsOntology, patientInd, "patient_"+patientId);
+				uaddLabel(individualsOntology, patientInd, "patient_" + patientId);
 				uaddStringAnnotationAssertion(individualsOntology, patientInd, patientId,
 						IDENTIFIER_ANNOT_PROPERTY_URI);
 
@@ -119,13 +131,14 @@ public class GenerateInstanceData {
 						diagOrderList.remove(diagOrderList.size() - 1));
 			}
 
-			// add the remaining list the the last encounter
+			// add the remaining list of codes to the the last encounter
 			for (OWLNamedIndividual ni : diagOrderList) {
 				uaddObjectAssertion(individualsOntology, hasOutput, encounterInd, ni);
 			}
 
 		}
 
+		// save files in the "generated" directory.
 		man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
 				new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
 						+ CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME)));
