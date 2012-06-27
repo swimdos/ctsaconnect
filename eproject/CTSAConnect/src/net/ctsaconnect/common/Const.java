@@ -7,7 +7,7 @@ public class Const {
 	public static final String PATIENT_CLASS_URI = "http://purl.obolibrary.org/obo/ARG_0000051";
 	public static final String HAS_DATE_DATA_PROPERTY_URI = "http://purl.obolibrary.org/obo/ARG_0000365";
 	public static final String IDENTIFIER_ANNOT_PROPERTY_URI = "http://purl.obolibrary.org/obo/ARG_0000495";
-	public static final String ORDER_CLASS_URI = "http://purl.obolibrary.org/obo/ARG_0000006";
+	public static final String ORDER_CLASS_URI = "http://purl.obolibrary.org/obo/ARG_0000016";
 	public static final String HAS_SPECIFIED_OUTPUT_URI = "http://purl.obolibrary.org/obo/OBI_0000299";
 	public static final String HAS_PART_URI = "http://www.obofoundry.org/ro/ro.owl#has_part";
 	public static final String DIAGNOSIS_URI = "http://purl.obolibrary.org/obo/ARG_0000037";
