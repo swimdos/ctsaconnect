@@ -145,6 +145,14 @@ public class OWLUtil {
 		return p;
 	}
 
+	public static OWLAnnotationProperty uaddAnnotationProperty(OWLOntology ontology,
+			String annotationPropertyUri) {
+		OWLOntologyManager man = ontology.getOWLOntologyManager();
+		OWLAnnotationProperty p = df.getOWLAnnotationProperty(ugetIri(annotationPropertyUri));
+		man.addAxiom(ontology, df.getOWLDeclarationAxiom(p));
+		return p;
+	}
+
 	public static OWLObjectProperty uaddObjectProperty(OWLOntology ontology, String objectPropertyUri) {
 		OWLOntologyManager man = ontology.getOWLOntologyManager();
 		OWLObjectProperty p = df.getOWLObjectProperty(ugetIri(objectPropertyUri));
