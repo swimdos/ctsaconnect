@@ -2,24 +2,29 @@ package net.ctsaconnect.common;
 
 public class Const {
 
-	public static final String ENCOUNTER_CLASS_URI = "http://purl.obolibrary.org/obo/ARG_0000140";
-	public static final String HEALTH_PRACTITIONER_CLASS_URI = "http://purl.obolibrary.org/obo/ARG_0000130";
+	// "health care encounter" from OGMS
+	public static final String ENCOUNTER_CLASS_URI = "http://purl.obolibrary.org/obo/OGMS_0000097";
+	// "health care provider role" from OBI
+	public static final String HEALTH_PRACTITIONER_CLASS_URI = "http://purl.obolibrary.org/obo/OBI_0000207";
+	// "patient"
 	public static final String PATIENT_CLASS_URI = "http://purl.obolibrary.org/obo/ARG_0000051";
 	public static final String HAS_DATE_DATA_PROPERTY_URI = "http://purl.obolibrary.org/obo/ARG_0000365";
+	// AP to record an identifier for the entity (other than the URI)
 	public static final String IDENTIFIER_ANNOT_PROPERTY_URI = "http://purl.obolibrary.org/obo/ARG_0000495";
 	public static final String ORDER_CLASS_URI = "http://purl.obolibrary.org/obo/ARG_0000016";
 	public static final String HAS_SPECIFIED_OUTPUT_URI = "http://purl.obolibrary.org/obo/OBI_0000299";
-	public static final String DIAGNOSIS_URI = "http://purl.obolibrary.org/obo/ARG_0000037";
+	// "diagnosis textual entity"
+	public static final String DIAGNOSIS_URI = "http://purl.obolibrary.org/obo/OBI_0000075";
 
 	// property URIs
 	public static final String HAS_PART_URI = "http://www.obofoundry.org/ro/ro.owl#has_part";
 	public static final String HAS_PARTICIPANT_URI = "http://www.obofoundry.org/ro/ro.owl#has_participant";
 
 	// annotation properties uris
-	public static final String HAS_CODE_ANNOT_PROP_URI = "http://has_code";
-	public static final String HAS_CUI_ANNOT_PROP_URI = "http://has_cui";
-	public static final String HAS_DEF_ANNOT_PROP_URI = "http://has_def";
-	public static final String MAPPED_TO_ANNOT_PROP_URI = "http://mapped_to";
+	public static final String HAS_CODE_ANNOT_PROP_URI = "http://purl.obolibrary.org/obo/ARG_0000033";
+	public static final String HAS_CUI_ANNOT_PROP_URI = "http://purl.obolibrary.org/obo/ARG_0000034";
+	public static final String HAS_DEF_ANNOT_PROP_URI = "http://purl.obolibrary.org/obo/IAO_0000115";
+	//public static final String MAPPED_TO_ANNOT_PROP_URI = "http://mapped_to";
 
 	public static final String CPT_BILLING_CODE_URI = "http://purl.obolibrary.org/obo/ARG_0000442";
 	public static final String ICD9_BILLING_CODE_URI = "http://purl.obolibrary.org/obo/ARG_0000123";
