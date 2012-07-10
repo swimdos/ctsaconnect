@@ -12,6 +12,7 @@ import net.ctsaconnect.common.Util;
 import net.ctsaconnect.datasource.DataSource;
 import net.ctsaconnect.datasource.SimpleDataObject;
 
+import org.coode.owlapi.turtle.TurtleOntologyFormat;
 import org.joda.time.DateTime;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.RDFXMLOntologyFormat;
@@ -142,6 +143,11 @@ public class GenerateInstanceData {
 		man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
 				new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
 						+ CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME)));
+
+		man.saveOntology(individualsOntology, new TurtleOntologyFormat(), new FileOutputStream(
+				new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
+						+ "clinical_instances_ei_turtle.n3.owl")));
+
 	}
 
 	/**
