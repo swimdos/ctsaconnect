@@ -66,6 +66,7 @@ public class CSVtoDataSource {
 	
   public void execute(){
   	DataSourceSimple convertedSet = convert(this.fileToConvert);
+  	System.out.print(convertedSet.print());
   }
 
 	/**

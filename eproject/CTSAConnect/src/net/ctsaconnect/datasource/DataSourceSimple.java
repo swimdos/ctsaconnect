@@ -57,5 +57,13 @@ public class DataSourceSimple extends DataSource {
 	public int length(){
 		return SimpleDataList.size();
 	}
+	
+	public String print(){
+		StringBuffer strBuff = new StringBuffer();
+		for(SimpleDataObject sdo : SimpleDataList){
+			strBuff.append(sdo.print() + "\n");
+		}
+		return strBuff.toString();
+	}
 
 }
