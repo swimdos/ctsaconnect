@@ -14,4 +14,17 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>isf_svn</name>
+			<type>2</type>
+			<locationURI>ISF_SVN</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>ISF_SVN</name>
+			<value>file:/C:/shahim/svns/connect-isf</value>
+		</variable>
+	</variableList>
 </projectDescription>
