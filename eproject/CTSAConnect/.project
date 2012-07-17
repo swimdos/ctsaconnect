@@ -21,10 +21,4 @@
 			<locationURI>ISF_SVN</locationURI>
 		</link>
 	</linkedResources>
-	<variableList>
-		<variable>
-			<name>ISF_SVN</name>
-			<value>file:/C:/shahim/svns/connect-isf</value>
-		</variable>
-	</variableList>
 </projectDescription>
