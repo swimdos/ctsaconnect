@@ -23,4 +23,8 @@ public class SimpleDataObject {
 		this.uniquePatient = uniquePatient;
 	}
 
+	public SimpleDataObject() {
+		// TODO Auto-generated constructor stub
+	}
+
 }

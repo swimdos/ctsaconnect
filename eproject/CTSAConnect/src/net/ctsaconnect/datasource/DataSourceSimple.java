@@ -10,17 +10,33 @@ import java.util.List;
  * then used as the data source to return the data objects.
  */
 public class DataSourceSimple extends DataSource {
-	private List<SimpleDataObject> testData = new ArrayList<SimpleDataObject>();
+	private List<SimpleDataObject> SimpleDataList = new ArrayList<SimpleDataObject>();
 	private Iterator<SimpleDataObject> i;
 
 	DataSourceSimple() {
-
-		testData.add(new SimpleDataObject("1234567", "91120", "", 1, 1));
-		testData.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
-		testData.add(new SimpleDataObject("1234567", "91120", "", 8, 6));
-		testData.add(new SimpleDataObject("1234568", "76376", "", 10, 5));
-		i = testData.iterator();
-
+		SimpleDataList.add(new SimpleDataObject("1234567", "91120", "", 1, 1));
+		SimpleDataList.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
+		SimpleDataList.add(new SimpleDataObject("1234567", "91120", "", 8, 6));
+		SimpleDataList.add(new SimpleDataObject("1234568", "76376", "", 10, 5));
+		i = SimpleDataList.iterator();
+	}
+	
+	DataSourceSimple(Boolean withTestData){
+		if (withTestData){
+			SimpleDataList.add(new SimpleDataObject("1234567", "91120", "", 1, 1));
+			SimpleDataList.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
+			SimpleDataList.add(new SimpleDataObject("1234567", "91120", "", 8, 6));
+			SimpleDataList.add(new SimpleDataObject("1234568", "76376", "", 10, 5));
+			i = SimpleDataList.iterator();
+		}
+		else{
+			i = SimpleDataList.iterator();
+		}
+			
+	}
+	
+	public void addSimpleData(SimpleDataObject newObject){
+		SimpleDataList.add(newObject);
 	}
 
 	@Override
@@ -36,6 +52,10 @@ public class DataSourceSimple extends DataSource {
 	@Override
 	public SimpleDataObject next() {
 		return i.next();
+	}
+	
+	public int length(){
+		return SimpleDataList.size();
 	}
 
 }

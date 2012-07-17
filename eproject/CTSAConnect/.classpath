@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="lib/owlapi-bin.jar" sourcepath="lib-src/owlapi-src.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.18-bin.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-2.1.jar" sourcepath="lib-src/joda-time-2.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/javacsv.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
