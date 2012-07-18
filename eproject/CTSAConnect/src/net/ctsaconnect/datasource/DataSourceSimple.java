@@ -15,10 +15,10 @@ public class DataSourceSimple extends DataSource {
 
 	DataSourceSimple() {
 
-		testData.add(new SimpleDataObject("1234567", "91120", "", 1, 1));
+		testData.add(new SimpleDataObject("1234567", "", "552.00", 1, 1));
 		testData.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
-		testData.add(new SimpleDataObject("1234567", "91120", "", 8, 6));
-		testData.add(new SimpleDataObject("1234568", "76376", "", 10, 5));
+		testData.add(new SimpleDataObject("1234567", "", "553.02", 8, 6));
+		testData.add(new SimpleDataObject("1234568", "", "745.12", 10, 5));
 		i = testData.iterator();
 
 	}
