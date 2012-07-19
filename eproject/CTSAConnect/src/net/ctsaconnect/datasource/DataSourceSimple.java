@@ -10,8 +10,8 @@ import java.util.List;
  * then used as the data source to return the data objects.
  */
 public class DataSourceSimple extends DataSource {
-	private List<SimpleDataObject> SimpleDataList = new ArrayList<SimpleDataObject>();
-	private Iterator<SimpleDataObject> i;
+	public List<SimpleDataObject> SimpleDataList = new ArrayList<SimpleDataObject>();
+	public Iterator<SimpleDataObject> i;
 
 	DataSourceSimple() {
 		SimpleDataList.add(new SimpleDataObject("1234567", "91120", "", 1, 1));
