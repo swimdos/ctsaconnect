@@ -124,7 +124,7 @@ public class GenerateInstanceData {
 				uaddStringAnnotationAssertion(individualsOntology, encounterInd, encounterId,
 						IDENTIFIER_ANNOT_PROPERTY_URI);
 				uaddDataAssertion(individualsOntology, encounterInd, hasDateProperty,
-						encounterDate.toString("dd-MM-yyyy"), OWL2Datatype.XSD_DATE_TIME);
+						encounterDate.toString("yyyy-MM-dd")+"T00:00:00", OWL2Datatype.XSD_DATE_TIME);
 				uaddObjectAssertion(individualsOntology, hasParticipant, encounterInd, patientInd);
 				uaddObjectAssertion(individualsOntology, hasParticipant, encounterInd, practitionerInd);
 				// remove and use one individual from the diagnosis or order list
