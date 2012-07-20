@@ -1,0 +1,1 @@
+This file will contain the steps necessary to use this Eclipse project inside Eclipse. There are few configuration items (not committed to the Git repository) that need to be done in Eclipse in order to be able to compile and run the code.
