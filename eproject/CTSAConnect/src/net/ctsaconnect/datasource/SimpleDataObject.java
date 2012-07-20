@@ -23,4 +23,20 @@ public class SimpleDataObject {
 		this.uniquePatient = uniquePatient;
 	}
 
+	public SimpleDataObject() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public String print(){
+		if (this.CPTCode != null && this.ICD9Code !=null){
+			return "Practiioner: " + this.practitionerID + " has " + this.codeOccurrences + " occurances of " + this.uniquePatient + " patients for cpt code " + this.CPTCode + " and icd9 code " + this.ICD9Code;			
+		}else if (this.CPTCode != null){
+			return "Practiioner: " + this.practitionerID + " has " + this.codeOccurrences + " occurances of " + this.uniquePatient + " patients for cpt code " + this.CPTCode;
+		} else if (this.ICD9Code != null){
+			return "Practiioner: " + this.practitionerID + " has " + this.codeOccurrences + " occurances of " + this.uniquePatient + " patients for icd9 code " + this.ICD9Code;
+		} else {
+			return "Record has no CPT or ICD9 Code id";
+		}
+	}
+
 }
