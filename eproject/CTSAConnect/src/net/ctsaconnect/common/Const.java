@@ -2,10 +2,24 @@ package net.ctsaconnect.common;
 
 public class Const {
 
+	// ontologies
+
+	// ARG
+	public static final String ARG_ONTOLOGY_FILE_NAME = "arg.owl";
+	public static final String ARG_BASE_URI = "http://purl.obolibrary.org/obo/";
+	public static final String ARG_ONTOLOGY_URI = ARG_BASE_URI + ARG_ONTOLOGY_FILE_NAME;
+	public static final String ARG_ENTITY_URI_PREFIX = ARG_BASE_URI + "ARG_";
+	
+	// Clinical module
+	public static final String CM_ONTOLOGY_FILE_NAME = "clinical_module.owl";
+	public static final String CM_BASE_URI = "http://purl.obolibrary.org/obo/arg/";
+	public static final String CM_ONTOLOGY_URI = CM_BASE_URI + CM_ONTOLOGY_FILE_NAME;
+	public static final String CM_ENTITY_URI_PREFIX = ARG_BASE_URI + "ARG_";
+
 	// "health care encounter" from OGMS
 	public static final String ENCOUNTER_CLASS_URI = "http://purl.obolibrary.org/obo/OGMS_0000097";
 	// "health care provider role" from OBI
-	public static final String HEALTH_PRACTITIONER_CLASS_URI = "http://purl.obolibrary.org/obo/OBI_0000207";
+	public static final String HEALTH_PRACTITIONER_CLASS_URI = "http://purl.obolibrary.org/obo/ARG_0000130";
 	// "patient"
 	public static final String PATIENT_CLASS_URI = "http://purl.obolibrary.org/obo/ARG_0000051";
 	public static final String HAS_DATE_DATA_PROPERTY_URI = "http://purl.obolibrary.org/obo/ARG_0000365";
@@ -24,7 +38,7 @@ public class Const {
 	public static final String HAS_CODE_ANNOT_PROP_URI = "http://purl.obolibrary.org/obo/ARG_0000033";
 	public static final String HAS_CUI_ANNOT_PROP_URI = "http://purl.obolibrary.org/obo/ARG_0000034";
 	public static final String HAS_DEF_ANNOT_PROP_URI = "http://purl.obolibrary.org/obo/IAO_0000115";
-	//public static final String MAPPED_TO_ANNOT_PROP_URI = "http://mapped_to";
+	// public static final String MAPPED_TO_ANNOT_PROP_URI = "http://mapped_to";
 
 	public static final String CPT_BILLING_CODE_URI = "http://purl.obolibrary.org/obo/ARG_0000442";
 	public static final String ICD9_BILLING_CODE_URI = "http://purl.obolibrary.org/obo/ARG_0000123";
