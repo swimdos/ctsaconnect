@@ -14,28 +14,27 @@ public class DataSourceSimple extends DataSource {
 	public Iterator<SimpleDataObject> i;
 
 	DataSourceSimple() {
-		SimpleDataList.add(new SimpleDataObject("1234567", "91120", "", 1, 1));
+		SimpleDataList.add(new SimpleDataObject("1234567", "", "552.00", 1, 1));
 		SimpleDataList.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
-		SimpleDataList.add(new SimpleDataObject("1234567", "91120", "", 8, 6));
-		SimpleDataList.add(new SimpleDataObject("1234568", "76376", "", 10, 5));
+		SimpleDataList.add(new SimpleDataObject("1234567", "", "553.02", 8, 6));
+		SimpleDataList.add(new SimpleDataObject("1234568", "", "745.12", 10, 5));
 		i = SimpleDataList.iterator();
 	}
-	
-	DataSourceSimple(Boolean withTestData){
-		if (withTestData){
-			SimpleDataList.add(new SimpleDataObject("1234567", "91120", "", 1, 1));
+
+	DataSourceSimple(Boolean withTestData) {
+		if (withTestData) {
+			SimpleDataList.add(new SimpleDataObject("1234567", "", "552.00", 1, 1));
 			SimpleDataList.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
-			SimpleDataList.add(new SimpleDataObject("1234567", "91120", "", 8, 6));
-			SimpleDataList.add(new SimpleDataObject("1234568", "76376", "", 10, 5));
+			SimpleDataList.add(new SimpleDataObject("1234567", "", "553.02", 8, 6));
+			SimpleDataList.add(new SimpleDataObject("1234568", "", "745.12", 10, 5));
+			i = SimpleDataList.iterator();
+		} else {
 			i = SimpleDataList.iterator();
 		}
-		else{
-			i = SimpleDataList.iterator();
-		}
-			
+
 	}
-	
-	public void addSimpleData(SimpleDataObject newObject){
+
+	public void addSimpleData(SimpleDataObject newObject) {
 		SimpleDataList.add(newObject);
 	}
 
@@ -53,14 +52,14 @@ public class DataSourceSimple extends DataSource {
 	public SimpleDataObject next() {
 		return i.next();
 	}
-	
-	public int length(){
+
+	public int length() {
 		return SimpleDataList.size();
 	}
-	
-	public String print(){
+
+	public String print() {
 		StringBuffer strBuff = new StringBuffer();
-		for(SimpleDataObject sdo : SimpleDataList){
+		for (SimpleDataObject sdo : SimpleDataList) {
 			strBuff.append(sdo.print() + "\n");
 		}
 		return strBuff.toString();
