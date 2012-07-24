@@ -70,6 +70,12 @@ public class GenerateInstanceData {
 		this.ds = incomingDS;
 	}
 
+	
+	/**
+	 * generates the fake instance data based on the aggregate dataset that you provide
+	 * 
+	 * @throws Exception
+	 */
 	public void generate() throws Exception {
 
 		// create the ontology object
@@ -186,6 +192,7 @@ public class GenerateInstanceData {
 				uaddObjectAssertion(individualsOntology, hasOutput, encounterInd, ni);
 			}
 			
+			//For every xth element save the files TODO: svwilliams cleanup by perhaps toggling the append variable with (index == x) perhaps also turn this into a method call
 			if ((index%50) == 0){
 				// save files in the "generated" directory.
 				if (index == 50){
