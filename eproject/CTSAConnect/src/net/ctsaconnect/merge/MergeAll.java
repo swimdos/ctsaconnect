@@ -24,7 +24,7 @@ public class MergeAll {
 
 	private void merge() throws OWLOntologyCreationException, OWLOntologyStorageException,
 			FileNotFoundException {
-		String isfSvnLocation = System.getenv("ISF_SVN");
+		String isfSvnLocation = System.getProperty("ISF_SVN");
 		AutoIRIMapper mapper = new AutoIRIMapper(new File(isfSvnLocation + "/src/ontology"), true);
 		System.out.println(mapper.getOntologyIRIs());
 
