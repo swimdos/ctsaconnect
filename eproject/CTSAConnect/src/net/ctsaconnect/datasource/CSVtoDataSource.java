@@ -13,7 +13,7 @@ import com.csvreader.CsvReader;
  * @author drspeedo
  *
  */
-public class CSVtoDataSource {
+public class CSVtoDataSource extends DataSourceSimple{
 
 	
 	/**
@@ -34,8 +34,12 @@ public class CSVtoDataSource {
 		}
 	}
 	
-	public DataSourceSimple convert(CsvReader incomingFile){
-		DataSourceSimple outputSet = new DataSourceSimple(false);
+	public void convert(){
+		convert(this.fileToConvert);
+	}
+
+	
+	public void convert(CsvReader incomingFile){
   	
   	try {
   		incomingFile.readHeaders();
@@ -50,9 +54,10 @@ public class CSVtoDataSource {
 				incomingRecord.codeOccurrences = Integer.parseInt(incomingFile.get("QUANTITY"));
 				incomingRecord.uniquePatient = Integer.parseInt(incomingFile.get("UNIQUE_PATIENTS"));
 				
-			  outputSet.addSimpleData(incomingRecord);
+			  this.addSimpleData(incomingRecord);
 			}
 			
+			this.i = this.SimpleDataList.iterator();
 			this.fileToConvert.close();
 			
 		} catch (IOException e) {
@@ -60,13 +65,12 @@ public class CSVtoDataSource {
 			e.printStackTrace();
 		}
   	
-  	System.out.println("Number of Records: " + outputSet.length());
-  	return outputSet;
+  	System.out.println("Number of Records: " + this.length());
 	}
 	
   public void execute(){
-  	DataSourceSimple convertedSet = convert(this.fileToConvert);
-  	System.out.print(convertedSet.print());
+  	this.convert(this.fileToConvert);
+  	System.out.print(this.print());
   }
 
 	/**
@@ -74,7 +78,7 @@ public class CSVtoDataSource {
 	 * 
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		// TODO -
 			new CSVtoDataSource(args[0]).execute();
 	}
 
