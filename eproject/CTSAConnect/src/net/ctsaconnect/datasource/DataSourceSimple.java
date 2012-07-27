@@ -14,19 +14,19 @@ public class DataSourceSimple extends DataSource {
 	public Iterator<SimpleDataObject> i;
 
 	DataSourceSimple() {
-		SimpleDataList.add(new SimpleDataObject("1234567", "", "552.00", 1, 1));
-		SimpleDataList.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
-		SimpleDataList.add(new SimpleDataObject("1234567", "", "553.02", 8, 6));
-		SimpleDataList.add(new SimpleDataObject("1234568", "", "745.12", 10, 5));
+		//SimpleDataList.add(new SimpleDataObject("1234567", "", "552.00", 1, 1));
+		//SimpleDataList.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
+		//SimpleDataList.add(new SimpleDataObject("1234567", "", "553.02", 8, 6));
+		//SimpleDataList.add(new SimpleDataObject("1234568", "", "745.12", 10, 5));
 		i = SimpleDataList.iterator();
 	}
 
 	DataSourceSimple(Boolean withTestData) {
 		if (withTestData) {
-			SimpleDataList.add(new SimpleDataObject("1234567", "", "552.00", 1, 1));
-			SimpleDataList.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
-			SimpleDataList.add(new SimpleDataObject("1234567", "", "553.02", 8, 6));
-			SimpleDataList.add(new SimpleDataObject("1234568", "", "745.12", 10, 5));
+			//SimpleDataList.add(new SimpleDataObject("1234567", "", "552.00", 1, 1));
+			//SimpleDataList.add(new SimpleDataObject("1234567", "", "555.1", 4, 1));
+			//SimpleDataList.add(new SimpleDataObject("1234567", "", "553.02", 8, 6));
+			//SimpleDataList.add(new SimpleDataObject("1234568", "", "745.12", 10, 5));
 			i = SimpleDataList.iterator();
 		} else {
 			i = SimpleDataList.iterator();

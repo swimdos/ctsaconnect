@@ -195,23 +195,23 @@ public class GenerateInstanceData {
 			//For every xth element save the files TODO: svwilliams cleanup by perhaps toggling the append variable with (index == x) perhaps also turn this into a method call
 			if ((index%50) == 0){
 				// save files in the "generated" directory.
-				if (index == 50){
+				/*if (index == 50){
 					man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
 						new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
-								+ CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME)));
+								+ "clinical_instances_" + index + ".owl")));
 
 					man.saveOntology(individualsOntology, new TurtleOntologyFormat(), new FileOutputStream(
 						new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
-								+ "clinical_instances_ei_turtle.n3.owl")));
-				} else {
+								+ "clinical_instances_ei_turtle_" + index + ".n3.owl")));
+				} else {*/
 					man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
 							new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
-									+ CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME),true));
+									+ "clinical_instances_" + index + ".owl")));
 
 						man.saveOntology(individualsOntology, new TurtleOntologyFormat(), new FileOutputStream(
 							new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
-									+ "clinical_instances_ei_turtle.n3.owl"),true));
-				}
+									+ "clinical_instances_ei_turtle_" + index + ".n3.owl")));
+				//}
 				man.removeOntology(individualsOntology);
 				individualsOntology = man.createOntology(ugetIri(CLINICAL_INSTANCE_ONTOLOGY_URI));
 				// add property declarations to the ontology and keep a refernce to the
@@ -229,11 +229,11 @@ public class GenerateInstanceData {
 		// save files in the "generated" directory.
 		man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
 				new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
-						+ CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME), true));
+						+ "clinical_instances_end.owl"), true));
 
 		man.saveOntology(individualsOntology, new TurtleOntologyFormat(), new FileOutputStream(
 				new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
-						+ "clinical_instances_ei_turtle.n3.owl"), true));
+						+ "clinical_instances_ei_turtle_end.n3.owl"), true));
 
 	}
 
