@@ -94,6 +94,7 @@ public class GenerateInstanceData {
 		// for each data object
 		if (this.debug) System.out.println("Entering Loop");
 		int index = 0;
+		int numberOfAxioms = 0;
 		for (SimpleDataObject sdo : this.ds) {
 			
 			if (this.debug) System.out.println("In Loop: " + index++);
@@ -204,6 +205,8 @@ public class GenerateInstanceData {
 						new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
 								+ "clinical_instances_ei_turtle_" + index + ".n3.owl")));
 				} else {*/
+					numberOfAxioms += individualsOntology.getAxiomCount();
+				
 					man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
 							new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
 									+ "clinical_instances_" + index + ".owl")));
@@ -225,6 +228,9 @@ public class GenerateInstanceData {
 			}
 
 		}
+		
+		numberOfAxioms += individualsOntology.getAxiomCount();
+		System.out.println(numberOfAxioms + "Total Number of Axioms");
 
 		// save files in the "generated" directory.
 		man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
