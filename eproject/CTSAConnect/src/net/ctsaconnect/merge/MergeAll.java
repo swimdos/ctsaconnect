@@ -19,7 +19,7 @@ public class MergeAll {
 
 	OWLOntology original;
 	OWLOntology merged;
-	OWLOntologyManager man ;
+	OWLOntologyManager man;
 	OWLOntologyManager man2;
 
 	private void merge() throws OWLOntologyCreationException, OWLOntologyStorageException,
@@ -57,8 +57,7 @@ public class MergeAll {
 		}
 		man2.saveOntology(merged, new FileOutputStream(new File(isfSvnLocation
 				+ "/src/ontology-merged/" + Const.CM_ONTOLOGY_FILE_NAME)));
-		
-		
+
 		// merge clinical_module-no-icd-cpt.owl
 		man = OWLManager.createOWLOntologyManager();
 		man.clearIRIMappers();
@@ -66,7 +65,7 @@ public class MergeAll {
 		man2 = OWLManager.createOWLOntologyManager();
 		original = man.loadOntologyFromOntologyDocument(new File(isfSvnLocation
 				+ "/src/ontology/clinical_module/clinical_module_no_icd_cpt.owl"));
-		merged = man2.createOntology(IRI.create(Const.CM_BASE_URI+"clinical_module_no_icd_cpt.owl"));
+		merged = man2.createOntology(IRI.create(Const.CM_BASE_URI + "clinical_module_no_icd_cpt.owl"));
 		for (OWLOntology o : original.getImportsClosure()) {
 			man2.addAxioms(merged, o.getAxioms());
 		}

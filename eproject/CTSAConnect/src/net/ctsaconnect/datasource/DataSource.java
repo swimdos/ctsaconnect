@@ -38,4 +38,6 @@ public abstract class DataSource implements Iterable<SimpleDataObject>, Iterator
 		throw new UnsupportedOperationException();
 	}
 
+	public abstract void close();
+
 }

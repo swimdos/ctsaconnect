@@ -2,42 +2,44 @@ package net.ctsaconnect.data;
 
 import java.io.File;
 
-import net.ctsaconnect.datasource.*;
+import net.ctsaconnect.datasource.CSVtoDataSource;
 
 /**
  * Extends GenerateInstanceData for DataSources from CSV
  * 
  * @author svwilliams
- *
+ * 
  */
-public class GenerateInstanceDataForCSV extends GenerateInstanceData {
+public class GenerateInstanceDataForCSV extends GenerateInstanceData_Old {
 
 	/**
 	 * Constructor that takes in a CSV File Path
 	 * 
-	 * @param csvFilePath path to csv file
+	 * @param csvFilePath
+	 *          path to csv file
 	 */
-	public GenerateInstanceDataForCSV(String csvFilePath){
+	public GenerateInstanceDataForCSV(String csvFilePath) {
 		CSVtoDataSource csvSource = new CSVtoDataSource(csvFilePath);
 		csvSource.convert();
 		this.ds = csvSource;
 	}
-	
+
 	/**
 	 * Generates An Owl file based on CSV File
 	 * 
-	 * @param args [0] csv file path 
+	 * @param args
+	 *          [0] csv file path
 	 */
-	public static void main(String[] args){
+	public static void main(String[] args) {
 
-		//Check for required file
-		if (args[0].isEmpty()){
+		// Check for required file
+		if (args[0].isEmpty()) {
 			System.out.println("GenerateInstanceDataForCSV requires a CSV File");
-		} else if (!(new File(args[0])).isFile()){
+		} else if (!(new File(args[0])).isFile()) {
 			System.out.println("File Not Found");
 		}
-		
-		//Create a new instance and run generate
+
+		// Create a new instance and run generate
 		try {
 			GenerateInstanceDataForCSV gidfor = new GenerateInstanceDataForCSV(args[0]);
 			gidfor.generate();

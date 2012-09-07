@@ -30,7 +30,7 @@ import org.semanticweb.owlapi.vocab.OWL2Datatype;
  * @version 0.2
  * @since 2012-07-19
  */
-public class GenerateInstanceData {
+public class GenerateInstanceData_Old {
 
 	protected String startDate = "01-01-2009";
 	protected String endDate = "01-01-2010";
@@ -59,7 +59,7 @@ public class GenerateInstanceData {
 	 * 
 	 * Generic Constructor that uses a test datasource
 	 */
-	public GenerateInstanceData() {
+	public GenerateInstanceData_Old() {
 		this.ds = DataSource.getDataSource();
 	}
 
@@ -72,7 +72,7 @@ public class GenerateInstanceData {
 	 * @param incomingDS
 	 *          The datasource that instance data should be generated from
 	 */
-	public GenerateInstanceData(DataSource incomingDS) {
+	public GenerateInstanceData_Old(DataSource incomingDS) {
 		this.ds = incomingDS;
 	}
 
@@ -98,14 +98,16 @@ public class GenerateInstanceData {
 		// DataSource ds = DataSource.getDataSource();
 
 		// for each data object
-		if (this.debug)
+		if (this.debug) {
 			System.out.println("Entering Loop");
+		}
 		int index = 0;
 		int numberOfAxioms = 0;
 		for (SimpleDataObject sdo : this.ds) {
 
-			if (this.debug)
+			if (this.debug) {
 				System.out.println("In Loop: " + index++);
+			}
 			/*
 			 * Check for Valid Data (add as you see need) 1. Number of Unique Patients
 			 * <= Number of Code Occurances
@@ -259,7 +261,7 @@ public class GenerateInstanceData {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		new GenerateInstanceData().generate();
+		new GenerateInstanceData_Old().generate();
 	}
 
 }

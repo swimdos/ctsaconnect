@@ -9,9 +9,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import net.ctsaconnect.common.DBInfo;
 
@@ -65,7 +63,7 @@ public class UmlsOwlClassGenerator {
 		umlsDbConnection = DriverManager.getConnection("jdbc:mysql://bic0193:3307/umls12aa_full",
 				DBInfo.READ_UMLS_DB_USER, DBInfo.READ_UMLS_DB_PASS);
 		ResultSet rs = umlsDbConnection.createStatement().executeQuery(sql);
-	
+
 		// Set<String> seenCodes = new HashSet<String>();
 		while (rs.next()) {
 			String childAui = rs.getString(1);
@@ -87,13 +85,13 @@ public class UmlsOwlClassGenerator {
 				uaddSubClassAxiom(ontology, ugetOWLClass(BASE_ICD9CM_CLASS_URI + chiledCode),
 						ugetOWLClass(ICD9_BILLING_CODE_URI));
 			}
-	
+
 			// seenCodes.add(chiledCode);
 		}
 		umlsDbConnection.close();
 		man.saveOntology(ontology, new FileOutputStream(OWL_FILES_GENERATED_DIR_NAME + File.separator
 				+ ICD9CM_SUB_AXIOMS_ONTOLOGY_FILE_NAME));
-	
+
 	}
 
 	public void generateCPT2012Classes() throws Exception {
