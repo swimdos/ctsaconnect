@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.ctsaconnect.common.Util;
-import net.ctsaconnect.datasource.CSVtoDataSource;
 import net.ctsaconnect.datasource.DataSource;
 import net.ctsaconnect.datasource.SimpleDataObject;
 
@@ -27,9 +26,9 @@ import org.semanticweb.owlapi.vocab.OWL2Datatype;
 
 /**
  * 
- * @author 			carlo shahim drspeeedo
- * @version 		0.2
- * @since				2012-07-19
+ * @author carlo shahim drspeeedo
+ * @version 0.2
+ * @since 2012-07-19
  */
 public class GenerateInstanceData {
 
@@ -40,17 +39,21 @@ public class GenerateInstanceData {
 	private OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 	private OWLDataFactory df = man.getOWLDataFactory();
 	private OWLOntology individualsOntology;
-	
+
 	/**
-	 * Source of data that is generated into instance data.  Should be aggregate data to use this class
+	 * Source of data that is generated into instance data. Should be aggregate
+	 * data to use this class
 	 */
 	protected DataSource ds;
-	
+
 	/**
-	 * Allows the creation of if(debug) { System.out.pringln("Message"); } in the code which can be switched off at will
+	 * Allows the creation of if(debug) { System.out.pringln("Message"); } in the
+	 * code which can be switched off at will
 	 */
-	private boolean debug = true;  //TODO svwilliams switch this to using a standard logger with a log rate (all, errors, warning, etc.)
-	
+	private boolean debug = true; // TODO svwilliams switch this to using a
+																// standard logger with a log rate (all, errors,
+																// warning, etc.)
+
 	/**
 	 * GenerateInstanceData Constructor
 	 * 
@@ -59,20 +62,23 @@ public class GenerateInstanceData {
 	public GenerateInstanceData() {
 		this.ds = DataSource.getDataSource();
 	}
-	
-	/** GenerateInstanceData Constructor
+
+	/**
+	 * GenerateInstanceData Constructor
 	 * 
-	 *  Instead of using the test DataSource that is known at the creation of GenerateInstanceData
-	 *  
-	 *  @param incomingDS The datasource that instance data should be generated from
+	 * Instead of using the test DataSource that is known at the creation of
+	 * GenerateInstanceData
+	 * 
+	 * @param incomingDS
+	 *          The datasource that instance data should be generated from
 	 */
 	public GenerateInstanceData(DataSource incomingDS) {
 		this.ds = incomingDS;
 	}
 
-	
 	/**
-	 * generates the fake instance data based on the aggregate dataset that you provide
+	 * generates the fake instance data based on the aggregate dataset that you
+	 * provide
 	 * 
 	 * @throws Exception
 	 */
@@ -87,23 +93,27 @@ public class GenerateInstanceData {
 		OWLObjectProperty hasParticipant = uaddObjectProperty(individualsOntology, HAS_PARTICIPANT_URI);
 		OWLObjectProperty hasPart = uaddObjectProperty(individualsOntology, HAS_PART_URI);
 		OWLObjectProperty hasOutput = uaddObjectProperty(individualsOntology, HAS_SPECIFIED_OUTPUT_URI);
-		
-		// get the data source.		REFACTORED to out a declared element
-		//DataSource ds = DataSource.getDataSource();
+
+		// get the data source. REFACTORED to out a declared element
+		// DataSource ds = DataSource.getDataSource();
 
 		// for each data object
-		if (this.debug) System.out.println("Entering Loop");
+		if (this.debug)
+			System.out.println("Entering Loop");
 		int index = 0;
+		int numberOfAxioms = 0;
 		for (SimpleDataObject sdo : this.ds) {
-			
-			if (this.debug) System.out.println("In Loop: " + index++);
-			/* Check for Valid Data (add as you see need)
-			 *  1.  Number of Unique Patients <= Number of Code Occurances
+
+			if (this.debug)
+				System.out.println("In Loop: " + index++);
+			/*
+			 * Check for Valid Data (add as you see need) 1. Number of Unique Patients
+			 * <= Number of Code Occurances
 			 */
-			if (sdo.codeOccurrences < sdo.uniquePatient){
+			if (sdo.codeOccurrences < sdo.uniquePatient) {
 				continue;
 			}
-			
+
 			// practitioner owl individual
 			OWLNamedIndividual practitionerInd = uaddNamedIndividual(individualsOntology,
 					BASE_CLINICAL_INSTANCE_URI + sdo.practitionerID);
@@ -179,7 +189,7 @@ public class GenerateInstanceData {
 				uaddStringAnnotationAssertion(individualsOntology, encounterInd, encounterId,
 						IDENTIFIER_ANNOT_PROPERTY_URI);
 				uaddDataAssertion(individualsOntology, encounterInd, hasDateProperty,
-						encounterDate.toString("yyyy-MM-dd")+"T00:00:00", OWL2Datatype.XSD_DATE_TIME);
+						encounterDate.toString("yyyy-MM-dd") + "T00:00:00", OWL2Datatype.XSD_DATE_TIME);
 				uaddObjectAssertion(individualsOntology, hasParticipant, encounterInd, patientInd);
 				uaddObjectAssertion(individualsOntology, hasParticipant, encounterInd, practitionerInd);
 				// remove and use one individual from the diagnosis or order list
@@ -191,40 +201,48 @@ public class GenerateInstanceData {
 			for (OWLNamedIndividual ni : diagOrderList) {
 				uaddObjectAssertion(individualsOntology, hasOutput, encounterInd, ni);
 			}
-			
-			//For every xth element save the files TODO: svwilliams cleanup by perhaps toggling the append variable with (index == x) perhaps also turn this into a method call
-			if ((index%50) == 0){
+
+			// For every xth element save the files TODO: svwilliams cleanup by
+			// perhaps toggling the append variable with (index == x) perhaps also
+			// turn this into a method call
+			if ((index % 50) == 0) {
 				// save files in the "generated" directory.
-				if (index == 50){
-					man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
-						new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
-								+ CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME)));
+				/*
+				 * if (index == 50){ man.saveOntology(individualsOntology, new
+				 * RDFXMLOntologyFormat(), new FileOutputStream( new
+				 * File(OWL_FILES_GENERATED_DIR_NAME + File.separator +
+				 * "clinical_instances_" + index + ".owl")));
+				 * 
+				 * man.saveOntology(individualsOntology, new TurtleOntologyFormat(), new
+				 * FileOutputStream( new File(OWL_FILES_GENERATED_DIR_NAME +
+				 * File.separator + "clinical_instances_ei_turtle_" + index +
+				 * ".n3.owl"))); } else {
+				 */
+				numberOfAxioms += individualsOntology.getAxiomCount();
 
-					man.saveOntology(individualsOntology, new TurtleOntologyFormat(), new FileOutputStream(
-						new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
-								+ "clinical_instances_ei_turtle.n3.owl")));
-				} else {
-					man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
-							new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
-									+ CLINICAL_INSTANCE_ONTOLOGY_FILE_NAME),true));
+				man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
+						new File(OWL_FILES_GENERATED_DIR_NAME + File.separator + "clinical_instances_" + index
+								+ ".owl")));
 
-						man.saveOntology(individualsOntology, new TurtleOntologyFormat(), new FileOutputStream(
-							new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
-									+ "clinical_instances_ei_turtle.n3.owl"),true));
-				}
+				man.saveOntology(individualsOntology, new TurtleOntologyFormat(), new FileOutputStream(
+						new File(OWL_FILES_GENERATED_DIR_NAME + File.separator
+								+ "clinical_instances_ei_turtle_" + index + ".n3.owl")));
+				// }
 				man.removeOntology(individualsOntology);
 				individualsOntology = man.createOntology(ugetIri(CLINICAL_INSTANCE_ONTOLOGY_URI));
 				// add property declarations to the ontology and keep a refernce to the
 				// properties for later use.
-				hasDateProperty = uaddDataProperty(individualsOntology,
-						HAS_DATE_DATA_PROPERTY_URI);
+				hasDateProperty = uaddDataProperty(individualsOntology, HAS_DATE_DATA_PROPERTY_URI);
 				hasParticipant = uaddObjectProperty(individualsOntology, HAS_PARTICIPANT_URI);
 				hasPart = uaddObjectProperty(individualsOntology, HAS_PART_URI);
 				hasOutput = uaddObjectProperty(individualsOntology, HAS_SPECIFIED_OUTPUT_URI);
-				
+
 			}
 
 		}
+
+		numberOfAxioms += individualsOntology.getAxiomCount();
+		System.out.println(numberOfAxioms + "Total Number of Axioms");
 
 		// save files in the "generated" directory.
 		man.saveOntology(individualsOntology, new RDFXMLOntologyFormat(), new FileOutputStream(
