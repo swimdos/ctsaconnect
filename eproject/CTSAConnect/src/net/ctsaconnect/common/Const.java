@@ -9,7 +9,7 @@ public class Const {
 	public static final String ARG_BASE_URI = "http://purl.obolibrary.org/obo/";
 	public static final String ARG_ONTOLOGY_URI = ARG_BASE_URI + ARG_ONTOLOGY_FILE_NAME;
 	public static final String ARG_ENTITY_URI_PREFIX = ARG_BASE_URI + "ARG_";
-	
+
 	// Clinical module
 	public static final String CM_ONTOLOGY_FILE_NAME = "clinical_module.owl";
 	public static final String CM_BASE_URI = "http://purl.obolibrary.org/obo/arg/";

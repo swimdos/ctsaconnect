@@ -4,13 +4,41 @@ Change log and basic project documentation
 
 05/25/2012
 - Started moving string constants to Const class in the "common" package
-- Started to create static utility methods in the "OWLUtil" class that help with working with the OWL API. Javadoc will be added later. They are prefixed with "u" for "utility" and they can be imported by using a static import as seen in "UmlsOwlClassGenerator"
-- Added a "OWLFiles_generated" folder for generated files. This folder is git ignored to avoid publishing these files to google code.
-- When we have a better understanding of what can be published from the UMLS and other sources, we will move generated files to the "OWLFiles_published" folder.
-- Run the "UmlsOwlClassGenerator" class to generate ICD9CM and CPT2012 classes. This class needs a standard database installation of the UMLS and the connection parameters need to be set as described below.
-- There is a class "DBInfoExample" that needs to be copied to "DBInfo" and the correct database connection parameters set in the copied class. The copy will be ignored by git so that your connection information is not uploaded to the repository.
-- The code will be autoformated as needed but annotations can be added to prevent the auto formatting of a section of code or comments. The annotations are "//@formatter:on" and "//@formatter:off" to turn formatting on or off from the annotation line downwards. (see "createInstances.java" around line 80 and 160 for an example.)
+- Started to create static utility methods in the "OWLUtil" class 
+  that help with working with the OWL API. Javadoc will be added later. 
+  They are prefixed with "u" for "utility" and they can be imported by 
+  using a static import as seen in "UmlsOwlClassGenerator"
+- Added a "OWLFiles_generated" folder for generated files. This folder 
+  is git ignored to avoid publishing these files to google code.
+- When we have a better understanding of what can be published from the
+  UMLS and other sources, we will move generated files to the 
+  "OWLFiles_published" folder.
+- Run the "UmlsOwlClassGenerator" class to generate ICD9CM and 
+  CPT2012 classes. This class needs a standard database installation 
+  of the UMLS and the connection parameters need to be set as described below.
+- There is a class "DBInfoExample" that needs to be copied to "DBInfo" 
+  and the correct database connection parameters set in the copied class. 
+  The copy will be ignored by git so that your connection information is 
+  not uploaded to the repository.
+- The code will be autoformated as needed but annotations can be added to 
+  prevent the auto formatting of a section of code or comments. The 
+  annotations are "//@formatter:on" and "//@formatter:off" to turn formatting 
+  on or off from the annotation line downwards. (see "createInstances.java" 
+  around line 80 and 160 for an example.)
 
 05/24/2012
-- Git repository created and the path /eproject will contain individual Eclipse projects that can be imported into a workspace.
-- The first Eclipse project is added to the ctsaconnect git repository under /eproject
+- Git repository created and the path /eproject will contain individual 
+  Eclipse projects that can be imported into a workspace.
+- The first Eclipse project is added to the ctsaconnect git repository 
+  under /eproject
+
+09/07/2012
+- The Eclipse project is now a Maven project with the m2e plugin.
+- A new instance data generator is created that takes a datasource 
+  (to get simple data instances), a max number of data objects to 
+  encode for each OWLOntology,  a base URI for instances, and it returns
+  OWLOntology objects with OWL axioms for the encoded data objects.
+- A Sesame writer is added. It takes a instance generator, a Repository, and 
+  few additional settings and writes the OWLOntology objects directly to the
+  Sesame repository. See the example SesameWriterRunner.
+- Added an OHSU-specific datasource.
