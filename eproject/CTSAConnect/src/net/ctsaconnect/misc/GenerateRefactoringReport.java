@@ -25,6 +25,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -46,6 +47,8 @@ public class GenerateRefactoringReport {
 	ManchesterRenderer mr = null;
 	StringWriter newWriter = new StringWriter();
 	StringWriter approvedWriter = new StringWriter();
+	StringWriter newWriterExcel = new StringWriter();
+	StringWriter approvedWriterExcel = new StringWriter();
 
 	public static void main(String[] args) throws Exception {
 		new GenerateRefactoringReport().generate();
@@ -119,6 +122,10 @@ public class GenerateRefactoringReport {
 		System.out.println(newWriter.toString());
 		System.out.println("===  OLD CHANGES  ===\n");
 		System.out.println(approvedWriter.toString());
+		// System.out.println("===  NEW CHANGES Excel ===\n");
+		System.out.println(newWriterExcel.toString());
+		// System.out.println("===  OLD CHANGES  Excel ===\n");
+		System.out.println(approvedWriterExcel.toString());
 	}
 
 	OWLAnnotationProperty replaces = oucGetAnnotationProperty(REFACT_REPLACES_IRI);
@@ -168,43 +175,58 @@ public class GenerateRefactoringReport {
 		// Set<OWLAxiom> references = refactOntology.getaxiom
 
 		StringWriter writer = null;
+		StringWriter writerExcel = null;
 		for (OWLAxiom axiom : definingAxioms) {
 			Set<OWLAnnotation> nested = axiom.getAnnotations();
 			if (useAxiom(nested)) {
 				boolean multiple = checkMultipleApprove(nested); // TODO
 				if (isNew(nested)) {
 					writer = newWriter;
+					writerExcel = newWriterExcel;
 				} else {
 					writer = approvedWriter;
+					writerExcel = approvedWriterExcel;
+
 				}
 				mr.renderOWLObject(entity);
 				// if (!entityLineWritten) {
 				writer.append(entity.getEntityType().toString() + ": \"" + mr + "\" <" + entity.getIRI()
 						+ ">\n");
+				writerExcel.append(entity.getEntityType().toString() + "\t" + mr + "\t" + entity.getIRI()
+						+ "\t");
 				// entityLineWritten = true;
 				// }
 				mr.clearRenderer();
 				mr.renderOWLObject(axiom);
 				for (OWLAnnotation a : axiom.getAnnotations(added)) {
 					writer.append("  Add axiom: " + mr.toString() + "\n");
-					writer.append("  Reason: " + a.getValue().toString() + "\n");
+					writerExcel.append("Add axiom\t--\t" + mr.toString() + "\t--\t");
+					writer.append("  Reason: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
+					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + "\t");
 				}
 				for (OWLAnnotation a : axiom.getAnnotations(removed)) {
 					writer.append("  Remove axiom: " + mr.toString() + "\n");
-					writer.append("  Reason: " + a.getValue().toString() + "\n");
+					writerExcel.append("Remove axiom\t--\t" + mr.toString() + "\t--\t");
+					writer.append("  Reason: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
+					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + "\t");
 				}
 				mr.clearRenderer();
+				// writerExcel.append("--\t");
 				for (OWLAnnotation a : axiom.getAnnotations(comment)) {
-					writer.append("  Comment: " + a.getValue().toString() + "\n");
+					writer.append("  Comment: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
+					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + " -- ");
 				}
 				for (OWLAnnotation a : axiom.getAnnotations(approved)) {
-					writer.append("  Approval: " + a.getValue().toString() + "\n");
+					writer.append("  Approval: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
+					writer.append(((OWLLiteral) a.getValue()).getLiteral() + " -- ");
 				}
 
-				for (OWLAnnotation aAnnotation : entity.getAnnotations(refactOntology, module)) {
-					writer.append("  Module: " + aAnnotation.getValue().toString() + "\n");
+				for (OWLAnnotation a : entity.getAnnotations(refactOntology, module)) {
+					writer.append("  Module: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
+					writer.append("Module\t" + ((OWLLiteral) a.getValue()).getLiteral() + "\t");
 				}
 				writer.append("\n");
+				writerExcel.append("\n");
 			}
 		}
 
@@ -243,11 +265,15 @@ public class GenerateRefactoringReport {
 		Set<OWLAnnotation> nestedAnnotations = axiom.getAnnotations();
 		checkMultipleApprove(nestedAnnotations);
 		OWLAnnotation a = axiom.getAnnotation();
+		// Set<OWLEntity> entities =
+		// refactOntology.getEntitiesInSignature((IRI)a.getValue());
+		// for (OWLEntity e : entities) {
 		if (isNew(nestedAnnotations)) {
-			writeEntityLine(predicate, entity, a, newWriter, nestedAnnotations);
+			writeEntityLine(predicate, entity, a, newWriter, newWriterExcel, nestedAnnotations);
 		} else {
-			writeEntityLine(predicate, entity, a, approvedWriter, nestedAnnotations);
+			writeEntityLine(predicate, entity, a, approvedWriter, approvedWriterExcel, nestedAnnotations);
 		}
+		// }
 	}
 
 	private boolean checkMultipleApprove(Set<OWLAnnotation> annotations) {
@@ -263,55 +289,71 @@ public class GenerateRefactoringReport {
 	}
 
 	private void writeEntityLine(String predicate, OWLEntity entity, OWLAnnotation a,
-			StringWriter writer, Set<OWLAnnotation> nestedAnnotations) throws Exception {
+			StringWriter writer, StringWriter writerExcel, Set<OWLAnnotation> nestedAnnotations)
+			throws Exception {
 		mr.renderOWLObject(entity);
 		writer.append(entity.getEntityType().toString() + ": \"" + mr + "\" <" + entity.getIRI()
 				+ ">\n");
+		writerExcel.append(entity.getEntityType().toString() + "\t" + mr + "\t" + entity.getIRI()
+				+ "\t");
 		Set<OWLEntity> entities = refactOntology.getEntitiesInSignature((IRI) a.getValue(), true);
+		String entityTypes = "";
 		for (OWLEntity e : entities) {
-			mr.clearRenderer();
-			mr.renderOWLObject(e);
-			writer.append(predicate + e.getEntityType() + ": \"" + mr + "\" <" + e.getIRI() + ">\n");
+			entityTypes += " " + e.getEntityType();
 		}
+		entityTypes = entityTypes.trim();
+		// for (OWLEntity e : entities) {
+		mr.clearRenderer();
+		mr.renderOWLObject(entity);
+		writer.append(predicate + entityTypes + ": \"" + mr + "\" <" + entity.getIRI() + ">\n");
+		writerExcel.append(predicate.trim().substring(0, predicate.trim().length() - 1) + "\t"
+				+ entityTypes + "\t" + mr + "\t" + entity.getIRI() + "\t");
+		// }
 		mr.clearRenderer();
 		Set<String> lines = new HashSet<String>();
 		// now reason
 		for (OWLAnnotation aAnnotation : nestedAnnotations) {
 			if (aAnnotation.getProperty().equals(reason)) {
-				lines.add("  Reason: " + aAnnotation.getValue().toString() + "\n");
+				lines.add("  Reason: " + aAnnotation.getValue().toString());
 			}
 		}
-		writeOrderedLines(lines, writer);
+		writeOrderedLines(lines, writer, writerExcel);
 		lines.clear();
 		// new comments
 		for (OWLAnnotation aAnnotation : nestedAnnotations) {
 			if (aAnnotation.getProperty().equals(comment)) {
-				lines.add("  Comment: " + aAnnotation.getValue().toString() + "\n");
+				lines.add("  Comment: " + aAnnotation.getValue().toString());
 			}
 		}
-		writeOrderedLines(lines, writer);
+		writeOrderedLines(lines, writer, writerExcel);
 		lines.clear();
 		// now approval
 		for (OWLAnnotation aAnnotation : nestedAnnotations) {
 			if (aAnnotation.getProperty().equals(approved)) {
-				lines.add("  Approve: " + aAnnotation.getValue().toString() + "\n");
+				lines.add("  Approve: " + aAnnotation.getValue().toString());
 			}
 		}
 		for (OWLAnnotation aAnnotation : entity.getAnnotations(refactOntology, module)) {
-			lines.add("  Module: " + aAnnotation.getValue().toString() + "\n");
+			lines.add("  Module: " + aAnnotation.getValue().toString());
 		}
 
-		writeOrderedLines(lines, writer);
+		writeOrderedLines(lines, writer, writerExcel);
 		lines.clear();
 		writer.append("\n");
+		writerExcel.append("\n");
 	}
 
-	private void writeOrderedLines(Collection<String> strings, StringWriter writer) {
+	private void writeOrderedLines(Collection<String> strings, StringWriter writer,
+			StringWriter writerExcel) {
 		List<String> ordered = new ArrayList<String>(strings);
 		Collections.sort(ordered);
+		// writerExcel.append('"');
 		for (String s : ordered) {
-			writer.append(s);
+			writer.append(s + "\n");
+			int trim = s.indexOf(':');
+			writerExcel.append(s.substring(trim + 1).trim() + " -- ");
 		}
+		writerExcel.append("\t");
 	}
 
 	public void generateNew() {
