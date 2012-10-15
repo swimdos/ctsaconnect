@@ -1,4 +1,4 @@
-package net.ctsaconnect.misc;
+package net.ctsaconnect.properties;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,9 +12,15 @@ import java.util.Set;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLAnnotationPropertyDomainAxiom;
+import org.semanticweb.owlapi.model.OWLAnnotationPropertyRangeAxiom;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLDataRange;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -24,6 +30,8 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyIRIMapper;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLPropertyAxiom;
+import org.semanticweb.owlapi.model.OWLSubAnnotationPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubDataPropertyOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.util.AnnotationValueShortFormProvider;
@@ -41,8 +49,10 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxObjec
 public class PropertiesList {
 
 	OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+	OWLDataFactory df = man.getOWLDataFactory();
 
 	OWLOntology ontology;
+	OWLOntology propertiesOntology;
 	// Map<IRI, EntityInfo> entities = new HashMap<IRI,
 	// PropertiesList.EntityInfo>();
 	OWLOntology merged;
@@ -50,6 +60,9 @@ public class PropertiesList {
 	StringWriter sw;
 
 	private void run() throws Exception {
+
+		propertiesOntology = man.createOntology(IRI
+				.create("http://purl.obolibrary.org/obo/arg/module/property.owl"));
 
 		// setup rendering
 		List<OWLAnnotationProperty> renderingProps = new ArrayList<OWLAnnotationProperty>();
@@ -177,7 +190,9 @@ public class PropertiesList {
 		// properties.addAll(ontology.getAnnotationPropertiesInSignature());
 		properties.addAll(ontology.getObjectPropertiesInSignature(true));
 		properties.addAll(ontology.getDataPropertiesInSignature(true));
+		properties.addAll(ontology.getAnnotationPropertiesInSignature());
 		for (OWLEntity op : properties) {
+			man.addAxiom(propertiesOntology, df.getOWLDeclarationAxiom(op));
 			if (op instanceof OWLObjectProperty) {
 				OWLObjectProperty op1 = (OWLObjectProperty) op;
 				op1.accept(or);
@@ -276,21 +291,30 @@ public class PropertiesList {
 			System.out.println();
 
 		}
-		IRI i = IRI.create("http://vivoweb.org/ontology/core#addressState");
-		ontology.getSignature(true);
-		Set<OWLEntity> es = ontology.getEntitiesInSignature(i, true);
-		System.out.println(es);
 
-		// for (EntityInfo entityInfo : entities.values()) {
-		// // System.out.println(ei.labels + "  " + ei.entity);
-		// entityInfo.entity.accept(or);
-		// System.out.print("Property: ");
-		// or.flush();
-		// System.out.print("\tIRI: " + entityInfo.entity.getIRI());
-		// System.out.print("\tDomain: " + entityInfo.entity.getIRI());
-		//
-		// System.out.println();
-		// }
+		for (OWLEntity e : propertiesOntology.getSignature()) {
+			// add all annotations
+			man.addAxioms(propertiesOntology, e.getAnnotationAssertionAxioms(ontology));
+			for (OWLAxiom a : ontology.getAxioms()) {
+				if (a instanceof OWLDataPropertyAxiom || a instanceof OWLPropertyAxiom
+						|| a instanceof OWLAnnotationPropertyDomainAxiom
+						|| a instanceof OWLAnnotationPropertyRangeAxiom
+						|| a instanceof OWLSubAnnotationPropertyOfAxiom) {
+					man.addAxiom(propertiesOntology, a);
+					// make sure we have all the annotations for any class that is in the
+					// signature
+					for (OWLClass c : a.getClassesInSignature()) {
+						man.addAxioms(propertiesOntology, c.getAnnotationAssertionAxioms(ontology));
+						;
+					}
+				}
+				;
+			}
+
+		}
+
+		man.saveOntology(propertiesOntology, new FileOutputStream(new File(
+				"OWLFiles_generated/properties.owl")));
 
 	}
 
