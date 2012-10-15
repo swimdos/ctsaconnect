@@ -118,11 +118,13 @@ public class GenerateRefactoringReport {
 			writeOwlEntityReport(op);
 		}
 
-		System.out.println("===  NEW CHANGES  ===\n");
-		System.out.println(newWriter.toString());
-		System.out.println("===  OLD CHANGES  ===\n");
-		System.out.println(approvedWriter.toString());
+		// System.out.println("===  NEW CHANGES  ===\n");
+		// System.out.println(newWriter.toString());
+		// System.out.println("===  OLD CHANGES  ===\n");
+		// System.out.println(approvedWriter.toString());
 		// System.out.println("===  NEW CHANGES Excel ===\n");
+		System.out.print("Entity type\tEntity name\tEntity URI\tChange\tEntity type\tEntity name\t");
+		System.out.println("Entity URI\tReason\tComment\tApprove\tModule");
 		System.out.println(newWriterExcel.toString());
 		// System.out.println("===  OLD CHANGES  Excel ===\n");
 		System.out.println(approvedWriterExcel.toString());
@@ -179,6 +181,8 @@ public class GenerateRefactoringReport {
 		for (OWLAxiom axiom : definingAxioms) {
 			Set<OWLAnnotation> nested = axiom.getAnnotations();
 			if (useAxiom(nested)) {
+				boolean needsPadding = false; // Google spreadsheet ignores successive
+																			// tabs with no content in between
 				boolean multiple = checkMultipleApprove(nested); // TODO
 				if (isNew(nested)) {
 					writer = newWriter;
@@ -212,18 +216,39 @@ public class GenerateRefactoringReport {
 				}
 				mr.clearRenderer();
 				// writerExcel.append("--\t");
+				needsPadding = true;
 				for (OWLAnnotation a : axiom.getAnnotations(comment)) {
 					writer.append("  Comment: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
 					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + " -- ");
+					needsPadding = false;
 				}
+				if (needsPadding) {
+					writerExcel.append(" -- \t ");
+				} else {
+					writerExcel.append("\t");
+				}
+				needsPadding = true;
 				for (OWLAnnotation a : axiom.getAnnotations(approved)) {
 					writer.append("  Approval: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
-					writer.append(((OWLLiteral) a.getValue()).getLiteral() + " -- ");
+					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + " -- ");
+					needsPadding = false;
+				}
+				if (needsPadding) {
+					writerExcel.append(" -- \t ");
+				} else {
+					writerExcel.append("\t");
 				}
 
+				needsPadding = true;
 				for (OWLAnnotation a : entity.getAnnotations(refactOntology, module)) {
 					writer.append("  Module: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
-					writer.append("Module\t" + ((OWLLiteral) a.getValue()).getLiteral() + "\t");
+					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + " -- ");
+					needsPadding = false;
+				}
+				if (needsPadding) {
+					writerExcel.append(" -- \t ");
+				} else {
+					writerExcel.append("\t");
 				}
 				writer.append("\n");
 				writerExcel.append("\n");
@@ -333,6 +358,8 @@ public class GenerateRefactoringReport {
 				lines.add("  Approve: " + aAnnotation.getValue().toString());
 			}
 		}
+		writeOrderedLines(lines, writer, writerExcel);
+		lines.clear();
 		for (OWLAnnotation aAnnotation : entity.getAnnotations(refactOntology, module)) {
 			lines.add("  Module: " + aAnnotation.getValue().toString());
 		}
