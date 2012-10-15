@@ -89,15 +89,31 @@ public class GenerateModules {
 	}
 
 	private void writeModuleEntry(OWLObject object, String moduleAnnotation) throws Exception {
-		String[] tokens = moduleAnnotation.split("[ ]+");
+		String[] tokens = moduleAnnotation.split("[ \n]+");
 		for (String token : tokens) {
-			System.out.println("Doing token: "+token);
+			if (token.trim().equals(""))
+				continue;
+			//System.out.println("Doing token: " + token);
 			int index = token.lastIndexOf(':');
 			if (index > -1) {
 				// we have a colon
 				String moduleSuffix = token.substring(index + 1);
 				String moduleName = token.substring(0, index);
-				System.out.println("Writing to module: " + moduleName);
+				// check if the module assignment is approved
+				if (moduleSuffix.toLowerCase().equals("n")) {
+					// not approved
+					continue;
+				} else if (moduleSuffix.toLowerCase().equals("y")) {
+					// approved and should use
+					// get the letter before the "y" as the suffix
+					moduleSuffix = token.substring(index - 1, index);
+					moduleName = token.substring(0, index - 2);
+
+				} else {
+					// not yet decided
+					continue;
+				}
+				//System.out.println("Writing to module: " + moduleName);
 				if (moduleSuffix.toLowerCase().equals("d")) {
 					writeOwlObject(moduleName, moduleSuffix, object);
 
