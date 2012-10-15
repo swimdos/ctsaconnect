@@ -100,4 +100,16 @@ public class Const {
 	public static final String BASE_CLINICAL_INSTANCE_URI = "http://dev.ohsu.eagle-i.net/i/";
 	public static final String PRACTITIONER_LABEL_PREFIX = "practiotioner_";
 
+	// constants related to the refactoring owl file and related scripts
+
+	public static final String REFACT_AXIOM_ADDED_IRI = "http://arg-refactoring.owl/_isf_axiom_added";
+	public static final String REFACT_AXIOM_REMOVED_IRI = "http://arg-refactoring.owl/_isf_axiom_removed";
+	public static final String REFACT_COMMENT = "http://arg-refactoring.owl/_isf_comment";
+	public static final String REFACT_REPLACED_BY_IRI = "http://arg-refactoring.owl/_isf_replaced_by";
+	public static final String REFACT_REPLACES_IRI = "http://arg-refactoring.owl/_isf_replaces";
+	public static final String REFACT_POSSIBLE_REPLACED_BY_IRI = "http://arg-refactoring.owl/_isf_possible_replaced_by";
+	public static final String REFACT_POSSIBLE_REPLACES_IRI = "http://arg-refactoring.owl/_isf_possible_replaces";
+	public static final String REFACT_REASON_IRI = "http://arg-refactoring.owl/_isf_reason";
+	public static final String REFACT_APPROVED_IRI = "http://arg-refactoring.owl/_isf_approved";
+	public static final String REFACT_MODULE = "http://arg-refactoring.owl/_isf_module";
 }
