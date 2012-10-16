@@ -123,7 +123,7 @@ public class GenerateRefactoringReport {
 		// System.out.println(approvedWriter.toString());
 		// System.out.println("===  NEW CHANGES Excel ===\n");
 		System.out.print("Entity type\tEntity name\tEntity URI\tChange\tEntity type\tEntity name\t");
-		System.out.println("Entity URI\tReason\tComment\tApprove\tApproval\tModule");
+		System.out.print("Entity URI\tReason\tComment\tApprove\tApproval\tModule");
 		System.out.println(newWriterExcel.toString());
 		// System.out.println("===  OLD CHANGES  Excel ===\n");
 		System.out.println(approvedWriterExcel.toString());
@@ -253,7 +253,7 @@ public class GenerateRefactoringReport {
 
 						}
 					}
-				}else {
+				} else {
 					writerExcel.append(" - \t");
 				}
 
@@ -341,18 +341,23 @@ public class GenerateRefactoringReport {
 				+ ">\n");
 		writerExcel.append(entity.getEntityType().toString() + "\t" + mr + "\t" + entity.getIRI()
 				+ "\t");
-		Set<OWLEntity> entities = refactOntology.getEntitiesInSignature((IRI) a.getValue(), true);
+		IRI objectIri = (IRI) a.getValue();
+		Set<OWLEntity> entities = refactOntology.getEntitiesInSignature(objectIri, true);
 		String entityTypes = "";
+		OWLEntity firstObjectEntity = null;
 		for (OWLEntity e : entities) {
 			entityTypes += " " + e.getEntityType();
+			if (firstObjectEntity == null) {
+				firstObjectEntity = e;
+			}
 		}
 		entityTypes = entityTypes.trim();
 		// for (OWLEntity e : entities) {
 		mr.clearRenderer();
-		mr.renderOWLObject(entity);
-		writer.append(predicate + entityTypes + ": \"" + mr + "\" <" + entity.getIRI() + ">\n");
+		mr.renderOWLObject(firstObjectEntity);
+		writer.append(predicate + entityTypes + ": \"" + mr + "\" <" + objectIri + ">\n");
 		writerExcel.append(predicate.trim().substring(0, predicate.trim().length() - 1) + "\t"
-				+ entityTypes + "\t" + mr + "\t" + entity.getIRI() + "\t");
+				+ entityTypes + "\t" + mr + "\t" + objectIri + "\t");
 		// }
 		mr.clearRenderer();
 		Set<String> lines = new HashSet<String>();
