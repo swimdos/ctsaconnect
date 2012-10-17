@@ -1,5 +1,8 @@
 package net.ctsaconnect.misc;
 
+import static com.essaid.owlapi.util.OWLCreateUtil.*;
+import static net.ctsaconnect.common.Const.*;
+
 import java.io.File;
 import java.net.URL;
 import java.util.HashSet;
@@ -14,11 +17,8 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import static net.ctsaconnect.common.Const.*;
-import static com.essaid.owlapi.util.OWLCreateUtil.*;
 
 public class CheckInverses {
 

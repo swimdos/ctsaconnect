@@ -34,6 +34,10 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 public class GenerateRefactoringReport {
 
+	//TODO
+	// add a column for isf_todo annotations
+	//
+	
 	public static final String CATALOG_URL = "http://connect-isf.googlecode.com/svn/trunk/src/work-area/catalog-v001.xml";
 	public static final String SVN_TRUNK_ROOT = System.getProperty("isf.svn.trunk.root");
 
