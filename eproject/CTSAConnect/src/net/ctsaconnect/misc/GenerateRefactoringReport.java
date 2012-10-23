@@ -1,5 +1,8 @@
 package net.ctsaconnect.misc;
 
+import static com.essaid.owlapi.util.OWLCreateUtil.*;
+import static net.ctsaconnect.common.Const.*;
+
 import java.io.File;
 import java.io.StringWriter;
 import java.net.URL;
@@ -7,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -14,13 +18,10 @@ import org.protege.xmlcatalog.CatalogUtilities;
 import org.protege.xmlcatalog.XMLCatalog;
 import org.protege.xmlcatalog.owlapi.XMLCatalogIRIMapper;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLAnnotationSubject;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -31,14 +32,12 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
-import com.essaid.owlapi.visitor.AnnotationCollector;
-
-import static net.ctsaconnect.common.Const.*;
-import static com.essaid.owlapi.util.OWLQueryUtil.*;
-import static com.essaid.owlapi.util.OWLCreateUtil.*;
-
 public class GenerateRefactoringReport {
 
+	//TODO
+	// add a column for isf_todo annotations
+	//
+	
 	public static final String CATALOG_URL = "http://connect-isf.googlecode.com/svn/trunk/src/work-area/catalog-v001.xml";
 	public static final String SVN_TRUNK_ROOT = System.getProperty("isf.svn.trunk.root");
 
@@ -84,7 +83,11 @@ public class GenerateRefactoringReport {
 
 		
 		man.addIRIMapper(xmlm);
-		refactOntology = man.loadOntologyFromOntologyDocument(new File(SVN_TRUNK_ROOT+"/src/work-area/arg-refactoring.owl"));
+		// Open the ontology from a local file
+		// The SVN_TRUNK_ROOT needs to point to the root of trunk checkout.
+		//refactOntology = man.loadOntologyFromOntologyDocument(new File(SVN_TRUNK_ROOT+"/src/work-area/arg-refactoring.owl"));
+		// open the ontology from SVN
+		refactOntology = man.loadOntologyFromOntologyDocument(IRI.create("http://connect-isf.googlecode.com/svn/trunk/src/work-area/arg-refactoring.owl"));
 
 		
 		// for each class:
@@ -124,7 +127,7 @@ public class GenerateRefactoringReport {
 		// System.out.println(approvedWriter.toString());
 		// System.out.println("===  NEW CHANGES Excel ===\n");
 		System.out.print("Entity type\tEntity name\tEntity URI\tChange\tEntity type\tEntity name\t");
-		System.out.println("Entity URI\tReason\tComment\tApprove\tModule");
+		System.out.print("Entity URI\tReason\tComment\tApprove\tApproval\tModule");
 		System.out.println(newWriterExcel.toString());
 		// System.out.println("===  OLD CHANGES  Excel ===\n");
 		System.out.println(approvedWriterExcel.toString());
@@ -204,49 +207,68 @@ public class GenerateRefactoringReport {
 				mr.renderOWLObject(axiom);
 				for (OWLAnnotation a : axiom.getAnnotations(added)) {
 					writer.append("  Add axiom: " + mr.toString() + "\n");
-					writerExcel.append("Add axiom\t--\t" + mr.toString() + "\t--\t");
+					writerExcel.append("Add axiom\t-\t" + mr.toString() + "\t-\t");
 					writer.append("  Reason: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
 					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + "\t");
 				}
 				for (OWLAnnotation a : axiom.getAnnotations(removed)) {
 					writer.append("  Remove axiom: " + mr.toString() + "\n");
-					writerExcel.append("Remove axiom\t--\t" + mr.toString() + "\t--\t");
+					writerExcel.append("Remove axiom\t-\t" + mr.toString() + "\t-\t");
 					writer.append("  Reason: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
 					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + "\t");
 				}
 				mr.clearRenderer();
-				// writerExcel.append("--\t");
+				// writerExcel.append("-\t");
 				needsPadding = true;
 				for (OWLAnnotation a : axiom.getAnnotations(comment)) {
 					writer.append("  Comment: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
-					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + " -- ");
+					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + " - ");
 					needsPadding = false;
 				}
 				if (needsPadding) {
-					writerExcel.append(" -- \t ");
+					writerExcel.append(" - \t ");
 				} else {
 					writerExcel.append("\t");
 				}
 				needsPadding = true;
+				boolean hasApprove = false;
 				for (OWLAnnotation a : axiom.getAnnotations(approved)) {
 					writer.append("  Approval: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
-					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + " -- ");
+					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + " - ");
 					needsPadding = false;
+					hasApprove = true;
 				}
 				if (needsPadding) {
-					writerExcel.append(" -- \t ");
+					writerExcel.append(" - \t ");
 				} else {
 					writerExcel.append("\t");
+				}
+
+				if (hasApprove) {
+
+					if (writerExcel != approvedWriterExcel) {
+						writerExcel.append("NOT-SURE\t");
+					} else {
+						if (approvedReplacementYes) {
+							writerExcel.append("NO\t");
+
+						} else if (approvedReplacementNo) {
+							writerExcel.append("YES\t");
+
+						}
+					}
+				} else {
+					writerExcel.append(" - \t");
 				}
 
 				needsPadding = true;
 				for (OWLAnnotation a : entity.getAnnotations(refactOntology, module)) {
 					writer.append("  Module: " + ((OWLLiteral) a.getValue()).getLiteral() + "\n");
-					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + " -- ");
+					writerExcel.append(((OWLLiteral) a.getValue()).getLiteral() + " - ");
 					needsPadding = false;
 				}
 				if (needsPadding) {
-					writerExcel.append(" -- \t ");
+					writerExcel.append(" - \t ");
 				} else {
 					writerExcel.append("\t");
 				}
@@ -267,14 +289,16 @@ public class GenerateRefactoringReport {
 		return use;
 	}
 
+	boolean approvedReplacementYes = false;
+	boolean approvedReplacementNo = false;
+
 	private boolean isNew(Set<OWLAnnotation> nestedAnnotations) {
-		boolean approvedReplacementYes = false;
-		boolean approvedReplacementNo = false;
 		for (OWLAnnotation nestedA : nestedAnnotations) {
 			if (nestedA.getProperty().equals(approved)) {
-				if (nestedA.getValue().toString().trim().toLowerCase().startsWith("\"yes")) {
+				if (((OWLLiteral) nestedA.getValue()).getLiteral().trim().toLowerCase().startsWith("yes")) {
 					approvedReplacementYes = true;
-				} else if (nestedA.getValue().toString().trim().toLowerCase().startsWith("\"no")) {
+				} else if (((OWLLiteral) nestedA.getValue()).getLiteral().trim().toLowerCase()
+						.startsWith("no")) {
 					approvedReplacementNo = true;
 				} else {
 					// System.out.println("WARNING: " + a + " is not yes/no");
@@ -321,25 +345,30 @@ public class GenerateRefactoringReport {
 				+ ">\n");
 		writerExcel.append(entity.getEntityType().toString() + "\t" + mr + "\t" + entity.getIRI()
 				+ "\t");
-		Set<OWLEntity> entities = refactOntology.getEntitiesInSignature((IRI) a.getValue(), true);
+		IRI objectIri = (IRI) a.getValue();
+		Set<OWLEntity> entities = refactOntology.getEntitiesInSignature(objectIri, true);
 		String entityTypes = "";
+		OWLEntity firstObjectEntity = null;
 		for (OWLEntity e : entities) {
 			entityTypes += " " + e.getEntityType();
+			if (firstObjectEntity == null) {
+				firstObjectEntity = e;
+			}
 		}
 		entityTypes = entityTypes.trim();
 		// for (OWLEntity e : entities) {
 		mr.clearRenderer();
-		mr.renderOWLObject(entity);
-		writer.append(predicate + entityTypes + ": \"" + mr + "\" <" + entity.getIRI() + ">\n");
+		mr.renderOWLObject(firstObjectEntity);
+		writer.append(predicate + entityTypes + ": \"" + mr + "\" <" + objectIri + ">\n");
 		writerExcel.append(predicate.trim().substring(0, predicate.trim().length() - 1) + "\t"
-				+ entityTypes + "\t" + mr + "\t" + entity.getIRI() + "\t");
+				+ entityTypes + "\t" + mr + "\t" + objectIri + "\t");
 		// }
 		mr.clearRenderer();
 		Set<String> lines = new HashSet<String>();
 		// now reason
 		for (OWLAnnotation aAnnotation : nestedAnnotations) {
 			if (aAnnotation.getProperty().equals(reason)) {
-				lines.add("  Reason: " + aAnnotation.getValue().toString());
+				lines.add("  Reason: " + ((OWLLiteral) aAnnotation.getValue()).getLiteral());
 			}
 		}
 		writeOrderedLines(lines, writer, writerExcel);
@@ -347,7 +376,7 @@ public class GenerateRefactoringReport {
 		// new comments
 		for (OWLAnnotation aAnnotation : nestedAnnotations) {
 			if (aAnnotation.getProperty().equals(comment)) {
-				lines.add("  Comment: " + aAnnotation.getValue().toString());
+				lines.add("  Comment: " + ((OWLLiteral) aAnnotation.getValue()).getLiteral());
 			}
 		}
 		writeOrderedLines(lines, writer, writerExcel);
@@ -355,13 +384,31 @@ public class GenerateRefactoringReport {
 		// now approval
 		for (OWLAnnotation aAnnotation : nestedAnnotations) {
 			if (aAnnotation.getProperty().equals(approved)) {
-				lines.add("  Approve: " + aAnnotation.getValue().toString());
+				lines.add("  Approve: " + ((OWLLiteral) aAnnotation.getValue()).getLiteral());
+			}
+		}
+		writeOrderedLines(lines, writer, writerExcel);
+		lines.clear();
+		// now NEW/OLD
+		for (OWLAnnotation aAnnotation : nestedAnnotations) {
+			if (aAnnotation.getProperty().equals(approved)) {
+				String approveComment = ((OWLLiteral) aAnnotation.getValue()).getLiteral().toLowerCase();
+				if (approveComment.startsWith("yes")) {
+					lines.add("  NEW-OLD: YES");
+
+				} else if (approveComment.startsWith("no")) {
+					lines.add("  NEW-OLD: NO");
+
+				} else {
+					lines.add("  NEW-OLD: NOT-SURE");
+
+				}
 			}
 		}
 		writeOrderedLines(lines, writer, writerExcel);
 		lines.clear();
 		for (OWLAnnotation aAnnotation : entity.getAnnotations(refactOntology, module)) {
-			lines.add("  Module: " + aAnnotation.getValue().toString());
+			lines.add("  Module: " + ((OWLLiteral) aAnnotation.getValue()).getLiteral());
 		}
 
 		writeOrderedLines(lines, writer, writerExcel);
@@ -372,14 +419,28 @@ public class GenerateRefactoringReport {
 
 	private void writeOrderedLines(Collection<String> strings, StringWriter writer,
 			StringWriter writerExcel) {
+		if (strings.size() == 0) {
+			writerExcel.append(" - \t");
+			return;
+		}
 		List<String> ordered = new ArrayList<String>(strings);
 		Collections.sort(ordered);
 		// writerExcel.append('"');
-		for (String s : ordered) {
+		Iterator<String> i = ordered.iterator();
+		while (i.hasNext()) {
+			String s = i.next();
 			writer.append(s + "\n");
 			int trim = s.indexOf(':');
-			writerExcel.append(s.substring(trim + 1).trim() + " -- ");
+			writerExcel.append(s.substring(trim + 1).trim());
+			if (i.hasNext()) {
+				writerExcel.append(" - ");
+			}
 		}
+		// for (String s : ordered) {
+		// writer.append(s + "\n");
+		// int trim = s.indexOf(':');
+		// writerExcel.append(s.substring(trim + 1).trim() + " - ");
+		// }
 		writerExcel.append("\t");
 	}
 
