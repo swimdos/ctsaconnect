@@ -55,17 +55,19 @@ def evaluateProviderExpertise(providerList):
         print 'Getting data for provider %s' % (provider)
         results = generateCSVforExpertise(provider)
         filename = "./results/%s_expertise.xls" % (provider)
-        for entry in results:
-            writeCSV(provider, filename)
+        csvfile =  open(filename, 'wb')
+        # Write first row result
+        writeCSV(['PROVIDERID','DX_CODE','UNIQUE_PATIENTS','UNIQUE_CODE_OCCUR'], csvfile)
+        for row in results:
+            writeCSV(row, csvfile)
 
 ##############################################################################
 # Function that writes a csv in filename using the value returned by
 # executeGetICDCountSQL
 ##############################################################################
 
-def writeCSV(entry, filename):
-    csvfile = open(filename, 'wb')
-    spamwriter = csv.writer(csvfile, delimiter='\t', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+def writeCSV(entry, file):
+    spamwriter = csv.writer(file, delimiter='\t', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     spamwriter.writerow(entry)
 
 ##############################################################################
@@ -119,6 +121,7 @@ def generateCSVforExpertise(npi):
 FROM ctsadata.icd_simple WHERE ctsadata.icd_simple.npi ='%s' \
 GROUP BY ctsadata.icd_simple.icd \
 ORDER BY UNIQUE_PATIENTS DESC" % (npi)
+    print sql
 # Run query and get result
     cursor = db.cursor()
     try:
@@ -163,13 +166,14 @@ def main():
     print 'Starting execution'
     providerList = getUniqueProviders()
 
-# The block below generates files for histograms
+ #The block below generates files for histograms
 #    for provider in providerList:
 #        print 'Getting data for provider %s' % (provider)
 #        icd_results = executeGetICDCountSQL(provider)
 #        filename="./results/%s.xls" % (provider)
+#        csvfile =  open(filename, 'wb')
 #        for icd_entry in icd_results:
-#            writeCSV(provider, filename)
+#            writeCSV(icd_entry, csvfile)
 
     evaluateProviderExpertise(providerList)
 
