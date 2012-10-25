@@ -1,1 +1,3 @@
 * Initial version r0.01
+* October 25th 2015
+	- Added generateProviderSUmmary.py for generating CSV to be used by the expertise.py
