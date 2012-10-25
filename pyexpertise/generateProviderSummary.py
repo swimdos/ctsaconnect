@@ -121,7 +121,6 @@ def generateCSVforExpertise(npi):
 FROM ctsadata.icd_simple WHERE ctsadata.icd_simple.npi ='%s' \
 GROUP BY ctsadata.icd_simple.icd \
 ORDER BY UNIQUE_PATIENTS DESC" % (npi)
-    print sql
 # Run query and get result
     cursor = db.cursor()
     try:
