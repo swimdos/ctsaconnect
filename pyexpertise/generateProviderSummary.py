@@ -52,7 +52,7 @@ import csv
 def writeCSV(entry, filename):
     csvfile = open(filename, 'wb')
     spamwriter = csv.writer(csvfile, delimiter='\t', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    spamwriter.writerow(icd_entry)
+    spamwriter.writerow(entry)
 
 ##############################################################################
 # function that returns a DB connection
@@ -63,7 +63,8 @@ def getDB(host, port,  user, password, database):
 
 
 ##############################################################################
-# Execute the query to get the data for
+# Execute the query to get data about a provider as follows:
+# icd_code    icd_code_lable    icd_code_occurrrences
 ##############################################################################
 def executeGetICDCountSQL(npi):
     queryresults = []
@@ -95,35 +96,33 @@ ORDER BY Occurrence DESC" % (npi)
 # under ./queries
 ##############################################################################
 def getUniqueProviders():
-    providers_npi=[]
+    provider_npi=[]
     db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
     sql = "call getUniqueProviders()"
 
     # Run query and get result
     cursor = db.cursor()
     try:
-        print 'Calling getICDCount Stroe Procedure'
+        print 'Calling getICDCount Stored Procedure'
         cursor.execute(sql)
         result = cursor.fetchall()
     except Exception, e:
         print e
     # Loop through result
     for row in result:
-        providers_npi.append(row)
-
-    return providers_npi
+        provider_npi.append(row)
+    return provider_npi
 
 
 def main():
     print 'Starting execution'
-    providers = getUniqueProviders()
-    print providers
-    for provider_npi in providers:
-        print 'Getting data for provider %s' % (provider_npi)
-        filename="./results/%s.xls" % (provider_npi)
-        icd_results = executeGetICDCountSQL(provider_npi)
+    providerList = getUniqueProviders()
+    for provider in providerList:
+        print 'Getting data for provider %s' % (provider)
+        icd_results = executeGetICDCountSQL(provider)
+        filename="./results/%s.xls" % (provider)
         for icd_entry in icd_results:
-            writeCSV(provider_npi, filename)
+            writeCSV(provider, filename)
     print 'Done'
 
 if __name__ == '__main__':
