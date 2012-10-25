@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>CTSAConnect</name>
+	<name>ISF_SVN</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -27,10 +27,4 @@
 			<locationURI>ISF_SVN</locationURI>
 		</link>
 	</linkedResources>
-	<variableList>
-		<variable>
-			<name>ISF_SVN</name>
-			<value>file:/C:/shahim/svns/connect-isf-root/trunk</value>
-		</variable>
-	</variableList>
 </projectDescription>
