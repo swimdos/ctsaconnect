@@ -44,7 +44,7 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxObjec
 /**
  * Generates the arg.owl properties output for the google doc spreadsheet. It
  * needs to be changed to add line breaks between the class descriptions as seen
- * in the online document.
+ * in the online document. Dangola
  */
 public class PropertiesList {
 
