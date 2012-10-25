@@ -49,6 +49,20 @@ import csv
 # Function that writes a csv in filename using the value returned by
 # executeGetICDCountSQL
 ##############################################################################
+
+def evaluateProviderExpertise(providerList):
+    for provider in providerList:
+        print 'Getting data for provider %s' % (provider)
+        results = generateCSVforExpertise(provider)
+        filename = "./results/%s_expertise.xls" % (provider)
+        for entry in results:
+            writeCSV(provider, filename)
+
+##############################################################################
+# Function that writes a csv in filename using the value returned by
+# executeGetICDCountSQL
+##############################################################################
+
 def writeCSV(entry, filename):
     csvfile = open(filename, 'wb')
     spamwriter = csv.writer(csvfile, delimiter='\t', quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -57,6 +71,7 @@ def writeCSV(entry, filename):
 ##############################################################################
 # function that returns a DB connection
 ##############################################################################
+
 def getDB(host, port,  user, password, database):
     db = MySQLdb.connect(host=host, port=port, user=user, passwd=password, db=database)
     return db
@@ -66,6 +81,7 @@ def getDB(host, port,  user, password, database):
 # Execute the query to get data about a provider as follows:
 # icd_code    icd_code_lable    icd_code_occurrrences
 ##############################################################################
+
 def executeGetICDCountSQL(npi):
     queryresults = []
     db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
@@ -89,12 +105,41 @@ ORDER BY Occurrence DESC" % (npi)
     db.close()
     return queryresults
 
+##############################################################################
+# Execute the query to generate the csv used by expertise
+# PROVIDERID,DX_CODE,UNIQUE_PATIENTS,UNIQUE_CODE_OCCUR
+##############################################################################
+
+def generateCSVforExpertise(npi):
+    queryresults = []
+    db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
+    sql = "SELECT  ctsadata.icd_simple.npi AS PROVIDERID, ctsadata.icd_simple.icd AS DX_CODE,  \
+    COUNT(distinct ctsadata.icd_simple.patient_id) AS UNIQUE_PATIENTS,  \
+    COUNT( ctsadata.icd_simple.icd) AS UNIQUE_CODE_OCCUR \
+FROM ctsadata.icd_simple WHERE ctsadata.icd_simple.npi ='%s' \
+GROUP BY ctsadata.icd_simple.icd \
+ORDER BY UNIQUE_PATIENTS DESC" % (npi)
+# Run query and get result
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    except Exception, e:
+        print e
+    # Loop through result
+    for row in result:
+        queryresults.append(row)
+
+    # Close the Connection
+    db.close()
+    return queryresults
 
 ##############################################################################
 # Execute the stored Procedure getICDCount that return all the unique ID
 # for providers the source for the query can be found in getUniqueProviders.sql
 # under ./queries
 ##############################################################################
+
 def getUniqueProviders():
     provider_npi=[]
     db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
@@ -117,12 +162,17 @@ def getUniqueProviders():
 def main():
     print 'Starting execution'
     providerList = getUniqueProviders()
-    for provider in providerList:
-        print 'Getting data for provider %s' % (provider)
-        icd_results = executeGetICDCountSQL(provider)
-        filename="./results/%s.xls" % (provider)
-        for icd_entry in icd_results:
-            writeCSV(provider, filename)
+
+# The block below generates files for histograms
+#    for provider in providerList:
+#        print 'Getting data for provider %s' % (provider)
+#        icd_results = executeGetICDCountSQL(provider)
+#        filename="./results/%s.xls" % (provider)
+#        for icd_entry in icd_results:
+#            writeCSV(provider, filename)
+
+    evaluateProviderExpertise(providerList)
+
     print 'Done'
 
 if __name__ == '__main__':
