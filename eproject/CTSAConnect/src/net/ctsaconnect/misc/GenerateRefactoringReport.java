@@ -3,15 +3,21 @@ package net.ctsaconnect.misc;
 import static com.essaid.owlapi.util.OWLCreateUtil.*;
 import static net.ctsaconnect.common.Const.*;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.protege.xmlcatalog.CatalogUtilities;
@@ -34,10 +40,10 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 public class GenerateRefactoringReport {
 
-	//TODO
+	// TODO
 	// add a column for isf_todo annotations
 	//
-	
+
 	public static final String CATALOG_URL = "http://connect-isf.googlecode.com/svn/trunk/src/work-area/catalog-v001.xml";
 	public static final String SVN_TRUNK_ROOT = System.getProperty("isf.svn.trunk.root");
 
@@ -85,9 +91,9 @@ public class GenerateRefactoringReport {
 		man.addIRIMapper(xmlm);
 		// Open the ontology from a local file
 		// The SVN_TRUNK_ROOT needs to point to the root of trunk checkout.
-		//refactOntology = man.loadOntologyFromOntologyDocument(new File(SVN_TRUNK_ROOT+"/src/work-area/arg-refactoring.owl"));
+		refactOntology = man.loadOntologyFromOntologyDocument(new File(SVN_TRUNK_ROOT+"/src/work-area/arg-refactoring.owl"));
 		// open the ontology from SVN
-		refactOntology = man.loadOntologyFromOntologyDocument(IRI.create("http://connect-isf.googlecode.com/svn/trunk/src/work-area/arg-refactoring.owl"));
+		//refactOntology = man.loadOntologyFromOntologyDocument(IRI.create("http://connect-isf.googlecode.com/svn/trunk/src/work-area/arg-refactoring.owl"));
 
 		
 		// for each class:
@@ -126,7 +132,8 @@ public class GenerateRefactoringReport {
 		// System.out.println("===  OLD CHANGES  ===\n");
 		// System.out.println(approvedWriter.toString());
 		// System.out.println("===  NEW CHANGES Excel ===\n");
-		System.out.print("Entity type\tEntity name\tEntity URI\tChange\tEntity type\tEntity name\t");
+		System.out
+				.print("Manual notes\tEntity type\tEntity name\tEntity URI\tChange\tEntity type\tEntity name\t");
 		System.out.print("Entity URI\tReason\tComment\tApprove\tApproval\tModule");
 		System.out.println(newWriterExcel.toString());
 		// System.out.println("===  OLD CHANGES  Excel ===\n");
@@ -182,12 +189,12 @@ public class GenerateRefactoringReport {
 		StringWriter writer = null;
 		StringWriter writerExcel = null;
 		for (OWLAxiom axiom : definingAxioms) {
-			Set<OWLAnnotation> nested = axiom.getAnnotations();
-			if (useAxiom(nested)) {
+			Set<OWLAnnotation> nestedAnnotations = axiom.getAnnotations();
+			if (useAxiom(nestedAnnotations)) {
 				boolean needsPadding = false; // Google spreadsheet ignores successive
 																			// tabs with no content in between
-				boolean multiple = checkMultipleApprove(nested); // TODO
-				if (isNew(nested)) {
+				boolean multiple = checkMultipleApprove(nestedAnnotations); // TODO
+				if (isNew(nestedAnnotations)) {
 					writer = newWriter;
 					writerExcel = newWriterExcel;
 				} else {
@@ -195,6 +202,10 @@ public class GenerateRefactoringReport {
 					writerExcel = approvedWriterExcel;
 
 				}
+
+				// manual notes field
+				writerExcel.append("-\t");
+
 				mr.renderOWLObject(entity);
 				// if (!entityLineWritten) {
 				writer.append(entity.getEntityType().toString() + ": \"" + mr + "\" <" + entity.getIRI()
@@ -340,6 +351,8 @@ public class GenerateRefactoringReport {
 	private void writeEntityLine(String predicate, OWLEntity entity, OWLAnnotation a,
 			StringWriter writer, StringWriter writerExcel, Set<OWLAnnotation> nestedAnnotations)
 			throws Exception {
+		// first field
+		writerExcel.append("-\t");
 		mr.renderOWLObject(entity);
 		writer.append(entity.getEntityType().toString() + ": \"" + mr + "\" <" + entity.getIRI()
 				+ ">\n");
@@ -419,6 +432,7 @@ public class GenerateRefactoringReport {
 
 	private void writeOrderedLines(Collection<String> strings, StringWriter writer,
 			StringWriter writerExcel) {
+
 		if (strings.size() == 0) {
 			writerExcel.append(" - \t");
 			return;
@@ -469,6 +483,208 @@ public class GenerateRefactoringReport {
 		Collections.sort(comments);
 		return comments;
 
+	}
+
+	void addAnnotationBean(String annotationValue) throws IOException {
+		annotationBeans.add(new AnnotationBean(annotationValue));
+	}
+
+	Map<IRI, IRI> replacedByMap = new HashMap<IRI, IRI>();
+	Map<IRI, IRI> replacesMap = new HashMap<IRI, IRI>();
+	Set<AnnotationBean> annotationBeans = new HashSet<AnnotationBean>();
+
+	/**
+	 * The Class AnnoationBean.
+	 */
+	static class AnnotationBean {
+
+		String act;
+		Map<String, List<String>> data = null;
+		List<ModuleBean> modules;
+		List<String> reasons;
+		List<String> comments;
+		String approve;
+		List<String> types;
+
+		public List<String> getTypes() {
+			if (types == null) {
+				types = new ArrayList<String>();
+			}
+			return types;
+		}
+
+		public List<String> getReasons() {
+			if (reasons == null) {
+				reasons = new ArrayList<String>();
+			}
+			return reasons;
+		}
+
+		public List<String> getComments() {
+			if (comments == null) {
+				comments = new ArrayList<String>();
+			}
+			return comments;
+		}
+
+		public String getApprove() {
+			return approve;
+		}
+
+		public List<String> getTodos() {
+			if (todos == null) {
+				todos = new ArrayList<String>();
+			}
+			return todos;
+		}
+
+		List<String> todos;
+
+		AnnotationBean(String value) throws IOException {
+			StringReader sr = new StringReader(value);
+			BufferedReader br = new BufferedReader(sr);
+			String line;
+			boolean error = false;
+			while ((line = br.readLine()) != null) {
+				line = line.trim();
+				if (line.length() > 0) {
+					int col = line.indexOf(':');
+					if (col > -1) {
+						String field = line.substring(0, col).trim().toLowerCase();
+						if (!keys.contains(field)) {
+							error = true;
+						}
+						if (field.equals("act")) {
+							if (act != null) {
+								error = true;
+							}
+							act = line.substring(col + 1).trim().toLowerCase();
+						} else if (field.equals("reason")) {
+							getReasons().add(line.substring(col + 1).trim());
+						} else if (field.startsWith("com")) {
+							getComments().add(line.substring(col + 1).trim());
+						} else if (field.equals("todo")) {
+							getTodos().add(line.substring(col + 1).trim());
+						} else if (field.equals("approve")) {
+							if (approve != null) {
+								// there needs to be only one approve:
+								error = true;
+							}
+							approve = line.substring(col + 1).trim();
+						} else if (field.equals("type")) {
+							getTypes().add(line.substring(col + 1).trim());
+						} else if (field.startsWith("mod")) {
+							getModules().add(new ModuleBean(line.substring(col + 1).trim()));
+						} else {
+							// do the data map
+							List<String> datavalue = data.get(field);
+							if (datavalue == null) {
+								datavalue = new ArrayList<String>();
+								data.put(field, datavalue);
+							}
+							datavalue.add(line.substring(col + 1).trim());
+						}
+
+					} else {
+						error = true;
+					}
+				}
+			}
+
+			if (error) {
+				System.err.println("Error in populating annotations: " + value);
+			}
+		}
+
+		Set<String> keys = new HashSet<String>(Arrays.asList(new String[] { "com", "comment", "mod",
+				"module", "reason", "todo", "approve", "type", "act" }));
+
+		public Map<String, List<String>> getData() {
+			if (data == null) {
+				data = new HashMap<String, List<String>>();
+			}
+			return data;
+		}
+
+		public List<ModuleBean> getModules() {
+			if (modules == null) {
+				modules = new ArrayList<ModuleBean>();
+			}
+			return modules;
+		}
+
+		public void setModules(List<ModuleBean> modules) {
+			this.modules = modules;
+		}
+
+		public boolean isApproveSet() {
+			return approve.toLowerCase().startsWith("yes") || approve.toLowerCase().startsWith("no");
+		}
+
+		public boolean isApproved() {
+			return approve.toLowerCase().startsWith("yes");
+		}
+
+		public String getAct() {
+			return act;
+		}
+
+	}
+
+	static class ModuleBean {
+		String name;
+		boolean declareSet = false;
+		boolean declare = false;
+		boolean approvedSet = false;
+		boolean approved = false;
+
+		public String getName() {
+			return name;
+		}
+
+		public boolean isDeclareSet() {
+			return declareSet;
+		}
+
+		public boolean isDeclare() {
+			return declare;
+		}
+
+		public boolean isApprovedSet() {
+			return approvedSet;
+		}
+
+		public boolean isApproved() {
+			return approved;
+		}
+
+		ModuleBean(String value) {
+			String[] values = value.split(":");
+			name = values[0].toLowerCase();
+			if (values.length > 0) {
+				String d = values[1].toLowerCase();
+				if (d.equals("d")) {
+					declareSet = true;
+					declare = true;
+				} else if (d.equals("r")) {
+					declareSet = true;
+				} else {
+					System.out.println("ModuleBean error: " + value);
+				}
+			}
+
+			if (values.length > 1) {
+				String a = values[2].toLowerCase();
+				if (a.equals("y")) {
+					approvedSet = true;
+					approved = true;
+				} else if (a.equals("n")) {
+					approvedSet = true;
+				} else {
+					System.out.println("ModuleBean error: " + value);
+				}
+			}
+		}
 	}
 
 }

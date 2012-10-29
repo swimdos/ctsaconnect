@@ -112,4 +112,6 @@ public class Const {
 	public static final String REFACT_REASON_IRI = "http://arg-refactoring.owl/_isf_reason";
 	public static final String REFACT_APPROVED_IRI = "http://arg-refactoring.owl/_isf_approved";
 	public static final String REFACT_MODULE = "http://arg-refactoring.owl/_isf_module";
+	public static final String REFACT_ANNOTATION = "http://arg-refactoring.owl/_isf_annotation";
+	public static final String REFACT_REUSED_AS = "http://arg-refactoring.owl/_isf_reused_as";
 }
