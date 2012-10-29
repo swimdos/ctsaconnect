@@ -187,8 +187,8 @@ public class GenerateRefactoringReport_v2 {
 			}
 			if (bean != null) {
 
-				excelNewWriter.append(bean.getReasons().toString() + "\t");
-				excelNewWriter.append(bean.getComments().toString() + "\t");
+				excelNewWriter.append(getListAsString(bean.getReasons()) + "\t");
+				excelNewWriter.append(getListAsString(bean.getComments()) + "\t");
 				excelNewWriter.append(bean.getApprove() + "\t");
 				if (bean.isApproveSet()) {
 					if (bean.isApproved()) {
@@ -200,7 +200,8 @@ public class GenerateRefactoringReport_v2 {
 					excelNewWriter.append("UNDECIDED\t");
 				}
 
-				excelNewWriter.append(bean.getModules().toString() + "\t" + bean.getOriginal() + "\n");
+				excelNewWriter
+						.append(getListAsString(bean.getModules()) + "\t" + bean.getOriginal() + "\n");
 			} else {
 				excelNewWriter.append("-\t-\t-\t-\t-\t-\n");
 			}
@@ -222,12 +223,14 @@ public class GenerateRefactoringReport_v2 {
 			excelNewWriter.append(entity.getIRI() + "\t");
 			if (b.isUse()) {
 				excelNewWriter.append("USE\t");
+			} else if (b.isUseNew()) {
+				excelNewWriter.append("USE_NEW\t");
 			} else {
 				excelNewWriter.append("DONT_USE\t");
 			}
-			excelNewWriter.append("\t\t\t");
-			excelNewWriter.append(b.getReasons().toString() + "\t");
-			excelNewWriter.append(b.getComments().toString() + "\t");
+			excelNewWriter.append("DECLARE\t-\t-\t");
+			excelNewWriter.append(getListAsString(b.getReasons()) + "\t");
+			excelNewWriter.append(getListAsString(b.getComments()) + "\t");
 			excelNewWriter.append(b.getApprove() + "\t");
 			if (b.isApproveSet()) {
 				if (b.isApproved()) {
@@ -238,7 +241,7 @@ public class GenerateRefactoringReport_v2 {
 			} else {
 				excelNewWriter.append("UNDECIDED\t");
 			}
-			excelNewWriter.append(b.getModules().toString() + "\t");
+			excelNewWriter.append(getListAsString(b.getModules()) + "\t");
 			excelNewWriter.append(b.getOriginal() + "\n");
 
 		}
@@ -271,12 +274,16 @@ public class GenerateRefactoringReport_v2 {
 				excelNewWriter.append(entity.getIRI() + "\t");
 				if (b.isUse()) {
 					excelNewWriter.append("USE\t");
+				} else if (b.isUseNew()) {
+					excelNewWriter.append("USE_NEW\t");
 				} else {
 					excelNewWriter.append("DONT_USE\t");
 				}
-				excelNewWriter.append("\t\t\t");
-				excelNewWriter.append(b.getReasons().toString() + "\t");
-				excelNewWriter.append(b.getComments().toString() + "\t");
+				mr.clearRenderer();
+				mr.renderOWLObject(axiom);
+				excelNewWriter.append("AXIOM\t" + mr.toString() + "\t-\t");
+				excelNewWriter.append(getListAsString(b.getReasons()) + "\t");
+				excelNewWriter.append(getListAsString(b.getComments()) + "\t");
 				excelNewWriter.append(b.getApprove() + "\t");
 				if (b.isApproveSet()) {
 					if (b.isApproved()) {
@@ -287,12 +294,26 @@ public class GenerateRefactoringReport_v2 {
 				} else {
 					excelNewWriter.append("UNDECIDED\t");
 				}
-				excelNewWriter.append(b.getModules().toString() + "\t");
+				excelNewWriter.append(getListAsString(b.getModules()) + "\t");
 				excelNewWriter.append(b.getOriginal() + "\n");
 
 			}
 		}
 
+	}
+
+	String getListAsString(List<? extends Object> list) {
+		String string = "";
+		Iterator<? extends Object> i = list.iterator();
+		boolean first = true;
+		while (i.hasNext()) {
+			if (!first) {
+				string += " -- ";
+			}
+			string += i.next().toString();
+			first = false;
+		}
+		return string;
 	}
 
 	List<String> getEntityTypes(IRI iri) {
@@ -539,7 +560,11 @@ public class GenerateRefactoringReport_v2 {
 		}
 
 		public boolean isUse() {
-			return act.equals("use");
+			return act.startsWith("use");
+		}
+
+		public boolean isUseNew() {
+			return act.equals("usenew");
 		}
 
 		@Override
