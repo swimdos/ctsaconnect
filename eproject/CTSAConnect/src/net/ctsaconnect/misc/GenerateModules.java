@@ -13,19 +13,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.ctsaconnect.common.Const;
 import net.ctsaconnect.misc.GenerateRefactoringReport_v2.AnnotationBean;
 
-import org.openrdf.query.algebra.IsURI;
+import org.openrdf.model.vocabulary.RDFS;
 import org.protege.xmlcatalog.CatalogUtilities;
 import org.protege.xmlcatalog.XMLCatalog;
 import org.protege.xmlcatalog.owlapi.XMLCatalogIRIMapper;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.AddImport;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -82,6 +83,7 @@ public class GenerateModules {
 			genOntPendingMap.put(moduleName, o);
 			System.out.println("Recreated ontology pending map entry: " + moduleName + " -- "
 					+ moduleName);
+
 		}
 		System.out.println("Recreated the generated-pending ontologies.");
 		// System.out.println(SVN_TRUNK_ROOT);
@@ -137,6 +139,14 @@ public class GenerateModules {
 					OWLAnnotationAssertionAxiom aaa = i.next();
 					if (aaa.getProperty().getIRI().toString().contains("_isf_")) {
 						annotationAxiomsCopy.remove(aaa);
+						if (aaa.getProperty().getIRI().toString().equals(Const.REFACT_LABEL)) {
+							OWLLiteral literal = ((OWLLiteral) aaa.getValue());
+							annotationAxiomsCopy.add(df.getOWLAnnotationAssertionAxiom(
+									e.getIRI(),
+									df.getOWLAnnotation(
+											df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI()), literal)));
+
+						}
 						continue;
 					}
 					Set<OWLAnnotation> aa = aaa.getAnnotations(isfannotation);
@@ -158,23 +168,21 @@ public class GenerateModules {
 
 			}
 		}
-		// for (OWLAxiom axiom : argOntology.getAxioms()) {
-		// if (axiom instanceof OWLDeclarationAxiom || axiom instanceof
-		// OWLAnnotationAssertionAxiom) {
-		// continue;
-		// }
-		// mr.clearRenderer();
-		// mr.renderOWLObject(axiom);
-		// System.out.println("Axiom in axiom loop is: " + mr.toString());
-		// Set<OWLAnnotation> modAnnotations = axiom.getAnnotations(isfannotation);
-		// for (OWLAnnotation a : modAnnotations) {
-		// String modString = ((OWLLiteral) a.getValue()).getLiteral();
-		// AnnotationBean bean = new AnnotationBean(modString);
-		// writeModuleEntry(axiom, new HashSet<OWLAnnotationAssertionAxiom>(),
-		// bean);
-		// }
-		//
-		// }
+		for (OWLAxiom axiom : argOntology.getAxioms()) {
+			if (axiom instanceof OWLDeclarationAxiom || axiom instanceof OWLAnnotationAssertionAxiom) {
+				continue;
+			}
+			mr.clearRenderer();
+			mr.renderOWLObject(axiom);
+			System.out.println("Axiom in axiom loop is: " + mr.toString());
+			Set<OWLAnnotation> modAnnotations = axiom.getAnnotations(isfannotation);
+			for (OWLAnnotation a : modAnnotations) {
+				String modString = ((OWLLiteral) a.getValue()).getLiteral();
+				AnnotationBean bean = new AnnotationBean(modString);
+				writeModuleEntry(axiom, new HashSet<OWLAnnotationAssertionAxiom>(), bean);
+			}
+
+		}
 
 		saveOntologies();
 		System.out.println("Finished.");
@@ -303,6 +311,21 @@ public class GenerateModules {
 			genOntOldMap.put(moduleName, oldOntology);
 			System.out.println("Created old ontology and added to map: " + moduleName + " -- "
 					+ oldOntology);
+
+			// the view ontology
+			OWLOntology viewer = localMan.createOntology(IRI.create(ARG_BASE_URI + "arg/module/"
+					+ moduleName + "-generated-view.owl"));
+			localMan.setOntologyDocumentIRI(
+					viewer,
+					IRI.create(new File(SVN_TRUNK_ROOT + "/src/ontology/module/" + moduleName + "/"
+							+ moduleName + "-generated-view.owl").getAbsoluteFile().toURI()));
+			AddImport ai = new AddImport(viewer, df.getOWLImportsDeclaration(modulePendingOntology
+					.getOntologyID().getOntologyIRI()));
+			localMan.applyChange(ai);
+			ai = new AddImport(viewer, df.getOWLImportsDeclaration(moduleOntology.getOntologyID()
+					.getOntologyIRI()));
+			localMan.applyChange(ai);
+			localMan.saveOntology(viewer);
 		}
 
 		// add the axioms

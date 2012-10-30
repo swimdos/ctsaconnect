@@ -33,7 +33,6 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLiteral;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -146,7 +145,7 @@ public class GenerateRefactoringReport_v2 {
 				relacedByFlag = true;
 			} else {
 
-				// ignore the annotation for now
+				// ignore other annotations for now
 				continue;
 			}
 
@@ -200,8 +199,8 @@ public class GenerateRefactoringReport_v2 {
 					excelNewWriter.append("UNDECIDED\t");
 				}
 
-				excelNewWriter
-						.append(getListAsString(bean.getModules()) + "\t" + bean.getOriginal() + "\n");
+				excelNewWriter.append(getListAsString(bean.getModules()) + "\t"
+						+ getListAsString(bean.getTodos()) + "\t" + bean.getOriginal() + "\n");
 			} else {
 				excelNewWriter.append("-\t-\t-\t-\t-\t-\n");
 			}
@@ -223,10 +222,10 @@ public class GenerateRefactoringReport_v2 {
 			excelNewWriter.append(entity.getIRI() + "\t");
 			if (b.isActSet()) {
 
-				if (b.isUse()) {
-					excelNewWriter.append("USE\t");
-				} else if (b.isUseNew()) {
+				if (b.isUseNew()) {
 					excelNewWriter.append("USE_NEW\t");
+				} else if (b.isUse()) {
+					excelNewWriter.append("USE\t");
 				} else {
 					excelNewWriter.append("DONT_USE\t");
 				}
@@ -278,10 +277,10 @@ public class GenerateRefactoringReport_v2 {
 				}
 				excelNewWriter.append("\t" + mr.toString() + "\t");
 				excelNewWriter.append(entity.getIRI() + "\t");
-				if (b.isUse()) {
-					excelNewWriter.append("USE\t");
-				} else if (b.isUseNew()) {
+				if (b.isUseNew()) {
 					excelNewWriter.append("USE_NEW\t");
+				} else if (b.isUse()) {
+					excelNewWriter.append("USE\t");
 				} else {
 					excelNewWriter.append("DONT_USE\t");
 				}
@@ -319,6 +318,9 @@ public class GenerateRefactoringReport_v2 {
 			}
 			string += i.next().toString();
 			first = false;
+		}
+		if (string.trim().isEmpty()) {
+			return "-";
 		}
 		return string;
 	}
