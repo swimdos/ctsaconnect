@@ -108,7 +108,7 @@ public class GenerateRefactoringReport_v2 {
 		System.out
 				.print("Manual notes\tEntity type\tEntity name\tEntity URI\tChange\tEntity type\tEntity name\t");
 		System.out
-				.print("Entity URI\tReason\tComment\tApprove\tApproval\tModule\tOriginal annotation\n");
+				.print("Entity URI\tReason\tComment\tApprove\tApproval\tModule\tTODO\tOriginal annotation\n");
 		System.out.println(excelNewWriter.toString());
 		// System.out.println("===  OLD CHANGES  Excel ===\n");
 		// System.out.println(excelApprovedWriter.toString());
@@ -140,13 +140,13 @@ public class GenerateRefactoringReport_v2 {
 			if (axiom.getProperty().equals(replaces)) {
 				replacement = (IRI) axiom.getSubject();
 				replaced = (IRI) axiom.getValue();
-			} else
-
-			if (axiom.getProperty().equals(replacedBy)) {
+			} else if (axiom.getProperty().equals(replacedBy)) {
 				replaced = (IRI) axiom.getSubject();
 				replacement = (IRI) axiom.getValue();
 				relacedByFlag = true;
 			} else {
+
+				// ignore the annotation for now
 				continue;
 			}
 
@@ -221,14 +221,19 @@ public class GenerateRefactoringReport_v2 {
 			}
 			excelNewWriter.append("\t" + mr.toString() + "\t");
 			excelNewWriter.append(entity.getIRI() + "\t");
-			if (b.isUse()) {
-				excelNewWriter.append("USE\t");
-			} else if (b.isUseNew()) {
-				excelNewWriter.append("USE_NEW\t");
+			if (b.isActSet()) {
+
+				if (b.isUse()) {
+					excelNewWriter.append("USE\t");
+				} else if (b.isUseNew()) {
+					excelNewWriter.append("USE_NEW\t");
+				} else {
+					excelNewWriter.append("DONT_USE\t");
+				}
+				excelNewWriter.append("DECLARE\t-\t-\t");
 			} else {
-				excelNewWriter.append("DONT_USE\t");
+				excelNewWriter.append("-\t-\t");
 			}
-			excelNewWriter.append("DECLARE\t-\t-\t");
 			excelNewWriter.append(getListAsString(b.getReasons()) + "\t");
 			excelNewWriter.append(getListAsString(b.getComments()) + "\t");
 			excelNewWriter.append(b.getApprove() + "\t");
@@ -242,6 +247,7 @@ public class GenerateRefactoringReport_v2 {
 				excelNewWriter.append("UNDECIDED\t");
 			}
 			excelNewWriter.append(getListAsString(b.getModules()) + "\t");
+			excelNewWriter.append(getListAsString(b.getTodos()) + "\t");
 			excelNewWriter.append(b.getOriginal() + "\n");
 
 		}
@@ -295,6 +301,7 @@ public class GenerateRefactoringReport_v2 {
 					excelNewWriter.append("UNDECIDED\t");
 				}
 				excelNewWriter.append(getListAsString(b.getModules()) + "\t");
+				excelNewWriter.append(getListAsString(b.getTodos()) + "\t");
 				excelNewWriter.append(b.getOriginal() + "\n");
 
 			}

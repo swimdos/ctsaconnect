@@ -114,4 +114,5 @@ public class Const {
 	public static final String REFACT_MODULE = "http://arg-refactoring.owl/_isf_module";
 	public static final String REFACT_ANNOTATION = "http://arg-refactoring.owl/_isf_annotation";
 	public static final String REFACT_REUSED_AS = "http://arg-refactoring.owl/_isf_reused_as";
+	public static final String REFACT_LABEL = "http://arg-refactoring.owl/_isf_label";
 }
