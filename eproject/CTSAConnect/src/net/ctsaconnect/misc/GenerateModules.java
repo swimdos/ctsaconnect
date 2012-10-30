@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.ctsaconnect.common.Const;
-import net.ctsaconnect.misc.GenerateRefactoringReport_v2.AnnotationBean;
+import net.ctsaconnect.misc.GenerateRefactoringReport.AnnotationBean;
 
 import org.openrdf.model.vocabulary.RDFS;
 import org.protege.xmlcatalog.CatalogUtilities;
@@ -220,7 +220,7 @@ public class GenerateModules {
 			return;
 		}
 
-		for (net.ctsaconnect.misc.GenerateRefactoringReport_v2.ModuleBean mb : bean.getModules()) {
+		for (net.ctsaconnect.misc.GenerateRefactoringReport.ModuleBean mb : bean.getModules()) {
 			approved = false;
 			notApproved = false;
 			declared = false;
