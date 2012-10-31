@@ -87,13 +87,19 @@ public class GenerateModules {
 		}
 		System.out.println("Recreated the generated-pending ontologies.");
 		// System.out.println(SVN_TRUNK_ROOT);
-		XMLCatalog catalog = CatalogUtilities.parseDocument(new URL(CATALOG_URL));
+		// XMLCatalog catalog = CatalogUtilities.parseDocument(new
+		// URL(CATALOG_URL));
 		// this is the OWLAPI mapper that can be used to configure a manager to
 		// resolve URLs based on the catalog entries.
-		XMLCatalogIRIMapper xmlm = new XMLCatalogIRIMapper(catalog);
-		man.addIRIMapper(xmlm);
-		argOntology = man.loadOntologyFromOntologyDocument(new File(SVN_TRUNK_ROOT
-				+ "/src/work-area/arg-refactoring.owl"));
+		// XMLCatalogIRIMapper xmlm = new XMLCatalogIRIMapper(catalog);
+		// man.addIRIMapper(xmlm);
+		// argOntology = man.loadOntologyFromOntologyDocument(new
+		// File(SVN_TRUNK_ROOT
+		// + "/src/work-area/arg-refactoring.owl"));
+		ISFOntologies isf = new ISFOntologies();
+		isf.loadLocalResolveCatalog();
+		man = isf.getManager();
+		argOntology = man.getOntology(IRI.create("http://arg-refactoring.owl"));
 
 		mr = ManchesterRenderer.getRenderer(man);
 		System.out.println("Loaded ISF");
