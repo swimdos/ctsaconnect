@@ -60,22 +60,25 @@ public class GenerateRefactoringReport {
 	}
 
 	public void generate() throws Exception {
-		man = OWLManager.createOWLOntologyManager();
+		ISFOntologies isf = new ISFOntologies();
+		isf.loadLocalResolveCatalog();
+		man=isf.getManager();
+		//man = OWLManager.createOWLOntologyManager();
 
-		// System.out.println(SVN_TRUNK_ROOT);
-		XMLCatalog catalog = CatalogUtilities.parseDocument(new URL(CATALOG_URL));
+		//XMLCatalog catalog = CatalogUtilities.parseDocument(new URL(CATALOG_URL));
 		// this is the OWLAPI mapper that can be used to configure a manager to
 		// resolve URLs based on the catalog entries.
-		XMLCatalogIRIMapper xmlm = new XMLCatalogIRIMapper(catalog);
+		//XMLCatalogIRIMapper xmlm = new XMLCatalogIRIMapper(catalog);
 
 //@formatter:off	
 		
 
 		
-		man.addIRIMapper(xmlm);
+		//man.addIRIMapper(xmlm);
 		// Open the ontology from a local file
 		// The SVN_TRUNK_ROOT needs to point to the root of trunk checkout.
-		refactOntology = man.loadOntologyFromOntologyDocument(new File(SVN_TRUNK_ROOT+"/src/work-area/arg-refactoring.owl"));
+		refactOntology = man.getOntology(IRI.create("http://arg-refactoring.owl"));
+		//refactOntology = man.loadOntologyFromOntologyDocument(new File(SVN_TRUNK_ROOT+"/src/work-area/arg-refactoring.owl"));
 		mr = ManchesterRenderer.getRenderer(man);
 		// open the ontology from SVN
 		//refactOntology = man.loadOntologyFromOntologyDocument(IRI.create("http://connect-isf.googlecode.com/svn/trunk/src/work-area/arg-refactoring.owl"));
@@ -124,6 +127,7 @@ public class GenerateRefactoringReport {
 	OWLAnnotationProperty removed = oucGetAnnotationProperty(REFACT_AXIOM_REMOVED_IRI);
 	OWLAnnotationProperty module = oucGetAnnotationProperty(REFACT_MODULE);
 	OWLAnnotationProperty isfannotation = oucGetAnnotationProperty(REFACT_ANNOTATION);
+	OWLAnnotationProperty isflabel = oucGetAnnotationProperty(REFACT_LABEL);
 
 	public void writeOwlEntityReport(OWLEntity entity) throws Exception {
 		mr.clearRenderer();
@@ -262,6 +266,15 @@ public class GenerateRefactoringReport {
 		if (entity instanceof OWLDataProperty) {
 			definingAxioms.addAll(refactOntology.getAxioms((OWLDataProperty) entity));
 		}
+		
+		// add the override label
+		for (OWLAnnotationAssertionAxiom a : refactOntology.getAnnotationAssertionAxioms(entity
+				.getIRI())) {
+			if (a.getProperty().equals(isflabel)) {
+				definingAxioms.add(a);
+			}
+		}
+
 		Collections.sort(definingAxioms);
 
 		for (OWLAxiom axiom : definingAxioms) {
