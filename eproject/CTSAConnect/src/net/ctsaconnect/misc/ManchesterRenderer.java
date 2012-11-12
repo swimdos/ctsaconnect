@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.ctsaconnect.common.Const;
+
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.OWLRendererException;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -32,6 +35,9 @@ public class ManchesterRenderer extends ManchesterOWLSyntaxObjectRenderer {
 		// setup rendering
 		List<OWLAnnotationProperty> renderingProps = new ArrayList<OWLAnnotationProperty>();
 		OWLAnnotationProperty ap = OWLManager.getOWLDataFactory().getOWLAnnotationProperty(
+				IRI.create(Const.REFACT_LABEL));
+		renderingProps.add(ap);
+		ap = OWLManager.getOWLDataFactory().getOWLAnnotationProperty(
 				OWLRDFVocabulary.RDFS_LABEL.getIRI());
 		renderingProps.add(ap);
 		HashMap<OWLAnnotationProperty, List<String>> map = new HashMap<OWLAnnotationProperty, List<String>>();

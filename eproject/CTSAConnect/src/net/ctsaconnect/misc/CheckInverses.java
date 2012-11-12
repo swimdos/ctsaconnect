@@ -16,7 +16,10 @@ import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
@@ -39,6 +42,7 @@ public class CheckInverses {
 				+ "/src/work-area/arg-refactoring.owl"));
 
 		Set<String> properties = new HashSet<String>();
+		OWLAnnotationProperty isfannotation = oucGetAnnotationProperty(REFACT_ANNOTATION);
 		properties.add(REFACT_REPLACES_IRI);
 		properties.add(REFACT_REPLACED_BY_IRI);
 		properties.add(REFACT_POSSIBLE_REPLACES_IRI);
@@ -52,6 +56,13 @@ public class CheckInverses {
 
 				OWLAnnotationAssertionAxiom aaaAdded = null;
 				if (ap.getIRI().toString().equals(REFACT_REPLACED_BY_IRI)) {
+
+					if (aaa.getAnnotations(isfannotation).size() != 1) {
+						System.err
+								.println("Error, 'replaced by' annotation axiom has NO/MULTIPLE isf annotation: "
+										+ aaa.toString());
+						;
+					}
 					aaaAdded = oucGetAnnotationAssertionAxiom(object,
 							oucGetAnnotationProperty(REFACT_REPLACES_IRI).getIRI(), subject);
 					if (!refactoringOntology.containsAxiomIgnoreAnnotations(aaaAdded)) {
@@ -60,6 +71,12 @@ public class CheckInverses {
 					}
 				}
 				if (ap.getIRI().toString().equals(REFACT_REPLACES_IRI)) {
+					// there should be no annotation in this direction
+					if (aaa.getAnnotations(isfannotation).size() > 0) {
+						System.err.println("Error, 'replaced' annotation axiom has AN isf annotation: "
+								+ aaa.toString());
+						;
+					}
 					aaaAdded = oucGetAnnotationAssertionAxiom(object,
 							oucGetAnnotationProperty(REFACT_REPLACED_BY_IRI).getIRI(), subject);
 					if (!refactoringOntology.containsAxiomIgnoreAnnotations(aaaAdded)) {
@@ -84,6 +101,19 @@ public class CheckInverses {
 					}
 				}
 
+			}
+		}
+
+		for (OWLAxiom axiom : refactoringOntology.getAxioms()) {
+			if (axiom instanceof OWLLogicalAxiom) {
+				if (axiom.getAnnotations(isfannotation).size() > 1) {
+					System.err.println("Axiom has more than one isf annotation: " + axiom);
+				}
+			}
+		}
+		for (OWLEntity entity : refactoringOntology.getSignature()) {
+			if (entity.getAnnotations(refactoringOntology, isfannotation).size() > 1) {
+				System.err.println("Entity has more than one isf annotation: " + entity);
 			}
 		}
 		man.saveOntology(refactoringOntology);
