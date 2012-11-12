@@ -86,7 +86,7 @@ for i, row in enumerate(csv.reader(open('icdtestdata','rb'), delimiter=',')):
     if not i or not row:
         continue
     PROVIDERID, DX_CODE, UNIQUE_PATIENTS, UNIQUE_CODE_OCCUR = row
-    data[PROVIDERID].append(float(UNIQUE_PATIENTS))
+    data[PROVIDERID].append(float(    ))
 
   
     
