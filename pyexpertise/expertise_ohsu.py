@@ -34,7 +34,10 @@ from collections import defaultdict
 
 ##############################################################################
 # Summary:
-# Purpose of this module is to calculate Expertise of a Provider by finding
+# This modules uses the OHSU csv files in order to calculate Expertise for Provider.
+# Currently at each steps are generate excel files for debugging checking purposes
+#
+# First of all we find t
 # the weight of each diagnosis or procedure code. The weight is determined by
 # first calculating the percentage of each patient with each diagnosis/proc
 #
@@ -49,45 +52,21 @@ from collections import defaultdict
 #
 # Formula: (CODE_PERCENT_PATIENTS * CODE_OCCURRENCE_FREQUENCY)
 #
+# TO DO:
+# Have all the calculation happen in memory with sets of dict
 ##############################################################################
 
 
-
-
-
-
-
-
-##############################################################################
-#   Function to count how many patients TOTAL for each PROVIDER_ID
-##############################################################################
-
-
-#def totalpatients(PROVIDER_ID):
-
-
-#TODO: replace all this. this is just prototyping
-#Sample Data ( Later to Come from Triple Store )
-# TODO: Add code to query Triple store to create this array of data
-
-#PROVIDERID,DX_CODE,UNIQUE_PATIENTS,UNIQUE_CODE_OCCUR
-#94376254889,530.1,10,11
-#94376254889,530.3,20,21
-
-
-
-#Read in the data from the csv file.
-#This csv file must be in the same directory as the program
-#otherwise you need to specify full path. Clean this up later.
-
-##############################################################################
-# Function that writes a csv in filename using the value returned by
-# executeGetICDCountSQL
-##############################################################################
 
 def writeCSV(entry, file):
+#===============================================================================
+#   Function that writes a csv in filename using the value returned by
+#   executeGetICDCountSQL
+#
+#===============================================================================
     spamwriter = csv.writer(file, delimiter='\t', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     spamwriter.writerow(entry)
+
 
 def readPatientIdsTotalPatient(filename):
 #===============================================================================
@@ -120,7 +99,7 @@ def percentofpatientsbycode(provider_id, total_patient):
     percentage_code_file = open(percentage_code_file_name, 'wb')
     expertise_file = open(expertise_file_name, 'rU')
     # Intialize the ooutput file
-    writeCSV(['DX_CODE','CODE_UNIQUE_PTIENTS','TOTAL_PATIENTS', 'CODE_PERC_PAT'], percentage_code_file)
+    writeCSV(['DX_CODE','CODE_UNIQUE_PATIENTS','TOTAL_PATIENTS', 'CODE_PERC_PAT'], percentage_code_file)
     dialect = csv.Sniffer().sniff(expertise_file.readline())
     expertise_file.seek(0)
     reader = csv.DictReader(expertise_file, dialect=dialect)
@@ -131,25 +110,56 @@ def percentofpatientsbycode(provider_id, total_patient):
         code_percentage_patients =  ((code_unique_patients / float(total_patient)) * 100)
         output_row = [code, code_unique_patients, total_patient, code_percentage_patients]
         #print output_row
-        # write the percentage of codes excel for each patient
+        # write the percentage for each code in an excel for each practitioner
         writeCSV(output_row, percentage_code_file)
     percentage_code_file.close()
     expertise_file.close()
-##############################################################################
-#Function to calculate the frequency of the code occurrence
-# Formula: (UNIQUE_CODE_OCCUR/CODE_UNIQUE_PATIENTS) = CODE_OCCURRENCE_FREQUENCY
-##############################################################################
-
-# def freqcodeoccur(PROVIDER_ID):
 
 
-##############################################################################
-#Function to calculate the code weight for this provider
-# Formula: (CODE_PERCENT_PATIENTS * CODE_OCCURRENCE_FREQUENCY)
-##############################################################################
 
-# def providercodeweight(PROVIDER_ID):
+def freqcodeoccur(provider_id, total_patient):
+#===============================================================================
+#   Function to calculate the frequency of the code occurrence
+#   Formula: (UNIQUE_CODE_OCCUR/CODE_UNIQUE_PATIENTS) = CODE_OCCURRENCE_FREQUENCY
+#   Currently writes a new file using the subsequent files I've created again for
+#   debug / checking purposes
+#===============================================================================
 
+# read the Excel_fiel for the provider ID
+    expertise_file_name='./results/'+provider_id+'_expertise.xls'
+    frequency_code_file_name = './results/'+provider_id+'_frequency_codes.xls'
+    frequency_code_file = open(frequency_code_file_name, 'wb')
+    expertise_file = open(expertise_file_name, 'rU')
+    # Intialize the ooutput file
+    writeCSV(['PROVIDER_ID', 'DX_CODE','CODE_UNIQUE_PATIENTS', 'UNIQUE_CODE_OCCUR','TOTAL_PATIENTS', 'CODE_PERC_PAT', 'CODE_FREQ'], frequency_code_file)
+    dialect = csv.Sniffer().sniff(expertise_file.readline())
+    expertise_file.seek(0)
+    reader = csv.DictReader(expertise_file, dialect=dialect)
+    for line in reader:
+        code = line['DX_CODE']
+        code_occurrences= int(line ['UNIQUE_CODE_OCCUR'])
+        code_unique_patients = int ( line ['UNIQUE_PATIENTS'])
+        # write this in the  percentage_code_file
+        code_percentage_patients =  ((code_unique_patients / float(total_patient)) * 100)
+        code_frequency = (code_occurrences / float (code_unique_patients))
+        output_row = [provider_id, code, code_unique_patients, code_occurrences, total_patient, code_percentage_patients, code_frequency]
+        #print output_row
+        # write the percentage for each code in an excel for each practitioner
+        writeCSV(output_row, frequency_code_file)
+    frequency_code_file.close()
+    expertise_file.close()
+
+
+
+
+
+def providercodeweight(provider_id, total_patient):
+#===============================================================================
+#   Function to calculate the code weight for this provider
+#   Formula: (CODE_PERCENT_PATIENTS * CODE_OCCURRENCE_FREQUENCY)
+#   Currently writes a new file using the subsequent files I've created  for
+#   debug / checking purposes
+#===============================================================================
     # p = PROVIDER_ID
     # tp = totalpatients(p)
     # ppbc = percentofpatientsbycode(p)
@@ -159,8 +169,32 @@ def percentofpatientsbycode(provider_id, total_patient):
 
     # return pcw
 
+    expertise_file_name='./results/'+provider_id+'_expertise.xls'
+    expertise_file = open(expertise_file_name, 'rU')
+    code_weight_file_name = './results/'+provider_id+'_weight_code.xls'
+    code_weight_file= open(code_weight_file_name, 'wb')
 
-# main() calls the above functions with inputs,
+    # Intialize the ooutput file
+    writeCSV(['PROVIDER_ID', 'DX_CODE','CODE_UNIQUE_PATIENTS', 'UNIQUE_CODE_OCCUR','TOTAL_PATIENTS', 'CODE_PERC_PAT', 'CODE_FREQ', 'CODE_WEIGHT'], code_weight_file)
+    dialect = csv.Sniffer().sniff(expertise_file.readline(), )
+    expertise_file.seek(0)
+    reader = csv.DictReader(expertise_file, dialect=dialect)
+    for line in reader:
+        code = line['DX_CODE']
+        code_occurrences= int(line ['UNIQUE_CODE_OCCUR'])
+        code_unique_patients = int ( line ['UNIQUE_PATIENTS'])
+        # write this in the  percentage_code_file
+        code_percentage_patients =  ((code_unique_patients / float(total_patient)) * 100)
+        code_frequency = (code_occurrences / float (code_unique_patients))
+        code_weight= code_percentage_patients * code_frequency
+        output_row = [provider_id, code, code_unique_patients, code_occurrences, total_patient, code_percentage_patients, code_frequency, code_weight]
+        #print output_row
+        # write the percentage for each code in an excel for each practitioner
+        writeCSV(output_row, code_weight_file)
+    code_weight_file.close()
+    expertise_file.close()
+
+
 def main():
 
     # get the list of providers and their total patients
@@ -169,8 +203,15 @@ def main():
     # For each provider calculate the percentage of patients by code
     for provider, total_patients in providerTotalPatients.items():
         print provider, total_patients
-        percentofpatientsbycode (provider, total_patients)
 
+        # Calculate the percentage of patients by code
+        #percentofpatientsbycode (provider, total_patients)
+
+        # Write the combined file with code percentages and codes frequency
+        #freqcodeoccur(provider, total_patients)
+
+        # Generatet the comulative file for each patient
+        providercodeweight(provider, total_patients)
 
 if __name__ == '__main__':
     main()
