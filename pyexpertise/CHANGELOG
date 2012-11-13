@@ -1,3 +1,4 @@
 * Initial version r0.01
 * October 25th 2015
 	- Added generateProviderSUmmary.py for generating CSV to be used by the expertise.py
+* Added expertise_ohsu.py to generate weighted expertise for single providers
