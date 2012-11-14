@@ -176,7 +176,7 @@ def providercodeweight(provider_id, total_patient):
 
     # Intialize the ooutput file
     writeCSV(['PROVIDER_ID', 'DX_CODE','CODE_UNIQUE_PATIENTS', 'UNIQUE_CODE_OCCUR','TOTAL_PATIENTS', 'CODE_PERC_PAT', 'CODE_FREQ', 'CODE_WEIGHT'], code_weight_file)
-    dialect = csv.Sniffer().sniff(expertise_file.readline(), )
+    dialect = csv.Sniffer().sniff(expertise_file.readline(),)
     expertise_file.seek(0)
     reader = csv.DictReader(expertise_file, dialect=dialect)
     for line in reader:
@@ -193,6 +193,7 @@ def providercodeweight(provider_id, total_patient):
         writeCSV(output_row, code_weight_file)
     code_weight_file.close()
     expertise_file.close()
+
 
 
 def main():

@@ -60,7 +60,7 @@ from collections import defaultdict
 # Have all the calculation happen in memory with sets of dict
 ##############################################################################
 
-############################################################################
+version = '1.0'
 
 def getDB(host, port,  user, password, database):
 #===============================================================================
@@ -81,89 +81,50 @@ def writeCSV(entry, file):
     spamwriter.writerow(entry)
 
 
-def getPatientIdsTotalPatient():
+def getPatientIdsTotalPatient(unique_patient_view):
 #===============================================================================
 #   It reads NPI number for a practitioner and the unique patient IDs
-#   from the view
+#   from the view unique_patient_view in the DB
 #
 #===============================================================================
     providerTotalPatients=dict()
-    f = open(filename, 'rU')
-    dialect = csv.Sniffer().sniff(f.readline())
-    f.seek(0)
-    reader = csv.DictReader(f, dialect=dialect)
-    for line in reader:
-        providerTotalPatients[line['PROVIDERID']]=line['UNIQUE_PATIENTS']
+    db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
+    sql = "SELECT * from  %s;" %(unique_patient_view)
+    #print sql
+    # Run query and get result
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    except Exception, e:
+        print e
+    # Loop through result
+    for row in result:
+        # Get the queryresults.append(row)
+        providerTotalPatients[str(row[0])]=row[1]
+
+    # Close the Connection
+    db.close()
     return providerTotalPatients
 
 
 
-
-def percentofpatientsbycode(provider_id, total_patient):
+def insertrowinweigths (provider_id, code, code_flatten, code_unique_patients, code_occurrences, total_patient, \
+        code_percentage_patients,  code_frequency , code_weight, version):
 #===============================================================================
-#   function to calculate the % of patients w each code
-#   For Each provider Calculate the Percentage of Patients with each Diagnosis
-#   Formula: ((CODE_UNIQUE_PATIENTS/TOTAL_PATIENTS)*100) = CODE_PERCENT_PATIENTS
+#   Inserts a row into the weight_codes table
 #===============================================================================
-
-    # read the Excel_fiel for the provider ID
-    expertise_file_name='./results/'+provider_id+'_expertise.xls'
-    percentage_code_file_name = './results/'+provider_id+'_percentage_codes.xls'
-    percentage_code_file = open(percentage_code_file_name, 'wb')
-    expertise_file = open(expertise_file_name, 'rU')
-    # Intialize the ooutput file
-    writeCSV(['DX_CODE','CODE_UNIQUE_PATIENTS','TOTAL_PATIENTS', 'CODE_PERC_PAT'], percentage_code_file)
-    dialect = csv.Sniffer().sniff(expertise_file.readline())
-    expertise_file.seek(0)
-    reader = csv.DictReader(expertise_file, dialect=dialect)
-    for line in reader:
-        code = line['DX_CODE']
-        code_unique_patients = int ( line ['UNIQUE_PATIENTS'])
-        # write this in the  percentage_code_file
-        code_percentage_patients =  ((code_unique_patients / float(total_patient)) * 100)
-        output_row = [code, code_unique_patients, total_patient, code_percentage_patients]
-        #print output_row
-        # write the percentage for each code in an excel for each practitioner
-        writeCSV(output_row, percentage_code_file)
-    percentage_code_file.close()
-    expertise_file.close()
-
-
-
-def freqcodeoccur(provider_id, total_patient):
-#===============================================================================
-#   Function to calculate the frequency of the code occurrence
-#   Formula: (UNIQUE_CODE_OCCUR/CODE_UNIQUE_PATIENTS) = CODE_OCCURRENCE_FREQUENCY
-#   Currently writes a new file using the subsequent files I've created again for
-#   debug / checking purposes
-#===============================================================================
-
-# read the Excel_fiel for the provider ID
-    expertise_file_name='./results/'+provider_id+'_expertise.xls'
-    frequency_code_file_name = './results/'+provider_id+'_frequency_codes.xls'
-    frequency_code_file = open(frequency_code_file_name, 'wb')
-    expertise_file = open(expertise_file_name, 'rU')
-    # Intialize the ooutput file
-    writeCSV(['PROVIDER_ID', 'DX_CODE','CODE_UNIQUE_PATIENTS', 'UNIQUE_CODE_OCCUR','TOTAL_PATIENTS', 'CODE_PERC_PAT', 'CODE_FREQ'], frequency_code_file)
-    dialect = csv.Sniffer().sniff(expertise_file.readline())
-    expertise_file.seek(0)
-    reader = csv.DictReader(expertise_file, dialect=dialect)
-    for line in reader:
-        code = line['DX_CODE']
-        code_occurrences= int(line ['UNIQUE_CODE_OCCUR'])
-        code_unique_patients = int ( line ['UNIQUE_PATIENTS'])
-        # write this in the  percentage_code_file
-        code_percentage_patients =  ((code_unique_patients / float(total_patient)) * 100)
-        code_frequency = (code_occurrences / float (code_unique_patients))
-        output_row = [provider_id, code, code_unique_patients, code_occurrences, total_patient, code_percentage_patients, code_frequency]
-        #print output_row
-        # write the percentage for each code in an excel for each practitioner
-        writeCSV(output_row, frequency_code_file)
-    frequency_code_file.close()
-    expertise_file.close()
-
-
-
+    db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
+    sql = "INSERT INTO  weight_code (provider_id, specific_icd9_code, high_level_icd_code, code_unique_patient, unique_code_occurence, total_patients, \
+        code_percentage_patients,  code_frequency , code_weight, version) VALUES ('%s', '%s', \
+         '%s', %d, %d, %d, %f, %f, %f, '%s')"  \
+    % (provider_id, code, code_flatten, code_unique_patients, code_occurrences, total_patient, \
+        code_percentage_patients,  code_frequency , code_weight, version)
+    #print sql
+    cursor = db.cursor()
+    cursor.execute(sql)
+    db.commit()
+    db.close()
 
 
 def providercodeweight(provider_id, total_patient):
@@ -173,60 +134,59 @@ def providercodeweight(provider_id, total_patient):
 #   Currently writes a new file using the subsequent files I've created  for
 #   debug / checking purposes
 #===============================================================================
-    # p = PROVIDER_ID
-    # tp = totalpatients(p)
-    # ppbc = percentofpatientsbycode(p)
-    # fco = freqcodeoccur(p)
 
-    # pcw = (ppbc * fco)
-
-    # return pcw
-
-    expertise_file_name='./results/'+provider_id+'_expertise.xls'
-    expertise_file = open(expertise_file_name, 'rU')
-    code_weight_file_name = './results/'+provider_id+'_weight_code.xls'
-    code_weight_file= open(code_weight_file_name, 'wb')
-
-    # Intialize the ooutput file
-    writeCSV(['PROVIDER_ID', 'DX_CODE','CODE_UNIQUE_PATIENTS', 'UNIQUE_CODE_OCCUR','TOTAL_PATIENTS', 'CODE_PERC_PAT', 'CODE_FREQ', 'CODE_WEIGHT'], code_weight_file)
-    dialect = csv.Sniffer().sniff(expertise_file.readline(), )
-    expertise_file.seek(0)
-    reader = csv.DictReader(expertise_file, dialect=dialect)
-    for line in reader:
-        code = line['DX_CODE']
-        code_occurrences= int(line ['UNIQUE_CODE_OCCUR'])
-        code_unique_patients = int ( line ['UNIQUE_PATIENTS'])
-        # write this in the  percentage_code_file
+    print "Doing it form the database data"
+    # Ok let's get the results form this query here
+    db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
+    sql = "SELECT  ctsadata.icd_simple.npi AS PROVIDERID, ctsadata.icd_simple.icd AS DX_CODE,  \
+    COUNT(distinct ctsadata.icd_simple.patient_id) AS UNIQUE_PATIENTS,  \
+    COUNT( ctsadata.icd_simple.icd) AS UNIQUE_CODE_OCCUR \
+    FROM ctsadata.icd_simple WHERE ctsadata.icd_simple.npi ='%s' \
+    GROUP BY ctsadata.icd_simple.icd \
+    ORDER BY UNIQUE_PATIENTS DESC" % (provider_id)
+    # Run query and get result
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    except Exception, e:
+        print e
+    # Loop through result
+    for row in result:
+        # Here get the proper variables in the results
+        provider_id =  row[0]
+        code= row[1]
+        code_occurrences = row[2]
+        code_unique_patients=int(row[3])
         code_percentage_patients =  ((code_unique_patients / float(total_patient)) * 100)
         code_frequency = (code_occurrences / float (code_unique_patients))
         code_weight= code_percentage_patients * code_frequency
-        output_row = [provider_id, code, code_unique_patients, code_occurrences, total_patient, code_percentage_patients, code_frequency, code_weight]
-        #print output_row
-        # write the percentage for each code in an excel for each practitioner
-        writeCSV(output_row, code_weight_file)
-    code_weight_file.close()
-    expertise_file.close()
+        # Just get the stiring before
+        if '.' in code:
+            code_flatten= code[0: code.index('.')]
+        else:
+            code_flatten=code
+        # Now do the caluclaiton I was doing before PLUS flatten the code
+        #print provider_id, code, code_flatten, code_unique_patients, code_occurrences, total_patient, \
+        code_percentage_patients,  code_frequency , code_weight, version
+
+        insertrowinweigths (provider_id, code, code_flatten, code_unique_patients, code_occurrences, int(total_patient), \
+        code_percentage_patients,  code_frequency , code_weight, version)
+    # Close the Connection
+    db.close()
 
 
 def main():
 
-    # get the list of providers and their total patients
-    providerTotalPatients = getPatientIdsTotalPatient()
-
-    # For each provider calculate the percentage of patients by code
-    # Here query the view and get the
+    # get the list of providers and their total patients form the view in the DB
+    providerTotalPatients = getPatientIdsTotalPatient('unique_patients_for_provider')
 
     for provider, total_patients in providerTotalPatients.items():
+        # Dubug that works
         print provider, total_patients
-
-        # Calculate the percentage of patients by code
-        #percentofpatientsbycode (provider, total_patients)
-
-        # Write the combined file with code percentages and codes frequency
-        #freqcodeoccur(provider, total_patients)
-
-        # Generatet the comulative file for each patient
-        providercodeweight(provider, total_patients)
+        providercodeweight (provider, total_patients)
 
 if __name__ == '__main__':
     main()
+    # Here just try the function with this data :1043456361 154
+    #providercodeweight ('1043456361',  '154')
