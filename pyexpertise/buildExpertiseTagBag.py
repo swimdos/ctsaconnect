@@ -29,21 +29,23 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 ##############################################################################
 
-import MySQLdb
-import Connection
-import csv
-
 
 #===============================================================================
 #   This scripts uses the weight_code table to generate reports for each
 #   practitioner based on the top 10 weighted ICD
 #===============================================================================
+
+import MySQLdb
+import Connection
+import csv
+
 #Defines the max numbers of code we are considering
+max_code_num=2000000
 
 
 
 def writeTagBag(provider):
-    print "Building  Tag_Bag"
+    print "Building  Tag_Bag for %s" %(provider)
     results = buildTagBag(provider)
     filenametag = "./results/%s_tag.xls" % (provider)
     csvfiletag = open(filenametag, 'wb')
@@ -53,7 +55,7 @@ def writeTagBag(provider):
         writeCSV(row, csvfiletag)
 
 def writeExpertiseReport(provider):
-    print "Building  expertise report"
+    print "Building  expertise report for %s" %(provider)
     results = buildExpertiseReport(provider)
     filename = "./results/%s_expertise.xls" % (provider)
     csvfile = open(filename, 'wb')
@@ -62,7 +64,7 @@ def writeExpertiseReport(provider):
     for row in results:
         writeCSV(row, csvfile)
 
-max_code_num=2000000
+
 
 
 def buildExpertiseReport(provider):
