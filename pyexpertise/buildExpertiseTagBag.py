@@ -45,6 +45,9 @@ max_code_num=2000000
 
 
 def writeTagBag(provider):
+#===============================================================================
+#   Writes a CSV containing the top 10 ICD values for a provider
+#===============================================================================
     print "Building  Tag_Bag for %s" %(provider)
     results = buildTagBag(provider)
     filenametag = "./results/%s_tag.xls" % (provider)
@@ -55,6 +58,9 @@ def writeTagBag(provider):
         writeCSV(row, csvfiletag)
 
 def writeExpertiseReport(provider):
+#===============================================================================
+#   Writes a CSV containing all the info abotu ICD ordered by ICD weight
+#===============================================================================
     print "Building  expertise report for %s" %(provider)
     results = buildExpertiseReport(provider)
     filename = "./results/%s_expertise.xls" % (provider)
