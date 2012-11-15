@@ -3,8 +3,8 @@
 #Insert BSD License (http://opensource.org/licenses/BSD-2-Clause)
 
 ##############################################################################
-# Copyright (c) 2012, Christopher P. Barnes ( senrabc at gmail.com )
-# Carlo Torniai
+# Copyright (c) 2012\
+# Carlo Torniai (carlotorniai at gmail.com)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification,
