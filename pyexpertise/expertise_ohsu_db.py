@@ -115,8 +115,8 @@ def insertrowinweigths (provider_id, code, code_flatten, code_unique_patients, c
 #   Inserts a row into the weight_codes table
 #===============================================================================
     db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
-    sql = "INSERT INTO  weight_code (provider_id, specific_icd9_code, high_level_icd_code, code_unique_patient, unique_code_occurence, total_patients, \
-        code_percentage_patients,  code_frequency , code_weight, version) VALUES ('%s', '%s', \
+    sql = "INSERT INTO  weight_code (provider_id, specific_icd9_code, high_level_icd_code, unique_patients, total_code_use, total_patients, \
+        patients_percentage,  code_frequency , code_weight, version) VALUES ('%s', '%s', \
          '%s', %d, %d, %d, %f, %f, %f, '%s')"  \
     % (provider_id, code, code_flatten, code_unique_patients, code_occurrences, total_patient, \
         code_percentage_patients,  code_frequency , code_weight, version)
@@ -140,7 +140,7 @@ def providercodeweight(provider_id, total_patient):
     db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
     sql = "SELECT  ctsadata.icd_simple.npi AS PROVIDERID, ctsadata.icd_simple.icd AS DX_CODE,  \
     COUNT(distinct ctsadata.icd_simple.patient_id) AS UNIQUE_PATIENTS,  \
-    COUNT( ctsadata.icd_simple.icd) AS UNIQUE_CODE_OCCUR \
+    COUNT(ctsadata.icd_simple.icd) AS TOTAL_CODE_OCCUR \
     FROM ctsadata.icd_simple WHERE ctsadata.icd_simple.npi ='%s' \
     GROUP BY ctsadata.icd_simple.icd \
     ORDER BY UNIQUE_PATIENTS DESC" % (provider_id)
@@ -156,8 +156,8 @@ def providercodeweight(provider_id, total_patient):
         # Here get the proper variables in the results
         provider_id =  row[0]
         code= row[1]
-        code_occurrences = row[2]
-        code_unique_patients=int(row[3])
+        code_unique_patients = row[2]
+        code_occurrences=int(row[3])
         code_percentage_patients =  ((code_unique_patients / float(total_patient)) * 100)
         code_frequency = (code_occurrences / float (code_unique_patients))
         code_weight= code_percentage_patients * code_frequency
@@ -168,7 +168,7 @@ def providercodeweight(provider_id, total_patient):
             code_flatten=code
         # Now do the caluclaiton I was doing before PLUS flatten the code
         #print provider_id, code, code_flatten, code_unique_patients, code_occurrences, total_patient, \
-        code_percentage_patients,  code_frequency , code_weight, version
+        #code_percentage_patients,  code_frequency , code_weight, version
 
         insertrowinweigths (provider_id, code, code_flatten, code_unique_patients, code_occurrences, int(total_patient), \
         code_percentage_patients,  code_frequency , code_weight, version)
@@ -189,4 +189,4 @@ def main():
 if __name__ == '__main__':
     main()
     # Here just try the function with this data :1043456361 154
-    #providercodeweight ('1043456361',  '154')
+    #providercodeweight ('1508871005',  '1092')
