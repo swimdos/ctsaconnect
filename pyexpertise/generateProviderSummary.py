@@ -34,9 +34,9 @@ import csv
 
 ##############################################################################
 # Summary:
-# This module executes a stored procedure to generate  csv files to be used
+# This module executes a stored procedure to generate csv files to be used
 # by expertise.py and other scripts.
-# It requires that a COnnection.py exists (See Connection.sample.py for
+# It requires that a Connection.py exists (See Connection.sample.py for
 #
 # it requires to have installed the MySQLdb module -> easy_install MySQL-python
 # it currently uses the database schema for OHSU ICD9 data
