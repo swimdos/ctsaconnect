@@ -33,7 +33,7 @@ from rdflib.namespace import Namespace, RDF, RDFS, XSD
 
 base_instance_uri="http://ohsu.dev.eagle-i.net/i/"
 expertise_base_uri = base_instance_uri+"exp/"
-
+icd_base_uri = "http://purl.obolibrary.org/obo/arg/icdcode/"
 #
 # Constant used for generating instances
 #
@@ -67,3 +67,21 @@ has_quality_Obj_Prop = OBO["BFO_0000086"]
 
 #Health Care Provider CLass
 health_care_provider_Class = OBO["ARG_0000130"]
+
+# Expertise mesurement Class
+expertise_measurment = OBO["ARG_2000009"]
+
+# HAs_measurement_value IAO dataProperty
+has_measurement_value_Data_Prop = OBO["IAO_0000004"]
+
+#Measurement label data Property
+has_measurement_label_Data_Prop = OBO["ARG_2000012"]
+
+#is_quality_measurement_of IAO Object Property connecting expertise measurement to expertise
+is_quality_measurement_of_Obj_Prop = OBO["IAO_0000221"]
+
+#is_specified_output Ibject property form OBI connecting a measurememtn to a measurement process
+is_specified_output_Obj_Prop= OBO["OBI_0000312"]
+
+#has_measurement-Unit_label Object property
+has_measurement_unit_label_Obj_Prop = OBO["IAO_0000039"]

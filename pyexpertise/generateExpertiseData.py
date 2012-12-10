@@ -78,7 +78,7 @@ def createAlgorithmExecutionInstance():
 
 def createExpertandExpertisetriples(npi):
 #===============================================================================
-#   Creates  measurement related to the expert and realted expertise
+#   Creates  measurement related to the expert and related expertise
 #===============================================================================
     # Create the expert instance
     expert_URI = URIRef(dataGenConst.base_instance_uri+npi)
@@ -95,12 +95,27 @@ def createExpertandExpertisetriples(npi):
     # Add experience triples
     store.add((experience_URI, RDF.type, dataGenConst.quality_Class))
     store.add((experience_URI, RDFS.label, Literal(npi+"_expertise")))
+    return experience_URI
 
-def createMeasurementTriples (npi, icd, measure_label, value, algExexURI):
+def createMeasurementTriples (npi, icd, measure_label, value, experience_URI, algExexURI):
 #==============================================================================
-#   Writes measurement related to a expertise measurement
+#   Writes triples related to a expertise measurement
 #===============================================================================
-    print "Done"
+    # Create the expertise measurement IRI
+    expertise_measurement_URI = URIRef(dataGenConst.base_instance_uri+npi+"_"+icd)
+
+    # Create ICD URI
+    #Here currently we generate the URI in the following way
+    icd_uri = URIRef(dataGenConst.icd_base_uri+icd)
+
+    # Add triples
+    store.add((expertise_measurement_URI, RDF.type, dataGenConst.expertise_measurment))
+    store.add((expertise_measurement_URI, RDFS.label, Literal(npi+"_"+icd+"_measurement")))
+    store.add((expertise_measurement_URI, dataGenConst.has_measurement_value_Data_Prop, Literal(value, datatype=XSD.float)))
+    store.add((expertise_measurement_URI, dataGenConst.has_measurement_label_Data_Prop, Literal(measure_label)))
+    store.add((expertise_measurement_URI, dataGenConst.is_quality_measurement_of_Obj_Prop, experience_URI))
+    store.add((expertise_measurement_URI, dataGenConst.is_specified_output_Obj_Prop, algExexURI))
+    store.add((expertise_measurement_URI, dataGenConst.has_measurement_unit_label_Obj_Prop, icd_uri))
 
 
 
@@ -139,9 +154,9 @@ measure_label="Depressive disorder, not elsewhere classified"
 measure_value="12.8049"
 icd="301"
 
-createExpertandExpertisetriples(npi)
+experience_URI = createExpertandExpertisetriples(npi)
 
-createMeasurementTriples(npi, icd, measure_label, measure_value, algExexURI)
+createMeasurementTriples(npi, icd, measure_label, measure_value, experience_URI, algExexURI)
 
 # Iterate over triples in store and print them out.
 #print "--- printing raw triples ---"
