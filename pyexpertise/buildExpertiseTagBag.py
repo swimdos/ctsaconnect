@@ -33,6 +33,7 @@
 #===============================================================================
 #   This scripts uses the weight_code table to generate reports for each
 #   practitioner based on the top 10 weighted ICD
+#   There is a method to create the same data in a tabel too
 #===============================================================================
 
 import MySQLdb
@@ -43,6 +44,9 @@ import csv
 max_code_num=1000000000
 
 
+createCVS = False
+createTable= True
+wrtieReports = False
 
 def writeTagBag(provider):
 #===============================================================================
@@ -90,10 +94,58 @@ def writeNewTagBag(provider):
                 new_results.append(new_entry)
 
     #print skip
-    writeCSV(['ICD_CODE', 'TERM', 'CODE WEIGHT'], csvfiletag)
-    for row in new_results:
-        writeCSV(row, csvfiletag)
-    print new_results
+    if createCVS:
+        writeCSV(['ICD_CODE', 'TERM', 'CODE WEIGHT'], csvfiletag)
+        for row in new_results:
+            writeCSV(row, csvfiletag)
+        print new_results
+
+    if createTable:
+        for row in new_results:
+        # Insert the vale in the ICD
+            sql_insert = "INSERT into ctsadata.icd_expertise(provider_id, icd_code, term, code_weigth, version)  \
+        VALUES (%s, %s, '%s', %f, %s)" % (provider, row[0], row[1], float(row[2]), "1.0")
+            print sql_insert
+            db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
+            cursor = db.cursor()
+            try:
+                cursor.execute(sql_insert)
+            except Exception, e:
+                print e
+
+        # Now insert the values here
+            db.close()
+
+def checkICDTable():
+    # If crateDB is true drop and create a table icd_expertise
+    if createTable:
+        db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
+        # First drop the tabel if exists
+        sql_drop = "DROP TABLE IF EXISTS ctsadata.icd_expertise; "
+        cursor_drop = db.cursor()
+        try:
+            cursor_drop.execute(sql_drop)
+        except Exception, e:
+            print e
+
+        sql_create="CREATE TABLE ctsadata.icd_expertise (\
+      provider_id varchar(64), \
+      icd_code varchar(45), \
+      term varchar(64), \
+      code_weigth float(12), \
+      version varchar(64) \
+    );"
+
+        cursor = db.cursor()
+        try:
+            cursor.execute(sql_create)
+        except Exception, e:
+            print e
+
+        # Now insert the values here
+        db.close()
+
+
 
 def writeNewExpertiseReport(provider):
 #===============================================================================
@@ -249,17 +301,24 @@ def main():
 
     providerTotalPatients = getPatientIdsTotalPatient('unique_patients_for_provider')
 
-    for provider, total_patients in providerTotalPatients.items():
-        #writeExpertiseReport(provider)
-        writeNewExpertiseReport(provider)
-        pass
+    if wrtieReports:
+        for provider, total_patients in providerTotalPatients.items():
+            #writeExpertiseReport(provider)
+            writeNewExpertiseReport(provider)
+            pass
+
     # Generate tag bags:
+    if createTable:
+        checkICDTable();
+
     for provider, total_patients in providerTotalPatients.items():
         #writeTagBag(provider)
         writeNewTagBag(provider)
+
 if __name__ == '__main__':
-    main()
+   main()
 #    writeExpertiseReport('1508871005')
 #    writeTagBag('1508871005')
 #    writeNewExpertiseReport('1508871005')
-#    writeNewTagBag('1508871005')
+#  checkICDTable()
+#writeNewTagBag('1508871005')

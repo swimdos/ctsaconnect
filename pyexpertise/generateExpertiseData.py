@@ -44,16 +44,38 @@
 import logging
 import time
 import uuid
+import Connection
 import dataGenConst
 from rdflib.graph import Graph
 from rdflib.term import URIRef, Literal, BNode
 from rdflib.namespace import Namespace, RDF, RDFS, XSD
 
+
+store = Graph()
+# Bind a few prefix, namespace pairs.
+store.bind("dc", "http://http://purl.org/dc/elements/1.1/")
+store.bind("foaf", "http://xmlns.com/foaf/0.1/")
+store.bind("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+store.bind("obo", "http://purl.obolibrary.org/obo/")
+store.bind("vivo", "http://vivoweb.org/ontology/core#")
+
+# Create the identifier for the algorithm execution
+algExexURI= URIRef("http://ohsu.dev.eagle-i.net/i/exp/measure_algorithm_01")
+
+
+def startLogger():
+#===============================================================================
+# Configure how we want rdflib logger to log messages
+#===============================================================================
+
+    _logger = logging.getLogger("rdflib")
+    _logger.setLevel(logging.DEBUG)
+    _hdlr = logging.StreamHandler()
+    _hdlr.setFormatter(logging.Formatter('%(name)s %(levelname)s: %(message)s'))
+    _logger.addHandler(_hdlr)
+
 def createAlgorithmExecutionInstance():
-#===============================================================================
-#   Creates  a sample set of triple for an algorithm execution
-#    TO DO: Need to parametrize the currently hard coded values
-#===============================================================================
+
     # Unique ID generation
     algddateExecID = uuid.uuid4()
     # Create a data execution instance
@@ -121,61 +143,42 @@ def createMeasurementTriples (npi, icd, measure_label, value, experience_URI, al
 
 
 
+def main():
+
+    startLogger()
+    createAlgorithmExecutionInstance()
+    getExpertiseData()
+    # Here assuming a data structure coming out of the DB to contain the following fields per row
+    npi="1013113257"
+    measure_label="Depressive disorder, not elsewhere classified"
+    measure_value="12.8049"
+    icd="301"
+
+    experience_URI = createExpertandExpertisetriples(npi)
+    createMeasurementTriples(npi, icd, measure_label, measure_value, experience_URI, algExexURI)
+
+    # Iterate over triples in store and print them out.
+    #print "--- printing raw triples ---"
+    #for s, p, o in store:
+    #    print s, p, o
 
 
-# Configure how we want rdflib logger to log messages
-_logger = logging.getLogger("rdflib")
-_logger.setLevel(logging.DEBUG)
-_hdlr = logging.StreamHandler()
-_hdlr.setFormatter(logging.Formatter('%(name)s %(levelname)s: %(message)s'))
-_logger.addHandler(_hdlr)
+    # Serialize the store as RDF/XML to the file expertise.rdf.
+    store.serialize("expertise.rdf", format="pretty-xml", max_depth=3)
 
 
-store = Graph()
+    print "RDF Serializations:"
 
-# Bind a few prefix, namespace pairs.
-store.bind("dc", "http://http://purl.org/dc/elements/1.1/")
-store.bind("foaf", "http://xmlns.com/foaf/0.1/")
-store.bind("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-store.bind("obo", "http://purl.obolibrary.org/obo/")
-store.bind("vivo", "http://vivoweb.org/ontology/core#")
+    # Serialize as XML
+    print "--- start: rdf-xml ---"
+    print store.serialize(format="pretty-xml")
+    print "--- end: rdf-xml ---\n"
 
-
-
-# Create the identifier for the algorithm execution
-algExexURI= URIRef("http://ohsu.dev.eagle-i.net/i/exp/measure_algorithm_01")
-
-createAlgorithmExecutionInstance()
-
-# Here assuming a data structure coming out of the DB to contain the following fields per row
-
-npi="1013113257"
-measure_label="Depressive disorder, not elsewhere classified"
-measure_value="12.8049"
-icd="301"
-
-experience_URI = createExpertandExpertisetriples(npi)
-
-createMeasurementTriples(npi, icd, measure_label, measure_value, experience_URI, algExexURI)
-
-# Iterate over triples in store and print them out.
-#print "--- printing raw triples ---"
-#for s, p, o in store:
-#    print s, p, o
+    # Serialize as NTriples
+    print "--- start: ntriples ---"
+    print store.serialize(format="nt")
+    print "--- end: ntriples ---\n"
 
 
-# Serialize the store as RDF/XML to the file expertise.rdf.
-store.serialize("expertise.rdf", format="pretty-xml", max_depth=3)
-
-
-print "RDF Serializations:"
-
-# Serialize as XML
-print "--- start: rdf-xml ---"
-print store.serialize(format="pretty-xml")
-print "--- end: rdf-xml ---\n"
-
-# Serialize as NTriples
-print "--- start: ntriples ---"
-print store.serialize(format="nt")
-print "--- end: ntriples ---\n"
+if __name__ == '__main__':
+    main()
