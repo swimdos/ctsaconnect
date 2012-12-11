@@ -44,12 +44,14 @@
 import logging
 import time
 import uuid
+import MySQLdb
 import Connection
 import dataGenConst
 from rdflib.graph import Graph
 from rdflib.term import URIRef, Literal, BNode
 from rdflib.namespace import Namespace, RDF, RDFS, XSD
 
+verbose = False
 
 store = Graph()
 # Bind a few prefix, namespace pairs.
@@ -62,6 +64,14 @@ store.bind("vivo", "http://vivoweb.org/ontology/core#")
 # Create the identifier for the algorithm execution
 algExexURI= URIRef("http://ohsu.dev.eagle-i.net/i/exp/measure_algorithm_01")
 
+
+def getDB(host, port,  user, password, database):
+#===============================================================================
+#   Function that returns a DB connection
+#
+#===============================================================================
+    db = MySQLdb.connect(host=host, port=port, user=user, passwd=password, db=database)
+    return db
 
 def startLogger():
 #===============================================================================
@@ -111,7 +121,7 @@ def createExpertandExpertisetriples(npi):
     #Add expert triples to store
 
     store.add((expert_URI, RDF.type, dataGenConst.health_care_provider_Class))
-    store.add((expert_URI, RDFS.label, Literal("Health Care provider" + npi)))
+    store.add((expert_URI, RDFS.label, Literal("Health Care provider " + npi)))
     store.add((expert_URI, dataGenConst.has_quality_Obj_Prop, experience_URI))
 
     # Add experience triples
@@ -141,21 +151,84 @@ def createMeasurementTriples (npi, icd, measure_label, value, experience_URI, al
 
 
 
+def getUniqueProviders(unique_patient_view):
+#===============================================================================
+#   It reads NPI number for a practitioner and the unique patient IDs
+#   from the view unique_patient_view in the DB
+#
+#===============================================================================
+    uniqueProviders=[]
+    db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
+    sql = "SELECT DISTINCT npi from  %s;" %(unique_patient_view)
+    #print sql
+    # Run query and get result
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    except Exception, e:
+        print e
+    # Loop through result
+    for row in result:
+        # Get the queryresults.append(row)
+      uniqueProviders.append(row[0])
 
+    # Close the Connection
+    db.close()
+    return uniqueProviders
+
+def getExpertiseData(provider):
+#===============================================================================
+#   It reads NPI number for a practitioner and the unique patient IDs
+#   from the view unique_patient_view in the DB
+#
+#===============================================================================
+    expertise_data=[]
+    db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
+    sql = "SELECT * from  icd_expertise WHERE provider_id = %s;" %(provider)
+    print sql
+    #print sql
+    # Run query and get result
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    except Exception, e:
+        print e
+    # Loop through result
+    for row in result:
+        # Get the queryresults.append(row)
+      expertise_data.append(row)
+
+    # Close the Connection
+    db.close()
+    return expertise_data
 
 def main():
 
     startLogger()
     createAlgorithmExecutionInstance()
-    getExpertiseData()
-    # Here assuming a data structure coming out of the DB to contain the following fields per row
-    npi="1013113257"
-    measure_label="Depressive disorder, not elsewhere classified"
-    measure_value="12.8049"
-    icd="301"
 
-    experience_URI = createExpertandExpertisetriples(npi)
-    createMeasurementTriples(npi, icd, measure_label, measure_value, experience_URI, algExexURI)
+
+    # Here assuming a data structure coming out of the DB to contain the following fields per row
+
+    # SELECT DIstinct npi
+    # For each
+
+
+
+    providers = getUniqueProviders('unique_patients_for_provider')
+    print providers
+    for provider in providers:
+        experience_URI = createExpertandExpertisetriples(provider)
+        # Get the information out of the icd+expertise table
+        expertise_data = getExpertiseData(provider)
+        print expertise_data
+        for enrty in expertise_data:
+            createMeasurementTriples(enrty[0], enrty[1], enrty[2], enrty[3], experience_URI, algExexURI)
+        #createMeasurementTriples(npi, icd, measure_label, measure_value, experience_URI, algExexURI)
+
+
 
     # Iterate over triples in store and print them out.
     #print "--- printing raw triples ---"
@@ -164,20 +237,21 @@ def main():
 
 
     # Serialize the store as RDF/XML to the file expertise.rdf.
-    store.serialize("expertise.rdf", format="pretty-xml", max_depth=3)
+    store.serialize("expertise_ohsu.rdf", format="pretty-xml", max_depth=3)
+    store.serialize("expertise_ohsu.n3", format="nt", max_depth=3)
 
+    if verbose:
+        print "RDF Serializations:"
 
-    print "RDF Serializations:"
+        # Serialize as XML
+        print "--- start: rdf-xml ---"
+        print store.serialize(format="pretty-xml")
+        print "--- end: rdf-xml ---\n"
 
-    # Serialize as XML
-    print "--- start: rdf-xml ---"
-    print store.serialize(format="pretty-xml")
-    print "--- end: rdf-xml ---\n"
-
-    # Serialize as NTriples
-    print "--- start: ntriples ---"
-    print store.serialize(format="nt")
-    print "--- end: ntriples ---\n"
+        # Serialize as NTriples
+        print "--- start: ntriples ---"
+        print store.serialize(format="nt")
+        print "--- end: ntriples ---\n"
 
 
 if __name__ == '__main__':
