@@ -80,6 +80,9 @@ has_measurement_label_Data_Prop = OBO["ARG_2000012"]
 #is_quality_measurement_of IAO Object Property connecting expertise measurement to expertise
 is_quality_measurement_of_Obj_Prop = OBO["IAO_0000221"]
 
+# is_quality_measured_as IAO OBJ Property between expertise to Expertise emasurement
+is_quality_measured_as_Obj_Prop = OBO["IAO_0000417"]
+
 #is_specified_output Ibject property form OBI connecting a measurememtn to a measurement process
 is_specified_output_Obj_Prop= OBO["OBI_0000312"]
 

@@ -147,7 +147,7 @@ def createMeasurementTriples (npi, icd, measure_label, value, experience_URI, al
     store.add((expertise_measurement_URI, dataGenConst.has_measurement_label_Data_Prop, Literal(measure_label)))
     store.add((expertise_measurement_URI, dataGenConst.is_quality_measurement_of_Obj_Prop, experience_URI))
     store.add((expertise_measurement_URI, dataGenConst.is_specified_output_Obj_Prop, algExexURI))
-    store.add((expertise_measurement_URI, dataGenConst.has_measurement_unit_label_Obj_Prop, icd_uri))
+    store.add((experience_URI, dataGenConst.is_quality_measured_as_Obj_Prop, expertise_measurement_URI))
 
 
 
@@ -186,8 +186,8 @@ def getExpertiseData(provider):
     expertise_data=[]
     db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
     sql = "SELECT * from  icd_expertise WHERE provider_id = %s;" %(provider)
-    print sql
-    #print sql
+    if verbose:
+        print sql
     # Run query and get result
     cursor = db.cursor()
     try:
@@ -223,7 +223,7 @@ def main():
         experience_URI = createExpertandExpertisetriples(provider)
         # Get the information out of the icd+expertise table
         expertise_data = getExpertiseData(provider)
-        print expertise_data
+        #print expertise_data
         for enrty in expertise_data:
             createMeasurementTriples(enrty[0], enrty[1], enrty[2], enrty[3], experience_URI, algExexURI)
         #createMeasurementTriples(npi, icd, measure_label, measure_value, experience_URI, algExexURI)
