@@ -25,13 +25,12 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 ##############################################################################
 
-## Test using Network X for relating clinicians to basic researchers
-## Check the tutorial http://networkx.github.io/documentation/latest/tutorial/tutorial.html
+##
+##  http://networkx.github.io/documentation/latest/tutorial/tutorial.html
 ## Now what I should get is the list of connected folks
 ## TO DO:
-## How can I add a Label to the connections? I want to add a label which is the name of the Mesh Term
-
-## QUat kind of queries I need to build in order to create a table that looks like
+## Create Subgraph with teh connection from a particular node
+##
 
 ## id, npi, mesh_label, wieght
 ## From this
@@ -44,7 +43,7 @@ verbose = True
 safe= True
 
 G=nx.Graph()
-
+output_file_name = "./test_file_out"
 # List of dictionary containing the mane and the type: CLinitians or Basic researcher
 def logger(string_to_write):
     print(string_to_write)
@@ -84,11 +83,17 @@ def build_edge_list():
 # Think about how to reduce this maybe using a combinaiton of occurrences and score?
 # I should also
     db_conn = getDB("localhost", 3306, "root", "grisu#71", "scivaltest")
-    # Here I filter MeSH_terms that occur more than 10 times
+
     sql = "SELECT expert_scival_id, npi, S_Label, weight \
     from connections_mesh_icd  WHERE expert_scival_id in \
-    (SELECT expert_scival_id from authors_mesh_weights where term_count >100) \
-    AND weight > 50"
+    (SELECT expert_scival_id from authors_mesh_weights where term_count >20\
+   AND weight > 30)"
+
+    # Here I filter MeSH_terms that occur more than 10 times
+#    sql = "SELECT expert_scival_id, npi, S_Label, weight \
+#    from connections_mesh_icd  WHERE expert_scival_id in \
+#    (SELECT expert_scival_id from authors_mesh_weights where term_count >20) \
+#    AND weight > 50"
 
     if verbose:
             print sql.encode('ascii', 'ignore')
@@ -136,6 +141,8 @@ def add_researcher_node(Researcher_ids):
             label = researcher_element["name"] + " " + researcher_element["lastname"]
             attributes["Label"] = label
             attributes["Type"] = "Researcher"
+            attributes["First_Name"] = researcher_element["name"]
+            attributes["Last_Name"] =  researcher_element["lastname"]
             G.add_node(int(researcher_element["id"]), attributes)
     db_conn.close()
 
@@ -162,6 +169,8 @@ def add_clinitian_node(Clinician_ids):
             label = clinician_element["name"] + " " + clinician_element["lastname"]
             attributes["Label"] = label
             attributes["Type"] = "Clinician"
+            attributes["First_Name"] = clinician_element["name"]
+            attributes["Last_Name"] =  clinician_element["lastname"]
             G.add_node(int(clinician_element["npi"]), attributes)
     db_conn.close()
 
@@ -207,9 +216,22 @@ add_clinitian_node(Clinician_ids)
 
 # add edges
 for k in range (0, len(Edges_list)):
+    # Add Attrigutes to the nod
+    attributes = {}
+    key_value = Edges_list[k]["label"]
     print"Adding edge " + str(Edges_list[k]["id"])+ " " +  str(Edges_list[k]["npi"]) + " " + str(Edges_list[k]["weight"])
-    G.add_edge(Edges_list[k]["id"], Edges_list[k]["npi"], weight=Edges_list[k]["weight"])
-print G
+    G.add_edge(Edges_list[k]["id"], Edges_list[k]["npi"], key = key_value, weight=Edges_list[k]["weight"], )
+#print G
 
-logger("Writing GraphML file")
-nx.write_graphml(G, "./output_limited.graphml")
+# Here I want to get a number of nodes, edges and different keys
+print ("Nodes " + str(len(G.nodes())))
+print ("Edges " + str(len(G.edges())))
+distinct_key=set()
+
+for edge in G.edges(data=True):
+    distinct_key.add(edge[2]["key"])
+print ("DIstinct Mesh terms used " + str(len(distinct_key)))
+nx.write_graphml(G, output_file_name+".graphml")
+
+# Write pickle object
+nx.write_gpickle(G, output_file_name+"pkl")
