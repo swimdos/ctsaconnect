@@ -33,25 +33,23 @@ public class VivoFreshStartDeprecation {
 	OWLOntologyManager manOrig = OWLManager.createOWLOntologyManager();
 	OWLOntologyManager man2 = OWLManager.createOWLOntologyManager();
 	OWLOntology vivoOrig;
-	OWLOntology vivo2;
+	OWLOntology vivo;
 	OWLOntology vivoDep;
 
 	private void run() throws Exception {
 		System.out.println(System.getProperty("ISF_SVN_DIR") + "/src/ontology/imports/vivo");
-		manOrig.addIRIMapper(new AutoIRIMapper(new File(System.getProperty("ISF_SVN_DIR")
-				+ "/src/ontology/imports/vivo"), true));
-		vivoOrig = manOrig.loadOntologyFromOntologyDocument(new File(System.getProperty("ISF_SVN_DIR")
-				+ "/src/ontology/imports/vivo/vivo-core-public-1.5.owl"));
+		manOrig.addIRIMapper(new AutoIRIMapper(new File("C:/s/svns/connect-isf-root/trunk/src/ontology/imports/vivo"), true));
+		vivoOrig = manOrig.loadOntologyFromOntologyDocument(new File("C:/s/svns/connect-isf-root/trunk/src/ontology/imports/vivo/vivo-core-public-1.5.owl"));
 		System.out.println(vivoOrig.getTBoxAxioms(true).size());
 
 		man2.addIRIMapper(new AutoIRIMapper(new File(System.getProperty("ISF_SVN_DIR")
-				+ "/src/vivo-work-area/vivo-fresh-start"), true));
-		vivo2 = man2.loadOntologyFromOntologyDocument(new File(System.getProperty("ISF_SVN_DIR")
-				+ "/src/vivo-work-area/vivo-fresh-start/vivo2.owl"));
-		System.out.println(vivo2.getTBoxAxioms(true).size());
+				+ "/src/ontology/module/vivo"), true));
+		vivo = man2.loadOntologyFromOntologyDocument(new File(System.getProperty("ISF_SVN_DIR")
+				+ "/src/ontology/module/vivo/vivo.owl"));
+		System.out.println(vivo.getTBoxAxioms(true).size());
 
 		vivoDep = man2.loadOntologyFromOntologyDocument(new File(System.getProperty("ISF_SVN_DIR")
-				+ "/src/vivo-work-area/vivo-fresh-start/vivo2-deprecated.owl"));
+				+ "/src/ontology/module/vivo/vivo-deprecated.owl"));
 		System.out.println(vivoDep.getTBoxAxioms(true).size());
 
 		man2.removeAxioms(vivoDep, vivoDep.getAxioms());
@@ -63,7 +61,7 @@ public class VivoFreshStartDeprecation {
 			origAxioms.addAll(o.getAxioms());
 		}
 
-		for (OWLOntology o : vivo2.getImportsClosure()) {
+		for (OWLOntology o : vivo.getImportsClosure()) {
 			newAxioms.addAll(o.getAxioms());
 		}
 
@@ -75,7 +73,7 @@ public class VivoFreshStartDeprecation {
 
 		OWLDataFactory df = man2.getOWLDataFactory();
 		for (OWLEntity e : vivoDep.getSignature()) {
-			if (!vivo2.containsEntityInSignature(e, true)) {
+			if (!vivo.containsEntityInSignature(e, true)) {
 				if (e instanceof OWLClass) {
 					man2.addAxiom(
 							vivoDep,

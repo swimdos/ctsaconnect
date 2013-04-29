@@ -1,6 +1,15 @@
 package net.ctsaconnect.common;
 
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+
 public class Const {
+	
+	private static OWLDataFactory df = OWLManager.getOWLDataFactory();
 
 	// ontologies
 
@@ -115,4 +124,34 @@ public class Const {
 	public static final String REFACT_ANNOTATION = "http://arg-refactoring.owl/_isf_annotation";
 	public static final String REFACT_REUSED_AS = "http://arg-refactoring.owl/_isf_reused_as";
 	public static final String REFACT_LABEL = "http://arg-refactoring.owl/_isf_label";
+	
+	public static final String OHSU_EAGLEI_ISNTANCE_PREFIX = "http://ohsu.dev.eagle-i.net/i/";
+	
+	// assign related constants
+	// creator to assignment
+	public static final String OP_IRI_CREATES = "http://purl.obolibrary.org/obo/ARG_2000030";
+	public static final OWLObjectProperty OP_CREATES = df.getOWLObjectProperty(IRI.create(OP_IRI_CREATES));
+	
+	public static final String OP_IRI_CREATED_BY = "http://purl.obolibrary.org/obo/ARG_2000031";
+	public static final OWLObjectProperty OP_CREATED_BY = df.getOWLObjectProperty(IRI.create(OP_IRI_CREATED_BY));
+	
+	// assignment to assignee
+	public static final String OP_IRI_ASSIGNMENT_OF = "http://purl.obolibrary.org/obo/ARG_2000024";
+	public static final OWLObjectProperty OP_ASSIGNMENT_OF = df.getOWLObjectProperty(IRI.create(OP_IRI_ASSIGNMENT_OF));
+	public static final String OP_IRI_HAS_ASSIGNMENT = "http://purl.obolibrary.org/obo/ARG_2000025";
+	public static final OWLObjectProperty OP_HAS_ASSIGNMENT = df.getOWLObjectProperty(IRI.create(OP_IRI_HAS_ASSIGNMENT));
+	
+	// assignment to quality or role
+	public static final String OP_IRI_ASSGINES = "http://purl.obolibrary.org/obo/ARG_2000019";
+	public static final OWLObjectProperty OP_ASSGINES = df.getOWLObjectProperty(IRI.create(OP_IRI_ASSGINES));
+	public static final String OP_IRI_ASSIGNED_BY = "http://purl.obolibrary.org/obo/ARG_2000020";
+	public static final OWLObjectProperty OP_ASSIGNED_BY = df.getOWLObjectProperty(IRI.create(OP_IRI_ASSIGNED_BY));
+	// assignee to quality or role
+	public static final String OP_IRI_HAS_ASSIGNED= "http://purl.obolibrary.org/obo/ARG_2000027";
+	public static final OWLObjectProperty OP_HAS_ASSIGNED = df.getOWLObjectProperty(IRI.create(OP_IRI_HAS_ASSIGNED));
+	public static final String OP_IRI_ASSIGNED_OF = "http://purl.obolibrary.org/obo/ARG_2000026";
+	public static final OWLObjectProperty OP_ASSIGNED_OF = df.getOWLObjectProperty(IRI.create(OP_IRI_ASSIGNED_OF));
+	
+	
+	public static final OWLAnnotationProperty AP_LABEL = df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
 }
