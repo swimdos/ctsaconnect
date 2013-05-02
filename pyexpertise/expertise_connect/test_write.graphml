@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="weight" attr.type="double" for="edge" id="d1" />
+  <key attr.name="Label" attr.type="string" for="node" id="d0" />
+  <graph edgedefault="undirected">
+    <node id="456">
+      <data key="d0">Simone Walld</data>
+    </node>
+    <node id="1">
+      <data key="d0">Carlo Torniai</data>
+    </node>
+    <node id="2">
+      <data key="d0">Melissa Haendel</data>
+    </node>
+    <node id="123">
+      <data key="d0">Rob Schuff</data>
+    </node>
+    <edge source="456" target="2">
+      <data key="d1">0.62</data>
+    </edge>
+    <edge source="1" target="123">
+      <data key="d1">0.5</data>
+    </edge>
+  </graph>
+</graphml>

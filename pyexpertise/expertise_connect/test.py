@@ -38,7 +38,7 @@
 
 import networkx as nx
 G=nx.Graph()
-
+import pickle
 # List of dictionary contaning the mane and the type: CLinitians or Basic researcher
 def logger(string_to_write):
     print(string_to_write)
@@ -76,6 +76,10 @@ Edges_list = [{'id':1, 'npi':123, 'mesh':"apostosis", 'weight':0.50},  {'id':2, 
 for k in range (0, len(Edges_list)):
     G.add_edge(Edges_list[k]["id"], Edges_list[k]["npi"], weight=Edges_list[k]["weight"])
 print G
-print G.neighbors(123)
+print G.neighbors(1)
 logger("Writing GraphML file")
-nx.write_graphml(G, "./test.graphml")
+nx.write_graphml(G, "./test_write.graphml")
+nx.write_gpickle(G, "./test_write.pckl")
+
+H = nx.read_gpickle("./test_write.pckl")
+print H.neighbors(1)

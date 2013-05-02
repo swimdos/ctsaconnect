@@ -44,7 +44,7 @@ safe= True
 full = False
 base_dir = "/Users/torniai/Dropbox/clinical_research_graphs/"
 G=nx.Graph()
-filename= "test_new"
+filename= "test"
 output_file_name = base_dir+filename
 
 # List of dictionary containing the mane and the type: CLinitians or Basic researcher
@@ -89,8 +89,9 @@ def build_edge_list_full_data():
     db_conn = getDB("localhost", 3306, "root", "grisu#71", "scivaltest")
 
     sql = "SELECT expert_scival_id, npi, S_Label, weight \
-    from `connection_mesh_icd_full_new`  WHERE expert_scival_id in \
-    (SELECT expert_scival_id from authoer_mesh_2007_2012)"
+    from `connections_mesh_icd`  WHERE expert_scival_id in \
+    (SELECT expert_scival_id from authoer_mesh_2007_2012 where term_count >20\
+   AND weight > 20)"
 
     # Here I filter MeSH_terms that occur more than 10 times
 #    sql = "SELECT expert_scival_id, npi, S_Label, weight \
@@ -131,8 +132,9 @@ def build_edge_list():
     db_conn = getDB("localhost", 3306, "root", "grisu#71", "scivaltest")
 
     sql = "SELECT expert_scival_id, npi, S_Label, weight \
-    from `connection_mesh_icd_full_new`  WHERE expert_scival_id in \
-    (SELECT expert_scival_id from authoer_mesh_2007_2012)"
+    from connections_mesh_icd  WHERE expert_scival_id in \
+     (SELECT expert_scival_id from authoer_mesh_2007_2012 where term_count >20\
+   AND weight > 20)"
 
     # Here I filter MeSH_terms that occur more than 10 times
 #    sql = "SELECT expert_scival_id, npi, S_Label, weight \
@@ -272,9 +274,8 @@ for k in range (0, len(Edges_list)):
     attributes = {}
     key_value = Edges_list[k]["label"]
     print"Adding edge " + str(Edges_list[k]["id"])+ " " +  str(Edges_list[k]["npi"]) + " " + str(Edges_list[k]["weight"])
-    G.add_edge(Edges_list[k]["id"], Edges_list[k]["npi"], key = key_value, weight=Edges_list[k]["weight"])
-    #Add other edge
-    #G.add_edge(Edges_list[k]["npi"], Edges_list[k]["id"], key = key_value, weight=Edges_list[k]["weight"], )
+    G.add_edge(Edges_list[k]["id"], Edges_list[k]["npi"], key = key_value, weight=Edges_list[k]["weight"], )
+#print G
 
 # Here I want to get a number of nodes, edges and different keys
 print ("Nodes " + str(len(G.nodes())))
@@ -287,12 +288,4 @@ print ("DIstinct Mesh terms used " + str(len(distinct_key)))
 nx.write_graphml(G, output_file_name+".graphml")
 
 # Write pickle object
-nx.write_gpickle(G, output_file_name+".pkl")
-
-# write the undirect graph
-
-
-print G.neighbors('1104831619') # extend with neighbors
-
-# Now I want to add all the attributes to these nodes
-# By looping through them and
+nx.write_gpickle(G, output_file_name+"pkl")

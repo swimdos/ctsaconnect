@@ -71,7 +71,15 @@ def get_icd_data():
     print "Extracting data"
     # Ok let's get the results form this query here
     db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
+
+    # Trying to get the data from the freaking total codes:
+
+    #sql = "SELECT weight_code.provider_id, weight_code.specific_icd_9_code, weight_code.high_level_icd_code, weight_code.code_weigth from icd_expertise"
+
+    # Original SQL with just the top ten terms below:
+
     sql = "SELECT icd_expertise.provider_id,icd_expertise.icd_code,icd_expertise.code_weigth from icd_expertise"
+
     # Run query and get result
     cursor = db.cursor()
     try:
@@ -100,6 +108,51 @@ def get_icd_data():
         #print provider_id, code, code_flatten, code_unique_patients, code_occurrences, total_patient, \
         #code_percentage_patients,  code_frequency , code_weight, version
     db_conn.close()
+
+def get_total_icd_data():
+
+    print "Extracting data"
+    # Ok let's get the results form this query here
+    db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
+
+    # Trying to get the data from the freaking total codes:
+
+    sql = "SELECT weight_code.provider_id, weight_code.specific_icd9_code, weight_code.high_level_icd_code, weight_code.code_weight from weight_code"
+
+    # Original SQL with just the top ten terms below:
+
+    #sql = "SELECT icd_expertise.provider_id,icd_expertise.icd_code,icd_expertise.code_weigth from icd_expertise"
+
+    # Run query and get result
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchall()
+    except Exception, e:
+        print e
+    db_conn = getDB("localhost", 3306, "root", "grisu#71", "scivaltest")
+    for row in result:
+        # Here get the proper variables in the results
+        npi =  row[0]
+        icd_code= row[1]
+        icd_high_level_code = row[2]
+        weight = row[3]
+        # Now inser this value in the local table
+
+        cursor = db_conn.cursor()
+        sql = "INSERT  INTO icd_data_total (npi, icd_code, icd_high_level_code, weight) \
+           VALUES ('%s', '%s', '%s', '%s')" % \
+           (npi, icd_code, icd_high_level_code, weight)
+        if verbose:
+            print sql.encode('ascii', 'ignore')
+            # Insert the row
+        if not safe:
+            executeQuery(db_conn, sql)
+        # Now do the caluclaiton I was doing before PLUS flatten the code
+        #print provider_id, code, code_flatten, code_unique_patients, code_occurrences, total_patient, \
+        #code_percentage_patients,  code_frequency , code_weight, version
+    db_conn.close()
+
 
 def get_practitioner_data():
     db = getDB(Connection.host, Connection.port, Connection.user, Connection.password, Connection.database)
@@ -139,7 +192,8 @@ def get_practitioner_data():
 
 def main():
     # Query the data form the
-    get_icd_data()
+    #get_icd_data()
+    get_total_icd_data()
     #get_practitioner_data()
     # Close the Connection
     db.close()
