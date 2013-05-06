@@ -8,15 +8,12 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLDataPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.util.AutoIRIMapper;
 
 public class VivoFreshStartDeprecation {
@@ -49,10 +46,10 @@ public class VivoFreshStartDeprecation {
 		System.out.println(vivo.getTBoxAxioms(true).size());
 
 		vivoDep = man2.loadOntologyFromOntologyDocument(new File(System.getProperty("ISF_SVN_DIR")
-				+ "/src/ontology/module/vivo/vivo-deprecated.owl"));
+				+ "/src/ontology/app-views/vivo/vivo-app.owl"));
 		System.out.println(vivoDep.getTBoxAxioms(true).size());
 
-		man2.removeAxioms(vivoDep, vivoDep.getAxioms());
+		//man2.removeAxioms(vivoDep, vivoDep.getAxioms());
 
 		Set<OWLAxiom> origAxioms = new HashSet<OWLAxiom>();
 		Set<OWLAxiom> newAxioms = new HashSet<OWLAxiom>();

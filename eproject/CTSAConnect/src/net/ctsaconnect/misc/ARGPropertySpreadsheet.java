@@ -141,7 +141,7 @@ public class ARGPropertySpreadsheet {
 		properties.addAll(dps);
 
 		System.out
-				.println("NUMBER\tLEVEL\tTYPE\tLABEL\tIRI\tDOMAIN\tRANGE\tANNOTATION_GROUP\tANNOTATION_DOMAINS\tANNOTATION_RANGES");
+				.println("NUMBER\tLEVEL\tLABEL\tTYPE\tIRI\tDOMAIN\tRANGE\tANNOTATION_DOMAINS\tANNOTATION_RANGES\tANNOTATION_GROUP");
 
 		for (OWLProperty p : properties) {
 
