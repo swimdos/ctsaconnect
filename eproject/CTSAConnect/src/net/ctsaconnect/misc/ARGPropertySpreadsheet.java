@@ -16,7 +16,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLiteral;
@@ -93,6 +92,9 @@ public class ARGPropertySpreadsheet {
 		r.setUseTabbing(false);
 
 		for (OWLEntity e : argApp.getSignature(true)) {
+			if(e.getIRI().toString().equals("http://www.obofoundry.org/ro/ro.owl#adjacent_to")){
+				System.out.println("found");
+			}
 			if (e instanceof OWLProperty) {
 				OWLProperty p = (OWLProperty) e;
 				if (getParentProperty(p).size() == 0) {
