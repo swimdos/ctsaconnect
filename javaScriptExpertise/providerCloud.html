@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+#Insert BSD License (http://opensource.org/licenses/BSD-2-Clause)
+
+##############################################################################
+# Copyright (c) 2013, Christopher P. Barnes ( senrabc at gmail.com )
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, 
+# are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this 
+# list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice, 
+# this list of conditions and the following disclaimer in the documentation 
+# and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+# THE POSSIBILITY OF SUCH DAMAGE.
+##############################################################################
+
+--!>
+    <head>
+     <script src="http://www.google.com/jsapi?key=AIzaSyA5m1Nc8ws2BbmPRwKu5gFradvD_hgq6G0" type="text/javascript"></script>
+<meta charset="utf-8" />
+<!-- Google Chrome Frame open source plug-in brings Google Chrome's open web technologies and speedy JavaScript engine to Internet Explorer-->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<title>CTSAConnect Provider Cloud</title>
+ <link rel="stylesheet" type="text/css" href="http://visapi-gadgets.googlecode.com/svn/trunk/termcloud/tc.css"/>
+
+<!-- vitro base styles (application-wide) -->
+<link rel="stylesheet" href="http://vivo.ufl.edu/css/vitro.css" />
+
+<link rel="stylesheet" href="http://vivo.ufl.edu/css/individual/individual.css" />
+<link rel="stylesheet" href="http://vivo.ufl.edu/css/individual/individual-vivo.css" />
+
+<link rel="stylesheet" href="http://vivo.ufl.edu/css/edit.css" />
+<link rel="stylesheet" href="http://vivo.ufl.edu/themes/wilma_ctsi/css/screen.css" />
+
+
+<script type="text/javascript" src="http://vivo.ufl.edu/js/jquery.js"></script>
+<script type="text/javascript" src="http://vivo.ufl.edu/js/vitroUtils.js"></script>
+
+<!--[if lt IE 9]>
+<script type="text/javascript" src="http://vivo.ufl.edu/js/html5.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="http://vivo.ufl.edu/js/jquery_plugins/qtip/jquery.qtip-1.0.0-rc3.min.js"></script>
+<script type="text/javascript" src="http://vivo.ufl.edu/js/tiny_mce/tiny_mce.js"></script>
+<script type="text/javascript" src="http://vivo.ufl.edu/js/jquery_plugins/jquery.truncator.js"></script> 
+
+<!--[if lt IE 7]>
+<script type="text/javascript" src="http://vivo.ufl.edu/js/jquery_plugins/supersleight.js"></script>
+<![endif]-->
+
+<!--[if lt IE 7]>
+<link rel="stylesheet" href="http://vivo.ufl.edu/css/vitroIE6.css" />
+<![endif]-->
+
+<!--[if IE 7]>
+<link rel="stylesheet" href="http://vivo.ufl.edu/css/vitroIE7.css" />
+<![endif]-->
+
+<!--[if lt IE 7]>
+<link rel="stylesheet" href="http://vivo.ufl.edu/themes/wilma_ctsi/css/ie6.css" />
+<![endif]-->
+
+<!--[if IE 7]>
+<link rel="stylesheet" href="http://vivo.ufl.edu/themes/wilma_ctsi/css/ie7.css" />
+<![endif]-->
+
+<!--[if (gte IE 6)&(lte IE 8)]>
+<script type="text/javascript" src="http://vivo.ufl.edu/js/selectivizr.js"></script>
+<![endif]-->
+
+
+
+<link rel="shortcut icon" type="image/x-icon" href="http://vivo.ufl.edu/favicon.ico">    </head>
+    
+    <body class="display">
+
+<header id="branding" role="banner">
+    <h1 class="vivo-logo"><a title="VIVO | enabling national networking of scientists" href="http://vivo.ufl.edu/">
+    <span class="displace">VIVO</span></a></h1>
+
+    <nav role="navigation">
+        <ul id="header-nav" role="list">
+            <li role="listitem"><a href="/browse">Index</a></li>
+	    <li role="listitem"><a href="help">Help</a></li>
+                <li role="listitem"><a class="log-out" title="log in to manage this site" href="http://vivo.ufl.edu/authenticate?return=true">Log in</a></li>
+        </ul>
+        
+    </nav>
+    
+    <section id="search" role="region">
+        <fieldset>
+            <legend>Search form</legend>
+            
+            <form id="search-form" action="/search" name="search" role="search"> 
+                <div id="search-field">
+                    <input type="text" name="querytext" class="search-vivo" value="" autocapitalize="off" />
+                    <input type="submit" value="Search" class="search">
+                </div>
+            </form>
+        </fieldset>
+    </section>
+</header>
+        
+
+<nav role="navigation">
+    <ul id="main-nav" role="list">
+            <li role="listitem"><a href="http://vivo.ufl.edu/" >Home</a></li>
+            <li role="listitem"><a href="http://vivo.ufl.edu/people" >People</a></li>
+            <li role="listitem"><a href="http://vivo.ufl.edu/organizations" >Organizations</a></li>
+            <li role="listitem"><a href="http://vivo.ufl.edu/research" >Research</a></li>
+            <li role="listitem"><a href="http://vivo.ufl.edu/events" >Events</a></li>
+    </ul>
+</nav>
+
+<div id="wrapper-content" role="main">        
+<!-- # start wrapper content-->      
+<!-- http://vivo.ufl.edu/images/placeholders/person.thumbnail.jpg  -->      
+    
+    <!--[if lte IE 8]>
+    <noscript>
+        <p class="ie-alert">This site uses HTML elements that are not recognized by Internet Explorer 8 and below in the absence of JavaScript. As a result, the site will not be rendered appropriately. To correct this, please either enable JavaScript, upgrade to Internet Explorer 9, or use another browser. Here are the <a href="http://www.enable-javascript.com">instructions for enabling JavaScript in your web browser</a>.</p>
+    </noscript>
+    <![endif]-->        
+        <section id="individual-intro" class="vcard person" role="region">
+
+    <section id="share-contact" role="region"> 
+
+
+        <div id="photo-wrapper">        
+            <!-- <img class="individual-photo" src="http://vivo.ufl.edu/images/placeholders/person.thumbnail.jpg" title = "no image" alt="placeholder image" width="160" /> -->
+           <img class="individual-photo" src="http://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Albert_and_Alberta.jpg/210px-Albert_and_Alberta.jpg" title = "Alberta Gator" alt="placeholder image" width="160" />
+            
+</div>
+    
+        <nav role="navigation">
+        
+            <ul id ="individual-tools-people" role="list">
+                <li role="listitem"><img id="uriIcon" title="http://vivo.ufl.edu/" class="middle" src="http://vivo.ufl.edu/images/individual/uriIcon.gif" alt="uri icon"/></li>
+			<li role="listitem"><a title="View this individual in RDF format" class="icon-rdf" href="">RDF</a></li>
+
+        
+            <li role="listitem">
+                <img class="middle" src="http://vivo.ufl.edu/images/individual/qr_icon.png" alt="qr icon" /></a>
+                <span id="qrCodeImage" class="hidden"><a title="Export QR codes" href="/qrcode?uri=http%3A%2F%2Fvivo.ufl.edu%2Findividual%2Fn1770144435" title="QR Code">
+
+        <img src="https://chart.googleapis.com/chart?cht=qr&amp;chs=125x125&amp;chl=BEGIN%3AVCARD%0AVERSION%3A3.0%0AN%3AAbad%3BColleen%0AFN%3AColleen%20Abad%0AURL%3Ahttp%3A%2F%2Fvivo.ufl.edu%2Findividual%2Fn1770144435%0AEND%3AVCARD&amp;choe=UTF-8" />
+</a> <a class="qrCloseLink" href="#"  title="QR Code">Close</a></span>
+            </li>
+        
+
+		<li role="listitem"><img id="uriIcon" title="Click here to generate a full Curriculum Vitae (CV) in Rich Text Format for Download. This can be edited using a standard word processor." class="middle" src="http://vivo.ufl.edu/themes/wilma_ctsi/images/icon_cv_small.jpg" alt="CV icon" height="30" width="26" /></a></li>
+		<li role="listitem"><img id="uriIcon" title="Click here to generate a full NIH Biosketch in Rich Text Format for Download. This can be edited using a standard word processor." class="right" src="http://vivo.ufl.edu/themes/wilma_ctsi/images/icon_nih_small.jpg" alt="NIH Biosketch icon" height="30" width="26" /></a></li>
+            </ul>
+        </nav>
+            
+     
+         
+            <ul id="primary-email" class="individual-emails" role="list">
+                    <li role="listitem">
+                        <img class ="icon-email middle" src="http://vivo.ufl.edu/images/individual/emailIcon.gif" alt="email icon" />
+                        <a class="email" href="mailto:albertaGator@ufl.edu" title="email">albertaGator@ufl.edu</a>
+                    </li>
+            </ul>
+
+    
+
+         
+         
+                <ul id="primary-phonenumber" class="individual-phones" role="list">
+                        <li role="listitem">
+                                <img class ="icon-phone middle" src="http://vivo.ufl.edu/images/individual/phoneIcon.gif" alt="phone icon" />
+                                (352) 555-0111
+                        </li>
+                </ul>
+
+
+          
+                
+
+        </section>
+
+    <section id="individual-info" class="withThumb" role="region">
+
+        
+
+        
+        <header>
+                <h1 class="vcard foaf-person">
+                    <span class="fn">    Gator, Alberta Caitlyn
+</span>
+
+		<br />
+
+                                    </h1>
+            
+
+    <a href="" title="name">Clinical and Translational Research</a> 
+
+   
+                    </header>
+         
+        
+<!-- # Start TERM CLOUD SECTION-->
+
+<header>
+
+<!-- Get the params you need from the querystring and get the terms back from the SPARQL Endpoint-->
+<script type="text/javascript">
+
+
+
+
+</script>                    
+                    
+                    <span class="fn">  
+                        ISF Click to search Term Cloud. 
+                     </span>
+      
+
+		<br />
+
+                         
+                            <span class="pref-title">
+                            The following cloud of terms are derived from aggregating the collection of labels from the International Classification of Disease (ICD) codes utilized by this person over a one year period. The larger the term in the Term Cloud the more often it was utilized and the higher weighting it was given. To search for other People related to each term simply click on the term itself.
+                            
+                            </span>
+                </h1>
+<!-- Begin TermCloud-->
+   
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+   
+    <script type="text/javascript" src="http://visapi-gadgets.googlecode.com/svn/trunk/termcloud/tc.js"></script>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+   
+  
+    <script>
+    //get the URI of the provider passedin
+    function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+    }
+
+    var providerURI = getUrlVars()["providerURI"];
+    //var second = getUrlVars()["urlparamname"];
+ 
+    //alert(providerURI);
+
+
+    
+    
+    //this formatting is pretty specific for the Stoneybrook Virtuoso Endpoint.
+    //var query = 'query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+obo%3A+%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2F%3E%0D%0APREFIX+vivo%3A+%3Chttp%3A%2F%2Fvivoweb.org%2Fontology%2Fcore%23%3E%0D%0ASELECT+++*+where%0D%0A%7B%0D%0A%3Fprovider+a+obo%3AARG_0000130.%0D%0A%7D';
+    //like the most important thing is telling the endpoint to give back the results 'format' in JSON
+    var format = 'format=application%2Fsparql-results%2Bjson%0A';
+    var timeout = 'timeout=0';
+    var debug = 'debug=on';
+    var graphname = 'default-graph-uri=http%3A%2F%2Fohsu.dev.eagle-i.net';
+    var endpointURL = 'http://link.informatics.stonybrook.edu/sparql/?';
+    
+    
+    //SPARQL QUERY TO GET PROVIDER EXPERTISE TERMS
+    var query = ""
+        +"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" + '\n'
+        +"PREFIX owl: <http://www.w3.org/2002/07/owl#>" + '\n'
+        +"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>" + '\n'
+        +"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + '\n'
+        +"PREFIX obo: <http://purl.obolibrary.org/obo/>" + '\n'
+        +"PREFIX vivo: <http://vivoweb.org/ontology/core#>" + '\n'
+        +"SELECT    ?expertise ?label ?weight" + '\n'
+        +"WHERE" + '\n'
+        +"{" + '\n'
+        +"## Select the expertise for  provider passed in form querystring from providerURI" + '\n'
+        +"<" + decodeURIComponent(providerURI) + ">" 
+        +"obo:BFO_0000086 ?expertise." + '\n'
+        +"" + '\n'
+        +"## Select measurements contributing to expertise" + '\n'
+        +"?expertise_measurement obo:IAO_0000221 ?expertise." + '\n'
+        +"" + '\n'
+        +"## Select the weight and the label for measurements" + '\n'
+        +"?expertise_measurement obo:ARG_2000012 ?label." + '\n'
+        +"?expertise_measurement  obo:IAO_0000004 ?weight."  + '\n'
+        +"" + '\n'
+        +"}"  + '\n';
+        
+var querystring = endpointURL + graphname + "&query="+encodeURIComponent(query) +'&'+ format +'&'+ timeout +'&' + debug;
+
+$.getJSON(querystring,
+{
+    //tags: "provider",
+    //tagmode: "any",
+    //format: "json"
+}, function(data) {
+        //call external function with 'data' as a param to pass the JSON object out to another function to access its elements.
+        draw(data);
+        drawTable(data);    
+});
+</script> 
+
+   
+  
+
+    <h1><A href="providerListForCloud.html">Click here to go back to the provider list ... </A></h1>
+  
+    <hr>
+   <div id="tcdiv" width=100 ></div>
+    <script type="text/javascript">
+    
+      var weight = 1 ;
+      google.load("visualization", "1");
+      google.setOnLoadCallback(draw);
+      function draw(data) {
+        console.log('data = ', data);
+        datatbl = new google.visualization.DataTable();
+        datatbl.addColumn('string', 'Label');
+        datatbl.addColumn('number', 'Value');
+        datatbl.addColumn('string', 'Link');
+        datatbl.addRows(50);
+        
+        for (i = 0; i < data.results.bindings.length; i++){
+         
+         //alert(data.results.bindings[i].label.value);
+        //datatbl.setValue(0, 0, 'Hepatitis C');
+        //datatbl.setValue(0, 1, 86.2);
+        //datatbl.setValue(0, 2, 'http://vivo.ufl.edu/search?querytext=Hepatitis+C&classgroup=http%3A%2F%2Fvivoweb.org%2Fontology%23vitroClassGrouppeople');
+        
+       // alert (data.results.bindings[i].weight.value)
+        datatbl.setValue(i, 0, data.results.bindings[i].label.value);
+        datatbl.setValue(i, 1, parseFloat(data.results.bindings[i].weight.value));
+        datatbl.setValue(i, 2, 'http://vivo.ufl.edu/search?querytext=' + encodeURIComponent(data.results.bindings[i].label.value) + '&classgroup=http%3A%2F%2Fvivoweb.org%2Fontology%23vitroClassGrouppeople');
+       
+        }
+        
+       
+        var outputDiv = document.getElementById('tcdiv');
+        var tc = new TermCloud(outputDiv);
+       
+        tc.draw(datatbl,{target:'_blank'});
+      }
+        
+        //Data Table
+        google.load('visualization', '1', {packages: ['table']});
+        google.setOnLoadCallback(drawTable);
+        function drawTable(data) {
+        var datatbl2 = new google.visualization.DataTable();
+        datatbl2.addColumn('string', 'ICD Term');
+        datatbl2.addColumn('number', 'Weight');
+        //datatbl2.addColumn('string', 'Link');
+        datatbl2.addRows(data.results.bindings.length)
+        
+        for (i = 0; i < data.results.bindings.length; i++){ 
+        //data.addRows([['Mike',  {v: 10000, f: '$10,000'}]]);
+        datatbl2.setValue(i, 0, data.results.bindings[i].label.value);
+        datatbl2.setValue(i, 1 , parseFloat(data.results.bindings[i].weight.value));
+        //datatbl2.setValue(i, 2, '<A href="http://vivo.ufl.edu/search?querytext=' + encodeURIComponent(data.results.bindings[i].label.value) + '&classgroup=http%3A%2F%2Fvivoweb.org%2Fontology%23vitroClassGrouppeople">Search</A>');
+        }
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+        table.draw(datatbl2, {sortAscending: true});
+      }       
+
+    </script>      
+     <br>
+     <div id="table_div"></div>  
+<!--End Term Cloud-->
+
+<!-- Begin Data Table-->
+
+<!--End Data Table-->             
+         
+    </section>
+    
+    
+</section>
+
+
+    
+            <nav id="property-group-menu" role="navigation">
+                <ul role="list">
+                            <li role="listitem"><a href="#contact" title="group name">Contact</a></li>
+                </ul>
+            </nav>
+
+
+
+
+    
+
+
+
+
+
+              
+
+        
+
+</div>
+
+
+ <!-- #wrapper-content -->
+
+<footer role="contentinfo">
+    <p class="copyright">
+            <small>&copy;2013
+                VIVO Project
+             | <a class="terms" href="http://vivo.ufl.edu/termsOfUse">Terms of Use</a></small> | 
+        Powered by <a class="powered-by-vivo" href="http://vivoweb.org" target="_blank"><strong>VIVO</strong></a>
+    </p>
+    
+    <nav role="navigation">
+        <ul id="footer-nav" role="list" style="width:350px">
+            <li role="listitem"><a href="http://vivo.ufl.edu/about">About</a></li>
+                <li role="listitem"><a href="http://vivo.ufl.edu/contact">Contact Us</a></li>
+            <li role="listitem"><a href="http://www.vivoweb.org/support" target="blank">Support</a></li>
+	    <li role="listitem"><a href="http://privacy.ufl.edu/privacystatement.html" target="blank">Privacy Policy</a></li>
+	</ul>
+<div style="position:relative;float:left;width:930px;height:5px;margin:20px 0 0 0">
+	<a href = "http://www.ufl.edu"><img style= "padding-bottom:20px; position:relative; bottom:0px;right:50px; float:right; z-index:1; width:195px; height:54px" src = "http://vivo.ufl.edu/themes/wilma_ctsi/images/UFSigGray.png" /></a>
+</div>	
+    </nav>    
+</footer>
+
+
+<script type="text/javascript" src="http://vivo.ufl.edu/js/imageUpload/imageUploadUtils.js"></script>
+<script type="text/javascript" src="http://vivo.ufl.edu/js/individual/individualUriRdf.js"></script>
+<script type="text/javascript" src="http://vivo.ufl.edu/js/individual/individualUtils.js"></script>
+
+
+    </body>
+</html>
