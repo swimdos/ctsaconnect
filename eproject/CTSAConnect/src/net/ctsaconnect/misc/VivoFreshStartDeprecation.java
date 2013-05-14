@@ -6,9 +6,7 @@ import java.util.Set;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -67,8 +65,8 @@ public class VivoFreshStartDeprecation {
 				+ "/src/ontology/app-views/vivo/vivo-app.owl"));
 //		System.out.println(vivoApp.getTBoxAxioms(true).size());
 
-		// clear
-		man2.removeAxioms(vivoApp, vivoApp.getAxioms());
+//		// don't clear since there will be manual edits of this file.
+//		man2.removeAxioms(vivoApp, vivoApp.getAxioms());
 
 		Set<OWLAxiom> origAxioms = new HashSet<OWLAxiom>();
 		Set<OWLAxiom> newAxioms = new HashSet<OWLAxiom>();

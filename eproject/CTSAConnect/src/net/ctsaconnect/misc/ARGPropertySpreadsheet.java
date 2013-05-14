@@ -50,7 +50,6 @@ public class ARGPropertySpreadsheet {
 	static IRI inGroupIri = IRI.create(inPropertyGroupIri);
 	static OWLAnnotationProperty inGroupProp = OWLDataFactoryImpl.getInstance()
 			.getOWLAnnotationProperty(inGroupIri);
-
 	static String domainConstraint = "http://eagle-i.org/ont/app/1.0/domainConstraint";
 	static IRI domainIri = IRI.create(domainConstraint);
 	static OWLAnnotationProperty domainProp = OWLDataFactoryImpl.getInstance()
@@ -92,9 +91,9 @@ public class ARGPropertySpreadsheet {
 		r.setUseTabbing(false);
 
 		for (OWLEntity e : argApp.getSignature(true)) {
-			if(e.getIRI().toString().equals("http://www.obofoundry.org/ro/ro.owl#adjacent_to")){
-				System.out.println("found");
-			}
+//			if(e.getIRI().toString().equals("http://www.obofoundry.org/ro/ro.owl#adjacent_to")){
+//				System.out.println("found");
+//			}
 			if (e instanceof OWLProperty) {
 				OWLProperty p = (OWLProperty) e;
 				if (getParentProperty(p).size() == 0) {
@@ -226,6 +225,9 @@ public class ARGPropertySpreadsheet {
 
 	List<String> getAnnotationValues(OWLEntity entity, OWLAnnotationProperty annotationProperty) {
 		List<String> annotations = new ArrayList<String>();
+//		if(entity.getIRI().toString().equals("http://www.w3.org/2006/vcard/ns#tel")){
+//			System.out.println("found");
+//		}
 		for (OWLOntology o : argApp.getImportsClosure()) {
 			Set<OWLAnnotation> as = entity.getAnnotations(o, annotationProperty);
 			for (OWLAnnotation a : as) {

@@ -36,8 +36,9 @@ public class VivoRemoveOnlyAxioms {
 
 		vivo = man.loadOntologyFromOntologyDocument(new File(
 				"C:/s/svns/isf-new-layout/trunk/src/ontology/module/vivo/vivo.owl"));
-		vivoApp = man.createOntology(IRI
-				.create("http://purl.obolibrary.org/obo/arg/app-views/vivo/vivo-app.owl"));
+
+		vivoApp = man.loadOntologyFromOntologyDocument(new File(
+				"C:/s/svns/isf-new-layout/trunk/src/ontology/app-views/vivo/vivo-app.owl"));
 
 		for (OWLOntology o : vivo.getImportsClosure()) {
 			for (OWLAxiom axiom : o.getAxioms()) {
@@ -61,8 +62,7 @@ public class VivoRemoveOnlyAxioms {
 			}
 		}
 
-		man.saveOntology(vivoApp, new FileOutputStream(new File(
-				"C:/s/svns/isf-new-layout/trunk/src/ontology/app-views/vivo/vivo-app.owl")));
+		man.saveOntology(vivoApp);
 	}
 
 }
