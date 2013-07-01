@@ -1,0 +1,6 @@
+* To run expertise.py you should be able to simple run
+ myshell$ python expertise.py
+
+ * In order to run generateProviderSummary.py you will need to have MySQL for Python installed
+ * See: http://sourceforge.net/projects/mysql-python/
+ * You can installed also with easy_install MySQL-python
