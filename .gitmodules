@@ -1,3 +1,0 @@
-[submodule "externals/UMLS2SKOS"]
-	path = externals/UMLS2SKOS
-	url = git://github.com/jhajagos/UMLS2SKOS/
