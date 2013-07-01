@@ -27,4 +27,10 @@
 			<locationURI>ISF_SVN</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>ISF_SVN</name>
+			<value>file:/C:/s/svns/isf-new-layout/trunk</value>
+		</variable>
+	</variableList>
 </projectDescription>
