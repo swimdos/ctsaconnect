@@ -1,0 +1,10 @@
+This README provides instructions on loading the clinical demonstrator code as implemented at UF. Note, you may need to change the SPARQL endpoint URL to correctly retrieve desired data.
+
+
+1) Open the template individual--foaf-person.ftl in /var/lib/tomcat6/webapps/vivo/templates/freemarker/body/individual.
+2) After the <#-- Positions --> block (ends on line 118 in VIVO 1.4.1 version as used by UF), insert the directive:
+<#include "tag-cloud.html">
+3) Copy the tag-cloud.html file to the same directory. (/var/lib/tomcat6/webapps/vivo/templates/freemarker/body/individual)
+4) Reload the page. Restarting VIVO is generally not necessary as VIVO checks for alterations to the templates on a regular basis and should serve them immediately. Browse to an individual person's page to load the elements.
+
+
