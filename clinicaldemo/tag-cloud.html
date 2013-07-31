@@ -1,0 +1,170 @@
+<!-- # Start TERM CLOUD SECTION-->
+
+<header>
+
+<!-- Get the params you need from the querystring and get the terms back from the SPARQL Endpoint-->
+<script type="text/javascript">
+
+
+
+
+</script>                    
+                    
+                    <span class="fn">  
+                        ISF Click to search Term Cloud. 
+                     </span>
+      
+
+		<br />
+
+                         
+                            <span class="pref-title">
+                            The following cloud of terms are derived from aggregating the collection of labels from the International Classification of Disease (ICD) codes utilized by this person over a one year period. The larger the term in the Term Cloud the more often it was utilized and the higher weighting it was given. To search for other People related to each term simply click on the term itself.
+                            
+                            </span>
+                </h1>
+<!-- Begin TermCloud-->
+    <link rel="stylesheet" type="text/css" href="http://visapi-gadgets.googlecode.com/svn/trunk/termcloud/tc.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+   
+    <script type="text/javascript" src="http://visapi-gadgets.googlecode.com/svn/trunk/termcloud/tc.js"></script>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+   
+  
+    <script>
+    //get the URI of the provider passedin
+    function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+    }
+
+    //var providerURI = getUrlVars()["providerURI"];
+    var providerURI = "http://localhost/individual/n1665";
+    //var second = getUrlVars()["urlparamname"];
+ 
+    //alert(providerURI);
+
+
+    
+    
+    //this formatting is pretty specific for the Stoneybrook Virtuoso Endpoint.
+    //var query = 'query=PREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+obo%3A+%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2F%3E%0D%0APREFIX+vivo%3A+%3Chttp%3A%2F%2Fvivoweb.org%2Fontology%2Fcore%23%3E%0D%0ASELECT+++*+where%0D%0A%7B%0D%0A%3Fprovider+a+obo%3AARG_0000130.%0D%0A%7D';
+    //like the most important thing is telling the endpoint to give back the results 'format' in JSON
+    var format = 'format=application%2Fsparql-results%2Bjson%0A';
+    var timeout = 'timeout=0';
+    var debug = 'debug=on';
+   // var graphname = 'default-graph-uri=http%3A%2F%2Fohsu.dev.eagle-i.net';
+    var graphname = 'default-graph-uri=http%3A%2F%2Fvitro.mannlib.cornell.edu%2Fdefault%2Fvitro-kb-2';
+	 var endpointURL = 'http://localhost:3030/VIVO/query';
+    
+    
+    //SPARQL QUERY TO GET PROVIDER EXPERTISE TERMS
+    var query = ""
+        +"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" + '\n'
+        +"PREFIX owl: <http://www.w3.org/2002/07/owl#>" + '\n'
+        +"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>" + '\n'
+        +"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + '\n'
+        +"PREFIX obo: <http://purl.obolibrary.org/obo/>" + '\n'
+        +"PREFIX vivo: <http://vivoweb.org/ontology/core#>" + '\n'
+        +"SELECT    ?expertise ?label ?weight" + '\n'
+        +"WHERE" + '\n'
+        +"{" + '\n'
+        +"## Select the expertise for  provider passed in form querystring from providerURI" + '\n'
+        //+"<" + decodeURIComponent(providerURI) + ">" 
+	+"<" + providerURI + ">"
+        +"obo:BFO_0000086 ?expertise." + '\n'
+        +"" + '\n'
+        +"## Select measurements contributing to expertise" + '\n'
+        +"?expertise_measurement obo:IAO_0000221 ?expertise." + '\n'
+        +"" + '\n'
+        +"## Select the weight and the label for measurements" + '\n'
+        +"?expertise_measurement obo:ARG_2000012 ?label." + '\n'
+        +"?expertise_measurement  obo:IAO_0000004 ?weight."  + '\n'
+        +"" + '\n'
+        +"}"  + '\n';
+        
+//var querystring = endpointURL + graphname + "&query="+encodeURIComponent(query) +'&'+ format +'&'+ timeout +'&' + debug;
+var querystring = endpointURL + "?query="+encodeURIComponent(query) + '&' + format;
+
+$.getJSON(querystring,
+{
+    //tags: "provider",
+    //tagmode: "any",
+    //format: "json"
+}, function(data) {
+        //call external function with 'data' as a param to pass the JSON object out to another function to access its elements.
+        draw(data);
+	drawTable(data);    
+});
+</script> 
+
+   
+  
+
+    <h1><A href="providerListForCloud.html">Click here to go back to the provider list ... </A></h1>
+  
+    <hr>
+   <div id="tcdiv" width=100 ></div>
+    <script type="text/javascript">
+    
+      var weight = 1 ;
+      google.load("visualization", "1");
+      google.setOnLoadCallback(draw);
+      function draw(data) {
+        console.log('data = ', data);
+        datatbl = new google.visualization.DataTable();
+        datatbl.addColumn('string', 'Label');
+        datatbl.addColumn('number', 'Value');
+        datatbl.addColumn('string', 'Link');
+        datatbl.addRows(50);
+        
+        for (i = 0; i < data.results.bindings.length; i++){
+         
+         //alert(data.results.bindings[i].label.value);
+        //datatbl.setValue(0, 0, 'Hepatitis C');
+        //datatbl.setValue(0, 1, 86.2);
+        //datatbl.setValue(0, 2, 'http://vivo.ufl.edu/search?querytext=Hepatitis+C&classgroup=http%3A%2F%2Fvivoweb.org%2Fontology%23vitroClassGrouppeople');
+        
+       // alert (data.results.bindings[i].weight.value)
+        datatbl.setValue(i, 0, data.results.bindings[i].label.value);
+        datatbl.setValue(i, 1, parseFloat(data.results.bindings[i].weight.value * 100));
+        datatbl.setValue(i, 2, 'http://research.icts.uiowa.edu/polyglot/ctsaSearch.jsp?query=' + encodeURIComponent(data.results.bindings[i].label.value) + '');
+       
+        }
+        
+       
+        var outputDiv = document.getElementById('tcdiv');
+        var tc = new TermCloud(outputDiv);
+        tc.draw(datatbl, null);
+      }
+      
+	google.load('visualization', '1', {packages: ['table']});
+	google.setOnLoadCallback(drawTable);
+	function drawTable(data) {
+		var datatbl2 = new google.visualization.DataTable();
+		datatbl2.addColumn('string', 'ICD Term');
+		datatbl2.addColumn('number', 'Weight');
+		datatbl2.addRows(data.results.bindings.length)
+
+		for(i = 0; i <data.results.bindings.length; i++) {
+			datatbl2.setValue(i, 0, data.results.bindings[i].label.value);
+			datatbl2.setValue(i, 1, parseFloat(data.results.bindings[i].weight.value));
+		}
+		var table = new google.visualization.Table(document.getElementById('table_div'));
+		table.draw(datatbl2, {sortAscending: true});
+	}
+      
+    </script>      
+     <hr>  
+<!--End Term Cloud-->
+   <div id="table_div"></div> 
+ 
+     
+
+
+
+
+<!-- # End TERM CLOUD SECTION--> 
